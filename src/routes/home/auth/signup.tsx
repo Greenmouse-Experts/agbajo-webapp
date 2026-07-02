@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import logo from "/agbajo-logo.png";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -75,8 +76,8 @@ function SignupPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto bg-primary flex items-center justify-center">
-            <span className="text-primary-content font-bold text-2xl">A</span>
+          <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
+            <img src={logo} alt="Agbajo Africa" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
           <p className="text-base-content/60 mt-1">Digital Cooperative Savings</p>

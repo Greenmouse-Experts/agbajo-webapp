@@ -25,17 +25,27 @@ function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto bg-primary flex items-center justify-center">
-            <span className="text-primary-content font-bold text-2xl">A</span>
+          <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
+            <img
+              src={"/agbajo-logo.jpeg"}
+              alt="Agbajo Africa"
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
-          <p className="text-base-content/60 mt-1">Digital Cooperative Savings</p>
+          <p className="text-base-content/60 mt-1">
+            Digital Cooperative Savings
+          </p>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
-            <h2 className="text-xl font-semibold text-base-content mb-0">Welcome back</h2>
-            <p className="text-base-content/60 text-sm mb-2">Sign in to your account to continue</p>
+            <h2 className="text-xl font-semibold text-base-content mb-0">
+              Welcome back
+            </h2>
+            <p className="text-base-content/60 text-sm mb-2">
+              Sign in to your account to continue
+            </p>
 
             {error && (
               <div role="alert" className="alert alert-error mb-2">
@@ -77,7 +87,11 @@ function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </fieldset>
@@ -101,7 +115,10 @@ function LoginPage() {
             <div className="mt-2 text-center">
               <p className="text-sm text-base-content/60">
                 Don't have an account?{" "}
-                <Link to="/home/auth/signup" className="text-primary font-bold hover:underline">
+                <Link
+                  to="/home/auth/signup"
+                  className="text-primary font-bold hover:underline"
+                >
                   Sign up
                 </Link>
               </p>

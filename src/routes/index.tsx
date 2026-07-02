@@ -1,6 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute("/")({
+  component: Home,
+  loader: () => {
+    redirect({ to: "/home/auth/login" });
+  },
+});
 
 function Home() {
   return (
@@ -10,5 +15,5 @@ function Home() {
         Edit <code>src/routes/index.tsx</code> to get started.
       </p>
     </div>
-  )
+  );
 }
