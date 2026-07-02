@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
+import { Route as ContributorRouteRouteImport } from './routes/contributor/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContributorIndexRouteImport } from './routes/contributor/index'
 import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
@@ -20,15 +21,20 @@ const VerifyEmailRoute = VerifyEmailRouteImport.update({
   path: '/verify-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContributorRouteRoute = ContributorRouteRouteImport.update({
+  id: '/contributor',
+  path: '/contributor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContributorIndexRoute = ContributorIndexRouteImport.update({
-  id: '/contributor/',
-  path: '/contributor/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => ContributorRouteRoute,
 } as any)
 const HomeAuthSignupRoute = HomeAuthSignupRouteImport.update({
   id: '/home/auth/signup',
@@ -43,6 +49,7 @@ const HomeAuthLoginRoute = HomeAuthLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/contributor/': typeof ContributorIndexRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/contributor/': typeof ContributorIndexRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
@@ -67,6 +75,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/contributor'
     | '/verify-email'
     | '/contributor/'
     | '/home/auth/login'
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/contributor'
     | '/verify-email'
     | '/contributor/'
     | '/home/auth/login'
@@ -89,8 +99,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContributorRouteRoute: typeof ContributorRouteRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
-  ContributorIndexRoute: typeof ContributorIndexRoute
   HomeAuthLoginRoute: typeof HomeAuthLoginRoute
   HomeAuthSignupRoute: typeof HomeAuthSignupRoute
 }
@@ -104,6 +114,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contributor': {
+      id: '/contributor'
+      path: '/contributor'
+      fullPath: '/contributor'
+      preLoaderRoute: typeof ContributorRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -113,10 +130,10 @@ declare module '@tanstack/react-router' {
     }
     '/contributor/': {
       id: '/contributor/'
-      path: '/contributor'
+      path: '/'
       fullPath: '/contributor/'
       preLoaderRoute: typeof ContributorIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ContributorRouteRoute
     }
     '/home/auth/signup': {
       id: '/home/auth/signup'
@@ -135,10 +152,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ContributorRouteRouteChildren {
+  ContributorIndexRoute: typeof ContributorIndexRoute
+}
+
+const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
+  ContributorIndexRoute: ContributorIndexRoute,
+}
+
+const ContributorRouteRouteWithChildren =
+  ContributorRouteRoute._addFileChildren(ContributorRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContributorRouteRoute: ContributorRouteRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
-  ContributorIndexRoute: ContributorIndexRoute,
   HomeAuthLoginRoute: HomeAuthLoginRoute,
   HomeAuthSignupRoute: HomeAuthSignupRoute,
 }
