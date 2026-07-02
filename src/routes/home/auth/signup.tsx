@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import logo from "/agbajo-logo.png";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -60,7 +59,9 @@ function SignupPage() {
               <CheckCircle className="w-8 h-8 text-success" />
             </div>
             <h2 className="card-title">Account created successfully!</h2>
-            <p className="text-base-content/60">Check your email for verification.</p>
+            <p className="text-base-content/60">
+              Check your email for verification.
+            </p>
             <div className="card-actions mt-2">
               <Link to="/home/auth/login" className="btn btn-primary">
                 Go to login
@@ -77,16 +78,26 @@ function SignupPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
-            <img src={logo} alt="Agbajo Africa" className="w-full h-full object-contain" />
+            <img
+              src={"/agbajo-logo.jpeg"}
+              alt="Agbajo Africa"
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
-          <p className="text-base-content/60 mt-1">Digital Cooperative Savings</p>
+          <p className="text-base-content/60 mt-1">
+            Digital Cooperative Savings
+          </p>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
-            <h2 className="text-xl font-semibold text-base-content mb-0">Create your account</h2>
-            <p className="text-base-content/60 text-sm mb-2">Join AGBAJO to start saving together</p>
+            <h2 className="text-xl font-semibold text-base-content mb-0">
+              Create your account
+            </h2>
+            <p className="text-base-content/60 text-sm mb-2">
+              Join AGBAJO to start saving together
+            </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <fieldset className="fieldset">
@@ -167,7 +178,11 @@ function SignupPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
                 {errors.password && (
@@ -195,7 +210,11 @@ function SignupPage() {
                 )}
               </fieldset>
 
-              <button type="submit" disabled={isLoading} className="btn btn-primary w-full">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn btn-primary w-full"
+              >
                 {isLoading ? (
                   <>
                     <span className="loading loading-spinner loading-sm" />
@@ -210,7 +229,10 @@ function SignupPage() {
             <div className="mt-2 text-center">
               <p className="text-sm text-base-content/60">
                 Already have an account?{" "}
-                <Link to="/home/auth/login" className="text-primary font-bold hover:underline">
+                <Link
+                  to="/home/auth/login"
+                  className="text-primary font-bold hover:underline"
+                >
                   Sign in
                 </Link>
               </p>
