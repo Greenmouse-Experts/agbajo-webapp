@@ -17,7 +17,7 @@ export interface ApiResponseV2<T = any> {
   statusCode: number;
   path: string;
 }
-export const new_url = "https://needhomes-backend-staging.onrender.com/";
+export const new_url = "https://agbajo-backend.onrender.com/";
 const apiClient = axios.create({
   baseURL: new_url,
   withCredentials: true,

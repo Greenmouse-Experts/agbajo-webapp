@@ -1,25 +1,48 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import { set_user_value, type AUTHRECORD } from "#/store/authStore";
+import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/home/auth/login")({
   component: LoginPage,
 });
 
-function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const schema = z.object({
+  email: z.string().email("Enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-    // auth logic goes here
-    setIsLoading(false);
-  };
+type FormValues = z.infer<typeof schema>;
+
+function LoginPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({ resolver: zodResolver(schema) });
+
+  const mutation = useMutation({
+    mutationFn: (data: FormValues) =>
+      apiClient.post<ApiResponse<AUTHRECORD>>("/auth/login", data),
+    onSuccess: ({ data }) => {
+      set_user_value(data.data);
+      toast.success("Welcome back!");
+      navigate({ to: "/contributor" });
+    },
+    onError: (err) => {
+      toast.error(extract_message(err));
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col items-center justify-center p-4">
@@ -27,7 +50,7 @@ function LoginPage() {
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
             <img
-              src={"/agbajo-logo.jpeg"}
+              src="/agbajo-logo.jpeg"
               alt="Agbajo Africa"
               className="w-full h-full object-contain"
             />
@@ -47,40 +70,35 @@ function LoginPage() {
               Sign in to your account to continue
             </p>
 
-            {error && (
-              <div role="alert" className="alert alert-error mb-2">
-                <AlertCircle className="w-5 h-5 shrink-0" />
-                <span className="text-sm">{error}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form
+              onSubmit={handleSubmit((d) => mutation.mutate(d))}
+              className="space-y-4"
+            >
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Email address</legend>
                 <input
-                  id="email"
                   type="email"
-                  className="input w-full"
+                  className={`input w-full ${errors.email ? "input-error" : ""}`}
                   placeholder="you@example.com"
                   autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                 />
+                {errors.email && (
+                  <p className="fieldset-label text-error text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </fieldset>
 
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Password</legend>
                 <div className="relative">
                   <input
-                    id="password"
                     type={showPassword ? "text" : "password"}
-                    className="input w-full pr-10"
+                    className={`input w-full pr-10 ${errors.password ? "input-error" : ""}`}
                     placeholder="Enter your password"
                     autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password")}
                   />
                   <button
                     type="button"
@@ -94,14 +112,19 @@ function LoginPage() {
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="fieldset-label text-error text-xs mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
               </fieldset>
 
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={mutation.isPending}
                 className="btn btn-primary w-full"
               >
-                {isLoading ? (
+                {mutation.isPending ? (
                   <>
                     <span className="loading loading-spinner loading-sm" />
                     Signing in...

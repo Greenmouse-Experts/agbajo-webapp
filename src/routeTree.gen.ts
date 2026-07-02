@@ -9,13 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ContributorIndexRouteImport } from './routes/contributor/index'
 import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
 import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: '/verify-email',
+  path: '/verify-email',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContributorIndexRoute = ContributorIndexRouteImport.update({
+  id: '/contributor/',
+  path: '/contributor/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeAuthSignupRoute = HomeAuthSignupRouteImport.update({
@@ -31,41 +43,79 @@ const HomeAuthLoginRoute = HomeAuthLoginRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/contributor/': typeof ContributorIndexRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/contributor': typeof ContributorIndexRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/verify-email': typeof VerifyEmailRoute
+  '/contributor/': typeof ContributorIndexRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/home/auth/login' | '/home/auth/signup'
+  fullPaths:
+    | '/'
+    | '/verify-email'
+    | '/contributor/'
+    | '/home/auth/login'
+    | '/home/auth/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/home/auth/login' | '/home/auth/signup'
-  id: '__root__' | '/' | '/home/auth/login' | '/home/auth/signup'
+  to:
+    | '/'
+    | '/verify-email'
+    | '/contributor'
+    | '/home/auth/login'
+    | '/home/auth/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/verify-email'
+    | '/contributor/'
+    | '/home/auth/login'
+    | '/home/auth/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
+  ContributorIndexRoute: typeof ContributorIndexRoute
   HomeAuthLoginRoute: typeof HomeAuthLoginRoute
   HomeAuthSignupRoute: typeof HomeAuthSignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verify-email': {
+      id: '/verify-email'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contributor/': {
+      id: '/contributor/'
+      path: '/contributor'
+      fullPath: '/contributor/'
+      preLoaderRoute: typeof ContributorIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home/auth/signup': {
@@ -87,6 +137,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
+  ContributorIndexRoute: ContributorIndexRoute,
   HomeAuthLoginRoute: HomeAuthLoginRoute,
   HomeAuthSignupRoute: HomeAuthSignupRoute,
 }

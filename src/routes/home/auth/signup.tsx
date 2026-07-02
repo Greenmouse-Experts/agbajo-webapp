@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useForm } from "react-hook-form";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
+import apiClient from "#/api/simpleApi";
+import SimpleSelect from "#/components/modals/inputs/SimpleSelect";
 
 export const Route = createFileRoute("/home/auth/signup")({
   component: SignupPage,
@@ -11,10 +15,13 @@ export const Route = createFileRoute("/home/auth/signup")({
 
 const schema = z
   .object({
-    fullName: z.string().min(2, "Full name must be at least 2 characters"),
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Enter a valid email address"),
     phoneNumber: z.string().optional(),
-    role: z.enum(["contributor", "cluster_manager"]),
+    roleId: z
+      .string({ required_error: "Select a role" })
+      .min(1, "Select a role"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
@@ -27,51 +34,34 @@ type FormValues = z.infer<typeof schema>;
 
 function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  const methods = useForm<FormValues>({
+    resolver: zodResolver(schema),
+  });
 
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
+    control,
     formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: { role: "contributor" },
+  } = methods;
+
+  const mutation = useMutation({
+    mutationFn: (data: FormValues) =>
+      apiClient.post("/auth/sign-up", {
+        ...data,
+        roleId: Number(data.roleId),
+      }),
+    onSuccess: () => {
+      toast.success("Account created! Check your email for verification.");
+      navigate({ to: "/home/auth/login" });
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message ?? "Something went wrong.";
+      toast.error(msg);
+    },
   });
-
-  const role = watch("role");
-
-  const onSubmit = async (_data: FormValues) => {
-    setIsLoading(true);
-    // auth logic goes here
-    setIsLoading(false);
-    setSuccess(true);
-  };
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex items-center justify-center p-4">
-        <div className="card bg-base-100 shadow-xl max-w-md w-full">
-          <div className="card-body items-center text-center">
-            <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mb-2">
-              <CheckCircle className="w-8 h-8 text-success" />
-            </div>
-            <h2 className="card-title">Account created successfully!</h2>
-            <p className="text-base-content/60">
-              Check your email for verification.
-            </p>
-            <div className="card-actions mt-2">
-              <Link to="/home/auth/login" className="btn btn-primary">
-                Go to login
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col items-center justify-center p-4">
@@ -99,134 +89,162 @@ function SignupPage() {
               Join AGBAJO to start saving together
             </p>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Full Name</legend>
-                <input
-                  type="text"
-                  className={`input w-full ${errors.fullName ? "input-error" : ""}`}
-                  placeholder="John Doe"
-                  {...register("fullName")}
-                />
-                {errors.fullName && (
-                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {errors.fullName.message}
-                  </p>
-                )}
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Email address</legend>
-                <input
-                  type="email"
-                  className={`input w-full ${errors.email ? "input-error" : ""}`}
-                  placeholder="you@example.com"
-                  autoComplete="email"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {errors.email.message}
-                  </p>
-                )}
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Phone Number</legend>
-                <input
-                  type="tel"
-                  className="input w-full"
-                  placeholder="+234 800 000 0000"
-                  {...register("phoneNumber")}
-                />
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Account Type</legend>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setValue("role", "contributor")}
-                    className={`btn btn-sm ${role === "contributor" ? "btn-primary" : "btn-outline"}`}
-                  >
-                    Contributor
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setValue("role", "cluster_manager")}
-                    className={`btn btn-sm ${role === "cluster_manager" ? "btn-secondary" : "btn-outline"}`}
-                  >
-                    Cluster Manager
-                  </button>
-                </div>
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Password</legend>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className={`input w-full pr-10 ${errors.password ? "input-error" : ""}`}
-                    placeholder="Create a password"
-                    autoComplete="new-password"
-                    {...register("password")}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {errors.password.message}
-                  </p>
-                )}
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Confirm Password</legend>
-                <input
-                  type="password"
-                  className={`input w-full ${errors.confirmPassword ? "input-error" : ""}`}
-                  placeholder="Confirm your password"
-                  autoComplete="new-password"
-                  {...register("confirmPassword")}
-                />
-                {errors.confirmPassword && (
-                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </fieldset>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="btn btn-primary w-full"
+            <FormProvider {...methods}>
+              <form
+                onSubmit={handleSubmit((d) => mutation.mutate(d))}
+                className="space-y-4"
               >
-                {isLoading ? (
-                  <>
-                    <span className="loading loading-spinner loading-sm" />
-                    Creating account...
-                  </>
-                ) : (
-                  "Create account"
-                )}
-              </button>
-            </form>
+                <div className="grid grid-cols-2 gap-3">
+                  <fieldset className="fieldset">
+                    <legend className="fieldset-legend">First Name</legend>
+                    <input
+                      type="text"
+                      className={`input w-full ${errors.firstName ? "input-error" : ""}`}
+                      placeholder="John"
+                      {...register("firstName")}
+                    />
+                    {errors.firstName && (
+                      <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {errors.firstName.message}
+                      </p>
+                    )}
+                  </fieldset>
 
-            <div className="mt-2 text-center">
+                  <fieldset className="fieldset">
+                    <legend className="fieldset-legend">Last Name</legend>
+                    <input
+                      type="text"
+                      className={`input w-full ${errors.lastName ? "input-error" : ""}`}
+                      placeholder="Doe"
+                      {...register("lastName")}
+                    />
+                    {errors.lastName && (
+                      <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                        {errors.lastName.message}
+                      </p>
+                    )}
+                  </fieldset>
+                </div>
+
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Email address</legend>
+                  <input
+                    type="email"
+                    className={`input w-full ${errors.email ? "input-error" : ""}`}
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    {...register("email")}
+                  />
+                  {errors.email && (
+                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {errors.email.message}
+                    </p>
+                  )}
+                </fieldset>
+
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Phone Number</legend>
+                  <input
+                    type="tel"
+                    className="input w-full"
+                    placeholder="+234 800 000 0000"
+                    {...register("phoneNumber")}
+                  />
+                </fieldset>
+
+                <Controller
+                  control={control}
+                  name="roleId"
+                  render={({ field }) => (
+                    <SimpleSelect
+                      route="/auth/roles"
+                      label="Account Type"
+                      name="roleId"
+                      value={field.value ?? null}
+                      onChange={(v) => field.onChange(v)}
+                      render={(item: any, idx) => (
+                        <option key={idx} value={String(item.id)}>
+                          {item.name}
+                        </option>
+                      )}
+                    />
+                  )}
+                />
+                {errors.roleId && (
+                  <p className="text-error text-sm flex items-center gap-1 -mt-3">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {errors.roleId.message}
+                  </p>
+                )}
+
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Password</legend>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className={`input w-full pr-10 ${errors.password ? "input-error" : ""}`}
+                      placeholder="Create a password"
+                      autoComplete="new-password"
+                      {...register("password")}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {errors.password.message}
+                    </p>
+                  )}
+                </fieldset>
+
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Confirm Password</legend>
+                  <input
+                    type="password"
+                    className={`input w-full ${errors.confirmPassword ? "input-error" : ""}`}
+                    placeholder="Confirm your password"
+                    autoComplete="new-password"
+                    {...register("confirmPassword")}
+                  />
+                  {errors.confirmPassword && (
+                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
+                </fieldset>
+
+                <button
+                  type="submit"
+                  disabled={mutation.isPending}
+                  className="btn btn-primary w-full"
+                >
+                  {mutation.isPending ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm" />
+                      Creating account...
+                    </>
+                  ) : (
+                    "Create account"
+                  )}
+                </button>
+              </form>
+            </FormProvider>
+
+            <div className="mt-4 text-center">
               <p className="text-sm text-base-content/60">
                 Already have an account?{" "}
                 <Link
