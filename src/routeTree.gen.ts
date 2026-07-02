@@ -15,6 +15,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContributorIndexRouteImport } from './routes/contributor/index'
 import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
 import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
+import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
+import { Route as AuthResetPasswordConfirmRouteImport } from './routes/auth/reset-password/confirm'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -46,12 +48,26 @@ const HomeAuthLoginRoute = HomeAuthLoginRouteImport.update({
   path: '/home/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthResetPasswordRequestRoute =
+  AuthResetPasswordRequestRouteImport.update({
+    id: '/auth/reset-password/request',
+    path: '/auth/reset-password/request',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthResetPasswordConfirmRoute =
+  AuthResetPasswordConfirmRouteImport.update({
+    id: '/auth/reset-password/confirm',
+    path: '/auth/reset-password/confirm',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/contributor/': typeof ContributorIndexRoute
+  '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
+  '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
 }
@@ -59,6 +75,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/verify-email': typeof VerifyEmailRoute
   '/contributor': typeof ContributorIndexRoute
+  '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
+  '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
 }
@@ -68,6 +86,8 @@ export interface FileRoutesById {
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/contributor/': typeof ContributorIndexRoute
+  '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
+  '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
 }
@@ -78,6 +98,8 @@ export interface FileRouteTypes {
     | '/contributor'
     | '/verify-email'
     | '/contributor/'
+    | '/auth/reset-password/confirm'
+    | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
   fileRoutesByTo: FileRoutesByTo
@@ -85,6 +107,8 @@ export interface FileRouteTypes {
     | '/'
     | '/verify-email'
     | '/contributor'
+    | '/auth/reset-password/confirm'
+    | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
   id:
@@ -93,6 +117,8 @@ export interface FileRouteTypes {
     | '/contributor'
     | '/verify-email'
     | '/contributor/'
+    | '/auth/reset-password/confirm'
+    | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
   fileRoutesById: FileRoutesById
@@ -101,6 +127,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContributorRouteRoute: typeof ContributorRouteRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
+  AuthResetPasswordConfirmRoute: typeof AuthResetPasswordConfirmRoute
+  AuthResetPasswordRequestRoute: typeof AuthResetPasswordRequestRoute
   HomeAuthLoginRoute: typeof HomeAuthLoginRoute
   HomeAuthSignupRoute: typeof HomeAuthSignupRoute
 }
@@ -149,6 +177,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/reset-password/request': {
+      id: '/auth/reset-password/request'
+      path: '/auth/reset-password/request'
+      fullPath: '/auth/reset-password/request'
+      preLoaderRoute: typeof AuthResetPasswordRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset-password/confirm': {
+      id: '/auth/reset-password/confirm'
+      path: '/auth/reset-password/confirm'
+      fullPath: '/auth/reset-password/confirm'
+      preLoaderRoute: typeof AuthResetPasswordConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -167,6 +209,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContributorRouteRoute: ContributorRouteRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
+  AuthResetPasswordConfirmRoute: AuthResetPasswordConfirmRoute,
+  AuthResetPasswordRequestRoute: AuthResetPasswordRequestRoute,
   HomeAuthLoginRoute: HomeAuthLoginRoute,
   HomeAuthSignupRoute: HomeAuthSignupRoute,
 }
