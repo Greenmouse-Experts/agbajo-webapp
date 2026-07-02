@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
+import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomeAuthSignupRoute = HomeAuthSignupRouteImport.update({
+  id: '/home/auth/signup',
+  path: '/home/auth/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeAuthLoginRoute = HomeAuthLoginRouteImport.update({
+  id: '/home/auth/login',
+  path: '/home/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/home/auth/login': typeof HomeAuthLoginRoute
+  '/home/auth/signup': typeof HomeAuthSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/home/auth/login': typeof HomeAuthLoginRoute
+  '/home/auth/signup': typeof HomeAuthSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/home/auth/login': typeof HomeAuthLoginRoute
+  '/home/auth/signup': typeof HomeAuthSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/home/auth/login' | '/home/auth/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/home/auth/login' | '/home/auth/signup'
+  id: '__root__' | '/' | '/home/auth/login' | '/home/auth/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HomeAuthLoginRoute: typeof HomeAuthLoginRoute
+  HomeAuthSignupRoute: typeof HomeAuthSignupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/home/auth/signup': {
+      id: '/home/auth/signup'
+      path: '/home/auth/signup'
+      fullPath: '/home/auth/signup'
+      preLoaderRoute: typeof HomeAuthSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home/auth/login': {
+      id: '/home/auth/login'
+      path: '/home/auth/login'
+      fullPath: '/home/auth/login'
+      preLoaderRoute: typeof HomeAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HomeAuthLoginRoute: HomeAuthLoginRoute,
+  HomeAuthSignupRoute: HomeAuthSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
