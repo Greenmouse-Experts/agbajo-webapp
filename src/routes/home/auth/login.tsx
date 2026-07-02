@@ -91,7 +91,15 @@ function LoginPage() {
               </fieldset>
 
               <fieldset className="fieldset">
-                <legend className="fieldset-legend">Password</legend>
+                <legend className="fieldset-legend flex items-center justify-between">
+                  Password
+                  <Link
+                    to="/auth/reset-password/request"
+                    className="text-xs text-primary hover:underline font-normal"
+                  >
+                    Forgot password?
+                  </Link>
+                </legend>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
