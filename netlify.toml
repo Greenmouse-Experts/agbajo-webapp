@@ -1,0 +1,12 @@
+[build]
+  command = "vite build"
+  dir = "dist/client"
+[dev]
+  command = "vite dev"
+  port = 3000
+# [build]
+#   command = "bun run build"
+#   publish = "dist"
+
+#   [build.environment]
+#   BUN_VERSION = "1.1.38"
