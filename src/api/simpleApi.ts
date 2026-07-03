@@ -1,7 +1,6 @@
 import axios from "axios";
 import { get_user_value, set_user_value, clear_user } from "@/store/authStore";
 import { toast } from "sonner";
-import type { USER } from "@/types";
 
 export interface ApiResponse<T = any> {
   message: string;

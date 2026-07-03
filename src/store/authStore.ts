@@ -1,11 +1,18 @@
 import { atomWithStorage } from "jotai/utils";
 import { useAtom } from "jotai/react";
 import { getDefaultStore } from "jotai/vanilla";
-import type { USER } from "@/types";
-import apiClient, { type ApiResponse } from "@/api/simpleApi";
+import apiClient from "@/api/simpleApi";
 import { toast } from "sonner";
 import { extract_message } from "@/helpers/apihelpers";
-import { set } from "zod";
+
+export interface USER {
+  id: string | number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  [key: string]: unknown;
+}
 
 export interface AUTHRECORD {
   user: USER;
@@ -14,7 +21,6 @@ export interface AUTHRECORD {
   sessionId: string;
 }
 const stored = localStorage.getItem("user");
-const userKyc = localStorage.getItem("kyc");
 export const user_atom = atomWithStorage<AUTHRECORD | null>(
   "user",
   stored ? JSON.parse(stored) : null,

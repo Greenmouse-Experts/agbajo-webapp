@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import apiClient from "#/api/simpleApi";
 import SimpleSelect from "#/components/modals/inputs/SimpleSelect";
 
@@ -19,9 +19,7 @@ const schema = z
     lastName: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Enter a valid email address"),
     phoneNumber: z.string().optional(),
-    roleId: z
-      .string({ required_error: "Select a role" })
-      .min(1, "Select a role"),
+    roleId: z.string().min(1, "Select a role"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })

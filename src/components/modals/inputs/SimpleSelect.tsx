@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type PropsWithChildren } from "react";
-import type { RecordModel } from "pocketbase";
 import { useFormContext } from "react-hook-form";
 import type { ApiResponse } from "@/api/simpleApi";
 import apiClient from "@/api/simpleApi";
@@ -97,12 +96,8 @@ export default function SimpleSelect<
       </div>
     );
 
-  const data = query.data;
-  const items: T[] = Array.isArray(data?.data)
-    ? data.data
-    : Array.isArray(data?.data.data)
-      ? data?.data.data
-      : [];
+  const raw = query.data?.data as any;
+  const items: T[] = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
 
   return (
     <div className="w-full space-y-2">
