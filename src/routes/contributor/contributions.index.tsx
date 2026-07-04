@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactElement } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search, CheckCircle, Clock, XCircle, AlertCircle } from "lucide-react";
 import { PageHeader } from "./-components/PageHeader";
@@ -30,7 +30,7 @@ const mockContributions: Contribution[] = [
   { id: 6, group_name: "Victoria Island Circle", amount: 25000, status: "completed", is_late: false, contribution_type: "auto", created_at: "2026-05-30" },
 ];
 
-const statusIcon: Record<ContributionStatus, JSX.Element> = {
+const statusIcon: Record<ContributionStatus, ReactElement> = {
   completed: <CheckCircle className="w-5 h-5 text-success" />,
   pending: <Clock className="w-5 h-5 text-warning" />,
   failed: <XCircle className="w-5 h-5 text-error" />,
