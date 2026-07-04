@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Folder,
   DollarSign,
@@ -18,6 +18,9 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { PageHeader } from "./-components/PageHeader";
+import { StatCard } from "./-components/StatCard";
+import { formatCurrency } from "#/helpers/currency";
 
 export const Route = createFileRoute("/contributor/")({
   component: ContributorDashboard,
@@ -41,103 +44,55 @@ const recentActivity = [
   { id: 5, status: "pending", amount: 7500, date: "2026-06-07" },
 ];
 
-const fmt = (n: number) =>
-  new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-    minimumFractionDigits: 0,
-  }).format(n);
-
 function ContributorDashboard() {
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-base-content">Dashboard</h1>
-          <p className="text-base-content/60 mt-0.5">Welcome back</p>
-        </div>
-        <div className="badge badge-warning gap-1.5 py-3 px-3">
-          <Star className="w-3.5 h-3.5 fill-current" />
-          <span className="font-semibold">4.8</span>
-        </div>
-      </div>
+      <PageHeader
+        title="Dashboard"
+        subtitle="Welcome back"
+        action={
+          <div className="badge badge-warning gap-1.5 py-3 px-3">
+            <Star className="w-3.5 h-3.5 fill-current" />
+            <span className="font-semibold">4.8</span>
+          </div>
+        }
+      />
 
-      {/* Stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card bg-base-100 shadow-sm border border-base-200">
-          <div className="card-body p-5 gap-3">
-            <div className="flex items-center justify-between">
-              <div className="w-11 h-11 rounded-xl bg-secondary/10 flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-secondary" />
-              </div>
-              <span className="text-success flex items-center gap-0.5 text-xs font-medium">
-                <TrendingUp className="w-3.5 h-3.5" /> +12%
-              </span>
-            </div>
-            <div>
-              <p className="text-xl font-bold text-base-content">{fmt(240000)}</p>
-              <p className="text-xs text-base-content/60 mt-0.5">Total Contributions</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-base-100 shadow-sm border border-base-200">
-          <div className="card-body p-5 gap-3">
-            <div className="w-11 h-11 rounded-xl bg-success/10 flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-success" />
-            </div>
-            <div>
-              <p className="text-xl font-bold text-base-content">{fmt(85000)}</p>
-              <p className="text-xs text-base-content/60 mt-0.5">Wallet Balance</p>
-            </div>
-            <Link
-              to={"/contributor/wallet" as any}
-              className="text-xs text-success hover:underline -mt-1"
-            >
-              Fund wallet →
-            </Link>
-          </div>
-        </div>
-
-        <div className="card bg-base-100 shadow-sm border border-base-200">
-          <div className="card-body p-5 gap-3">
-            <div className="w-11 h-11 rounded-xl bg-warning/10 flex items-center justify-center">
-              <Folder className="w-5 h-5 text-warning" />
-            </div>
-            <div>
-              <p className="text-xl font-bold text-base-content">3</p>
-              <p className="text-xs text-base-content/60 mt-0.5">Active Groups</p>
-            </div>
-            <Link
-              to={"/contributor/groups" as any}
-              className="text-xs text-warning hover:underline -mt-1"
-            >
-              View groups →
-            </Link>
-          </div>
-        </div>
-
-        <div className="card bg-base-100 shadow-sm border border-base-200">
-          <div className="card-body p-5 gap-3">
-            <div className="w-11 h-11 rounded-xl bg-error/10 flex items-center justify-center">
-              <Clock className="w-5 h-5 text-error" />
-            </div>
-            <div>
-              <p className="text-xl font-bold text-base-content">2</p>
-              <p className="text-xs text-base-content/60 mt-0.5">Pending Payouts</p>
-            </div>
-            <Link
-              to={"/contributor/payouts" as any}
-              className="text-xs text-error hover:underline -mt-1"
-            >
-              View payouts →
-            </Link>
-          </div>
-        </div>
+        <StatCard
+          icon={DollarSign}
+          iconClass="bg-secondary/10 text-secondary"
+          value={formatCurrency(240000)}
+          label="Total Contributions"
+          trend={
+            <span className="text-success flex items-center gap-0.5">
+              <TrendingUp className="w-3.5 h-3.5" /> +12%
+            </span>
+          }
+        />
+        <StatCard
+          icon={Wallet}
+          iconClass="bg-success/10 text-success"
+          value={formatCurrency(85000)}
+          label="Wallet Balance"
+          link={{ to: "/contributor/wallet", label: "Fund wallet", colorClass: "text-success" }}
+        />
+        <StatCard
+          icon={Folder}
+          iconClass="bg-warning/10 text-warning"
+          value={3}
+          label="Active Groups"
+          link={{ to: "/contributor/groups", label: "View groups", colorClass: "text-warning" }}
+        />
+        <StatCard
+          icon={Clock}
+          iconClass="bg-error/10 text-error"
+          value={2}
+          label="Pending Payouts"
+          link={{ to: "/contributor/payouts", label: "View payouts", colorClass: "text-error" }}
+        />
       </div>
 
-      {/* Warning alert */}
       <div role="alert" className="alert alert-warning">
         <AlertTriangle className="w-5 h-5" />
         <div>
@@ -148,15 +103,12 @@ function ContributorDashboard() {
         </div>
       </div>
 
-      {/* Chart + Performance */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card bg-base-100 shadow-sm border border-base-200">
           <div className="card-body">
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="font-semibold text-base-content">Contribution Activity</h3>
-                <p className="text-xs text-base-content/60">Last 7 days</p>
-              </div>
+            <div className="mb-2">
+              <h3 className="font-semibold text-base-content">Contribution Activity</h3>
+              <p className="text-xs text-base-content/60">Last 7 days</p>
             </div>
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -175,7 +127,7 @@ function ContributorDashboard() {
                     tickFormatter={(v) => `₦${(v / 1000).toFixed(0)}k`}
                   />
                   <Tooltip
-                    formatter={(v) => fmt(v as number)}
+                    formatter={(v) => formatCurrency(v as number)}
                     contentStyle={{
                       backgroundColor: "white",
                       border: "1px solid oklch(86% 0 0)",
@@ -199,7 +151,6 @@ function ContributorDashboard() {
         <div className="card bg-base-100 shadow-sm border border-base-200">
           <div className="card-body gap-4">
             <h3 className="font-semibold text-base-content">Performance</h3>
-
             <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-primary/5 gap-2">
               <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-primary-content text-2xl font-bold">4.8</span>
@@ -209,7 +160,6 @@ function ContributorDashboard() {
                 Based on contribution consistency
               </p>
             </div>
-
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-base-200 p-3 text-center">
                 <p className="text-xl font-bold text-success">98%</p>
@@ -224,7 +174,6 @@ function ContributorDashboard() {
         </div>
       </div>
 
-      {/* Recent activity */}
       <div className="card bg-base-100 shadow-sm border border-base-200">
         <div className="card-body pb-0">
           <h3 className="font-semibold text-base-content">Recent Activity</h3>
@@ -253,7 +202,7 @@ function ContributorDashboard() {
                     item.status === "completed" ? "text-success" : "text-warning"
                   }`}
                 >
-                  {fmt(item.amount)}
+                  {formatCurrency(item.amount)}
                 </p>
                 <p className="text-xs text-base-content/40">
                   {new Date(item.date).toLocaleDateString()}
