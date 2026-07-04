@@ -11,8 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as ContributorRouteRouteImport } from './routes/contributor/route'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContributorIndexRouteImport } from './routes/contributor/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as ContributorWalletIndexRouteImport } from './routes/contributor/wallet.index'
+import { Route as ContributorPayoutsIndexRouteImport } from './routes/contributor/payouts.index'
+import { Route as ContributorKycIndexRouteImport } from './routes/contributor/kyc.index'
+import { Route as ContributorGroupsIndexRouteImport } from './routes/contributor/groups.index'
+import { Route as ContributorContributionsIndexRouteImport } from './routes/contributor/contributions.index'
+import { Route as ContributorComplaintsIndexRouteImport } from './routes/contributor/complaints.index'
 import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
 import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
@@ -28,6 +36,11 @@ const ContributorRouteRoute = ContributorRouteRouteImport.update({
   path: '/contributor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -38,6 +51,43 @@ const ContributorIndexRoute = ContributorIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ContributorRouteRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const ContributorWalletIndexRoute = ContributorWalletIndexRouteImport.update({
+  id: '/wallet/',
+  path: '/wallet/',
+  getParentRoute: () => ContributorRouteRoute,
+} as any)
+const ContributorPayoutsIndexRoute = ContributorPayoutsIndexRouteImport.update({
+  id: '/payouts/',
+  path: '/payouts/',
+  getParentRoute: () => ContributorRouteRoute,
+} as any)
+const ContributorKycIndexRoute = ContributorKycIndexRouteImport.update({
+  id: '/kyc/',
+  path: '/kyc/',
+  getParentRoute: () => ContributorRouteRoute,
+} as any)
+const ContributorGroupsIndexRoute = ContributorGroupsIndexRouteImport.update({
+  id: '/groups/',
+  path: '/groups/',
+  getParentRoute: () => ContributorRouteRoute,
+} as any)
+const ContributorContributionsIndexRoute =
+  ContributorContributionsIndexRouteImport.update({
+    id: '/contributions/',
+    path: '/contributions/',
+    getParentRoute: () => ContributorRouteRoute,
+  } as any)
+const ContributorComplaintsIndexRoute =
+  ContributorComplaintsIndexRouteImport.update({
+    id: '/complaints/',
+    path: '/complaints/',
+    getParentRoute: () => ContributorRouteRoute,
+  } as any)
 const HomeAuthSignupRoute = HomeAuthSignupRouteImport.update({
   id: '/home/auth/signup',
   path: '/home/auth/signup',
@@ -63,68 +113,115 @@ const AuthResetPasswordConfirmRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
+  '/admin/': typeof AdminIndexRoute
   '/contributor/': typeof ContributorIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
+  '/contributor/contributions/': typeof ContributorContributionsIndexRoute
+  '/contributor/groups/': typeof ContributorGroupsIndexRoute
+  '/contributor/kyc/': typeof ContributorKycIndexRoute
+  '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
+  '/contributor/wallet/': typeof ContributorWalletIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/admin': typeof AdminIndexRoute
   '/contributor': typeof ContributorIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/contributor/complaints': typeof ContributorComplaintsIndexRoute
+  '/contributor/contributions': typeof ContributorContributionsIndexRoute
+  '/contributor/groups': typeof ContributorGroupsIndexRoute
+  '/contributor/kyc': typeof ContributorKycIndexRoute
+  '/contributor/payouts': typeof ContributorPayoutsIndexRoute
+  '/contributor/wallet': typeof ContributorWalletIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
+  '/admin/': typeof AdminIndexRoute
   '/contributor/': typeof ContributorIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
+  '/contributor/contributions/': typeof ContributorContributionsIndexRoute
+  '/contributor/groups/': typeof ContributorGroupsIndexRoute
+  '/contributor/kyc/': typeof ContributorKycIndexRoute
+  '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
+  '/contributor/wallet/': typeof ContributorWalletIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/contributor'
     | '/verify-email'
+    | '/admin/'
     | '/contributor/'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/contributor/complaints/'
+    | '/contributor/contributions/'
+    | '/contributor/groups/'
+    | '/contributor/kyc/'
+    | '/contributor/payouts/'
+    | '/contributor/wallet/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/verify-email'
+    | '/admin'
     | '/contributor'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/contributor/complaints'
+    | '/contributor/contributions'
+    | '/contributor/groups'
+    | '/contributor/kyc'
+    | '/contributor/payouts'
+    | '/contributor/wallet'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/contributor'
     | '/verify-email'
+    | '/admin/'
     | '/contributor/'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/contributor/complaints/'
+    | '/contributor/contributions/'
+    | '/contributor/groups/'
+    | '/contributor/kyc/'
+    | '/contributor/payouts/'
+    | '/contributor/wallet/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
   ContributorRouteRoute: typeof ContributorRouteRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
   AuthResetPasswordConfirmRoute: typeof AuthResetPasswordConfirmRoute
@@ -149,6 +246,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContributorRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -161,6 +265,55 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/contributor/'
       preLoaderRoute: typeof ContributorIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/contributor/wallet/': {
+      id: '/contributor/wallet/'
+      path: '/wallet'
+      fullPath: '/contributor/wallet/'
+      preLoaderRoute: typeof ContributorWalletIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/contributor/payouts/': {
+      id: '/contributor/payouts/'
+      path: '/payouts'
+      fullPath: '/contributor/payouts/'
+      preLoaderRoute: typeof ContributorPayoutsIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/contributor/kyc/': {
+      id: '/contributor/kyc/'
+      path: '/kyc'
+      fullPath: '/contributor/kyc/'
+      preLoaderRoute: typeof ContributorKycIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/contributor/groups/': {
+      id: '/contributor/groups/'
+      path: '/groups'
+      fullPath: '/contributor/groups/'
+      preLoaderRoute: typeof ContributorGroupsIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/contributor/contributions/': {
+      id: '/contributor/contributions/'
+      path: '/contributions'
+      fullPath: '/contributor/contributions/'
+      preLoaderRoute: typeof ContributorContributionsIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/contributor/complaints/': {
+      id: '/contributor/complaints/'
+      path: '/complaints'
+      fullPath: '/contributor/complaints/'
+      preLoaderRoute: typeof ContributorComplaintsIndexRouteImport
       parentRoute: typeof ContributorRouteRoute
     }
     '/home/auth/signup': {
@@ -194,12 +347,36 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 interface ContributorRouteRouteChildren {
   ContributorIndexRoute: typeof ContributorIndexRoute
+  ContributorComplaintsIndexRoute: typeof ContributorComplaintsIndexRoute
+  ContributorContributionsIndexRoute: typeof ContributorContributionsIndexRoute
+  ContributorGroupsIndexRoute: typeof ContributorGroupsIndexRoute
+  ContributorKycIndexRoute: typeof ContributorKycIndexRoute
+  ContributorPayoutsIndexRoute: typeof ContributorPayoutsIndexRoute
+  ContributorWalletIndexRoute: typeof ContributorWalletIndexRoute
 }
 
 const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
   ContributorIndexRoute: ContributorIndexRoute,
+  ContributorComplaintsIndexRoute: ContributorComplaintsIndexRoute,
+  ContributorContributionsIndexRoute: ContributorContributionsIndexRoute,
+  ContributorGroupsIndexRoute: ContributorGroupsIndexRoute,
+  ContributorKycIndexRoute: ContributorKycIndexRoute,
+  ContributorPayoutsIndexRoute: ContributorPayoutsIndexRoute,
+  ContributorWalletIndexRoute: ContributorWalletIndexRoute,
 }
 
 const ContributorRouteRouteWithChildren =
@@ -207,6 +384,7 @@ const ContributorRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
   ContributorRouteRoute: ContributorRouteRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
   AuthResetPasswordConfirmRoute: AuthResetPasswordConfirmRoute,

@@ -5,7 +5,7 @@ import { PageHeader } from "./-components/PageHeader";
 import { EmptyState } from "./-components/EmptyState";
 import { formatCurrency } from "#/helpers/currency";
 
-export const Route = createFileRoute("/contributor/payout/")({
+export const Route = createFileRoute("/contributor/payouts/")({
   component: ContributorPayouts,
 });
 

@@ -15,7 +15,8 @@ export const Route = createFileRoute("/contributor/wallet/")({
   component: ContributorWallet,
 });
 
-type TxType = "deposit" | "payout" | "refund" | "withdrawal" | "contribution" | "penalty";
+type TxType =
+  "deposit" | "payout" | "refund" | "withdrawal" | "contribution" | "penalty";
 
 interface Transaction {
   id: number;
@@ -28,20 +29,58 @@ interface Transaction {
 const CREDIT_TYPES: TxType[] = ["deposit", "payout", "refund"];
 
 const mockTransactions: Transaction[] = [
-  { id: 1, type: "deposit", amount: 50000, description: "Wallet funded", created_at: "2026-07-02" },
-  { id: 2, type: "contribution", amount: 10000, description: "Lagos Savers — Cycle 3", created_at: "2026-07-01" },
-  { id: 3, type: "payout", amount: 120000, description: "Lagos Savers — Payout", created_at: "2026-06-30" },
-  { id: 4, type: "contribution", amount: 25000, description: "Victoria Island Circle", created_at: "2026-06-28" },
-  { id: 5, type: "deposit", amount: 30000, description: "Wallet funded", created_at: "2026-06-20" },
-  { id: 6, type: "penalty", amount: 2000, description: "Late payment fee", created_at: "2026-06-14" },
+  {
+    id: 1,
+    type: "deposit",
+    amount: 50000,
+    description: "Wallet funded",
+    created_at: "2026-07-02",
+  },
+  {
+    id: 2,
+    type: "contribution",
+    amount: 10000,
+    description: "Lagos Savers — Cycle 3",
+    created_at: "2026-07-01",
+  },
+  {
+    id: 3,
+    type: "payout",
+    amount: 120000,
+    description: "Lagos Savers — Payout",
+    created_at: "2026-06-30",
+  },
+  {
+    id: 4,
+    type: "contribution",
+    amount: 25000,
+    description: "Victoria Island Circle",
+    created_at: "2026-06-28",
+  },
+  {
+    id: 5,
+    type: "deposit",
+    amount: 30000,
+    description: "Wallet funded",
+    created_at: "2026-06-20",
+  },
+  {
+    id: 6,
+    type: "penalty",
+    amount: 2000,
+    description: "Late payment fee",
+    created_at: "2026-06-14",
+  },
 ];
 
 const QUICK_AMOUNTS = [5000, 10000, 20000, 50000];
 
 function txIcon(type: TxType) {
-  return CREDIT_TYPES.includes(type)
-    ? <ArrowDownRight className="w-5 h-5 text-success" />
-    : <ArrowUpRight className="w-5 h-5 text-error" />;
+  return CREDIT_TYPES.includes(type) ? (
+    <ArrowDownRight className="w-5 h-5 text-success" />
+  ) : (
+    <ArrowUpRight className="w-5 h-5 text-error" />
+  );
 }
 
 function ContributorWallet() {
@@ -80,15 +119,22 @@ function ContributorWallet() {
 
               <div>
                 <p className="text-white/70 text-sm">Available Balance</p>
-                <p className="text-4xl font-bold mt-1">{formatCurrency(85000)}</p>
+                <p className="text-4xl font-bold mt-1">
+                  {formatCurrency(85000)}
+                </p>
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-white/20">
                 <div>
                   <p className="text-white/70 text-xs">Pending Balance</p>
-                  <p className="text-white font-medium">{formatCurrency(12000)}</p>
+                  <p className="text-white font-medium">
+                    {formatCurrency(12000)}
+                  </p>
                 </div>
-                <button onClick={openModal} className="btn bg-white text-green-800 hover:bg-white/90 border-0">
+                <button
+                  onClick={openModal}
+                  className="btn bg-white text-green-800 hover:bg-white/90 border-0"
+                >
                   Fund Wallet
                 </button>
               </div>
@@ -109,8 +155,12 @@ function ContributorWallet() {
                 <ArrowDownRight className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">Fund Wallet</p>
-                <p className="text-xs text-base-content/60">Add money to your wallet</p>
+                <p className="text-sm font-medium text-base-content">
+                  Fund Wallet
+                </p>
+                <p className="text-xs text-base-content/60">
+                  Add money to your wallet
+                </p>
               </div>
             </button>
 
@@ -119,10 +169,19 @@ function ContributorWallet() {
                 <Zap className="w-5 h-5 text-warning" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">Auto Debit</p>
-                <p className="text-xs text-base-content/60">Enabled for contributions</p>
+                <p className="text-sm font-medium text-base-content">
+                  Auto Debit
+                </p>
+                <p className="text-xs text-base-content/60">
+                  Enabled for contributions
+                </p>
               </div>
-              <input type="checkbox" className="toggle toggle-success toggle-sm ml-auto" defaultChecked readOnly />
+              <input
+                type="checkbox"
+                className="toggle toggle-success toggle-sm ml-auto"
+                defaultChecked
+                readOnly
+              />
             </div>
           </div>
         </div>
@@ -131,7 +190,9 @@ function ContributorWallet() {
       {/* Transaction history */}
       <div className="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
         <div className="card-body pb-0">
-          <h3 className="font-semibold text-base-content">Transaction History</h3>
+          <h3 className="font-semibold text-base-content">
+            Transaction History
+          </h3>
         </div>
 
         {mockTransactions.length === 0 ? (
@@ -155,12 +216,19 @@ function ContributorWallet() {
                     {txIcon(tx.type)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-base-content capitalize">{tx.type}</p>
-                    <p className="text-xs text-base-content/60 mt-0.5">{tx.description}</p>
+                    <p className="text-sm font-medium text-base-content capitalize">
+                      {tx.type}
+                    </p>
+                    <p className="text-xs text-base-content/60 mt-0.5">
+                      {tx.description}
+                    </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className={`font-semibold ${isCredit ? "text-success" : "text-error"}`}>
-                      {isCredit ? "+" : "-"}{formatCurrency(tx.amount)}
+                    <p
+                      className={`font-semibold ${isCredit ? "text-success" : "text-error"}`}
+                    >
+                      {isCredit ? "+" : "-"}
+                      {formatCurrency(tx.amount)}
                     </p>
                     <p className="text-xs text-base-content/40">
                       {new Date(tx.created_at).toLocaleDateString()}
@@ -176,8 +244,12 @@ function ContributorWallet() {
       {/* Fund wallet modal */}
       <dialog ref={modalRef} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
-          <h3 className="text-lg font-semibold text-base-content">Fund Wallet</h3>
-          <p className="text-sm text-base-content/60 mt-0.5">Add money to your wallet</p>
+          <h3 className="text-lg font-semibold text-base-content">
+            Fund Wallet
+          </h3>
+          <p className="text-sm text-base-content/60 mt-0.5">
+            Add money to your wallet
+          </p>
 
           <form onSubmit={handleFund} className="mt-5 space-y-4">
             <fieldset className="fieldset">
@@ -210,7 +282,11 @@ function ContributorWallet() {
             </div>
 
             <div className="modal-action mt-2">
-              <button type="button" className="btn btn-ghost" onClick={closeModal}>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={closeModal}
+              >
                 Cancel
               </button>
               <button type="submit" className="btn btn-primary">

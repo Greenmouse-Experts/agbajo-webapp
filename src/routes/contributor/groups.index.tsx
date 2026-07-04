@@ -3,6 +3,8 @@ import { Users, DollarSign, Calendar, Star, AlertCircle } from "lucide-react";
 import { PageHeader } from "./-components/PageHeader";
 import { EmptyState } from "./-components/EmptyState";
 import { formatCurrency } from "#/helpers/currency";
+import { useQuery } from "@tanstack/react-query";
+import apiClient from "#/api/simpleApi.ts";
 
 export const Route = createFileRoute("/contributor/groups/")({
   component: ContributorGroups,
@@ -62,6 +64,16 @@ const statusBadge: Record<MemberStatus, string> = {
 };
 
 function ContributorGroups() {
+  // const query = useQuery({
+  //   queryKey: ["groups"],
+  //   queryFn: async () => {
+  //     let resp = await apiClient.get(
+  //       "groups/public?search=savings&limit=10&cursor=",
+  //     );
+  //     return resp.data;
+  //   },
+  // });
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -89,14 +101,20 @@ function ContributorGroups() {
                       {group.group_name.charAt(0)}
                     </span>
                   </div>
-                  <span className={`badge ${statusBadge[group.member_status]} capitalize`}>
+                  <span
+                    className={`badge ${statusBadge[group.member_status]} capitalize`}
+                  >
                     {group.member_status}
                   </span>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-base-content">{group.group_name}</h3>
-                  <p className="text-sm text-base-content/60 mt-0.5">Managed by {group.manager}</p>
+                  <h3 className="text-lg font-semibold text-base-content">
+                    {group.group_name}
+                  </h3>
+                  <p className="text-sm text-base-content/60 mt-0.5">
+                    Managed by {group.manager}
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">

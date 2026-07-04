@@ -6,9 +6,10 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
-import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import apiClient, { new_url, type ApiResponse } from "#/api/simpleApi";
 import { set_user_value, type AUTHRECORD } from "#/store/authStore";
 import { extract_message } from "#/helpers/apihelpers";
+import axios from "axios";
 
 export const Route = createFileRoute("/home/auth/login")({
   component: LoginPage,
@@ -33,7 +34,7 @@ function LoginPage() {
 
   const mutation = useMutation({
     mutationFn: (data: FormValues) =>
-      apiClient.post<ApiResponse<AUTHRECORD>>("/auth/login", data),
+      axios.post<ApiResponse<AUTHRECORD>>(new_url + "auth/login", data),
     onSuccess: ({ data }) => {
       set_user_value(data.data);
       toast.success("Welcome back!");
