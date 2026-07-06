@@ -21,6 +21,14 @@ import { Route as ContributorKycIndexRouteImport } from './routes/contributor/ky
 import { Route as ContributorGroupsIndexRouteImport } from './routes/contributor/groups.index'
 import { Route as ContributorContributionsIndexRouteImport } from './routes/contributor/contributions.index'
 import { Route as ContributorComplaintsIndexRouteImport } from './routes/contributor/complaints.index'
+import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports.index'
+import { Route as AdminPoliciesIndexRouteImport } from './routes/admin/policies.index'
+import { Route as AdminPayoutsIndexRouteImport } from './routes/admin/payouts.index'
+import { Route as AdminGroupsIndexRouteImport } from './routes/admin/groups.index'
+import { Route as AdminContributorsIndexRouteImport } from './routes/admin/contributors.index'
+import { Route as AdminContributionsIndexRouteImport } from './routes/admin/contributions.index'
+import { Route as AdminComplaintsIndexRouteImport } from './routes/admin/complaints.index'
+import { Route as AdminClusterManagersIndexRouteImport } from './routes/admin/cluster-managers.index'
 import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
 import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
@@ -88,6 +96,47 @@ const ContributorComplaintsIndexRoute =
     path: '/complaints/',
     getParentRoute: () => ContributorRouteRoute,
   } as any)
+const AdminReportsIndexRoute = AdminReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminPoliciesIndexRoute = AdminPoliciesIndexRouteImport.update({
+  id: '/policies/',
+  path: '/policies/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminPayoutsIndexRoute = AdminPayoutsIndexRouteImport.update({
+  id: '/payouts/',
+  path: '/payouts/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminGroupsIndexRoute = AdminGroupsIndexRouteImport.update({
+  id: '/groups/',
+  path: '/groups/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminContributorsIndexRoute = AdminContributorsIndexRouteImport.update({
+  id: '/contributors/',
+  path: '/contributors/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminContributionsIndexRoute = AdminContributionsIndexRouteImport.update({
+  id: '/contributions/',
+  path: '/contributions/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminComplaintsIndexRoute = AdminComplaintsIndexRouteImport.update({
+  id: '/complaints/',
+  path: '/complaints/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminClusterManagersIndexRoute =
+  AdminClusterManagersIndexRouteImport.update({
+    id: '/cluster-managers/',
+    path: '/cluster-managers/',
+    getParentRoute: () => AdminRouteRoute,
+  } as any)
 const HomeAuthSignupRoute = HomeAuthSignupRouteImport.update({
   id: '/home/auth/signup',
   path: '/home/auth/signup',
@@ -122,6 +171,14 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/admin/cluster-managers/': typeof AdminClusterManagersIndexRoute
+  '/admin/complaints/': typeof AdminComplaintsIndexRoute
+  '/admin/contributions/': typeof AdminContributionsIndexRoute
+  '/admin/contributors/': typeof AdminContributorsIndexRoute
+  '/admin/groups/': typeof AdminGroupsIndexRoute
+  '/admin/payouts/': typeof AdminPayoutsIndexRoute
+  '/admin/policies/': typeof AdminPoliciesIndexRoute
+  '/admin/reports/': typeof AdminReportsIndexRoute
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
@@ -138,6 +195,14 @@ export interface FileRoutesByTo {
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/admin/cluster-managers': typeof AdminClusterManagersIndexRoute
+  '/admin/complaints': typeof AdminComplaintsIndexRoute
+  '/admin/contributions': typeof AdminContributionsIndexRoute
+  '/admin/contributors': typeof AdminContributorsIndexRoute
+  '/admin/groups': typeof AdminGroupsIndexRoute
+  '/admin/payouts': typeof AdminPayoutsIndexRoute
+  '/admin/policies': typeof AdminPoliciesIndexRoute
+  '/admin/reports': typeof AdminReportsIndexRoute
   '/contributor/complaints': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions': typeof ContributorContributionsIndexRoute
   '/contributor/groups': typeof ContributorGroupsIndexRoute
@@ -157,6 +222,14 @@ export interface FileRoutesById {
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/admin/cluster-managers/': typeof AdminClusterManagersIndexRoute
+  '/admin/complaints/': typeof AdminComplaintsIndexRoute
+  '/admin/contributions/': typeof AdminContributionsIndexRoute
+  '/admin/contributors/': typeof AdminContributorsIndexRoute
+  '/admin/groups/': typeof AdminGroupsIndexRoute
+  '/admin/payouts/': typeof AdminPayoutsIndexRoute
+  '/admin/policies/': typeof AdminPoliciesIndexRoute
+  '/admin/reports/': typeof AdminReportsIndexRoute
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
@@ -177,6 +250,14 @@ export interface FileRouteTypes {
     | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/admin/cluster-managers/'
+    | '/admin/complaints/'
+    | '/admin/contributions/'
+    | '/admin/contributors/'
+    | '/admin/groups/'
+    | '/admin/payouts/'
+    | '/admin/policies/'
+    | '/admin/reports/'
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
@@ -193,6 +274,14 @@ export interface FileRouteTypes {
     | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/admin/cluster-managers'
+    | '/admin/complaints'
+    | '/admin/contributions'
+    | '/admin/contributors'
+    | '/admin/groups'
+    | '/admin/payouts'
+    | '/admin/policies'
+    | '/admin/reports'
     | '/contributor/complaints'
     | '/contributor/contributions'
     | '/contributor/groups'
@@ -211,6 +300,14 @@ export interface FileRouteTypes {
     | '/auth/reset-password/request'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/admin/cluster-managers/'
+    | '/admin/complaints/'
+    | '/admin/contributions/'
+    | '/admin/contributors/'
+    | '/admin/groups/'
+    | '/admin/payouts/'
+    | '/admin/policies/'
+    | '/admin/reports/'
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
@@ -316,6 +413,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContributorComplaintsIndexRouteImport
       parentRoute: typeof ContributorRouteRoute
     }
+    '/admin/reports/': {
+      id: '/admin/reports/'
+      path: '/reports'
+      fullPath: '/admin/reports/'
+      preLoaderRoute: typeof AdminReportsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/policies/': {
+      id: '/admin/policies/'
+      path: '/policies'
+      fullPath: '/admin/policies/'
+      preLoaderRoute: typeof AdminPoliciesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/payouts/': {
+      id: '/admin/payouts/'
+      path: '/payouts'
+      fullPath: '/admin/payouts/'
+      preLoaderRoute: typeof AdminPayoutsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/groups/': {
+      id: '/admin/groups/'
+      path: '/groups'
+      fullPath: '/admin/groups/'
+      preLoaderRoute: typeof AdminGroupsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/contributors/': {
+      id: '/admin/contributors/'
+      path: '/contributors'
+      fullPath: '/admin/contributors/'
+      preLoaderRoute: typeof AdminContributorsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/contributions/': {
+      id: '/admin/contributions/'
+      path: '/contributions'
+      fullPath: '/admin/contributions/'
+      preLoaderRoute: typeof AdminContributionsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/complaints/': {
+      id: '/admin/complaints/'
+      path: '/complaints'
+      fullPath: '/admin/complaints/'
+      preLoaderRoute: typeof AdminComplaintsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/cluster-managers/': {
+      id: '/admin/cluster-managers/'
+      path: '/cluster-managers'
+      fullPath: '/admin/cluster-managers/'
+      preLoaderRoute: typeof AdminClusterManagersIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/home/auth/signup': {
       id: '/home/auth/signup'
       path: '/home/auth/signup'
@@ -349,10 +502,26 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminClusterManagersIndexRoute: typeof AdminClusterManagersIndexRoute
+  AdminComplaintsIndexRoute: typeof AdminComplaintsIndexRoute
+  AdminContributionsIndexRoute: typeof AdminContributionsIndexRoute
+  AdminContributorsIndexRoute: typeof AdminContributorsIndexRoute
+  AdminGroupsIndexRoute: typeof AdminGroupsIndexRoute
+  AdminPayoutsIndexRoute: typeof AdminPayoutsIndexRoute
+  AdminPoliciesIndexRoute: typeof AdminPoliciesIndexRoute
+  AdminReportsIndexRoute: typeof AdminReportsIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
+  AdminClusterManagersIndexRoute: AdminClusterManagersIndexRoute,
+  AdminComplaintsIndexRoute: AdminComplaintsIndexRoute,
+  AdminContributionsIndexRoute: AdminContributionsIndexRoute,
+  AdminContributorsIndexRoute: AdminContributorsIndexRoute,
+  AdminGroupsIndexRoute: AdminGroupsIndexRoute,
+  AdminPayoutsIndexRoute: AdminPayoutsIndexRoute,
+  AdminPoliciesIndexRoute: AdminPoliciesIndexRoute,
+  AdminReportsIndexRoute: AdminReportsIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(

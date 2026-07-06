@@ -6,7 +6,7 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
-import apiClient, { new_url, type ApiResponse } from "#/api/simpleApi";
+import { new_url, type ApiResponse } from "#/api/simpleApi";
 import { set_user_value, type AUTHRECORD } from "#/store/authStore";
 import { extract_message } from "#/helpers/apihelpers";
 import axios from "axios";
@@ -36,8 +36,9 @@ function LoginPage() {
     mutationFn: (data: FormValues) =>
       axios.post<ApiResponse<AUTHRECORD>>(new_url + "auth/login", data),
     onSuccess: ({ data }) => {
-      set_user_value(data.data);
       toast.success("Welcome back!");
+      set_user_value(data.data);
+      // return console.log(data.data);
       navigate({ to: "/contributor" });
     },
     onError: (err) => {

@@ -24,8 +24,9 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   const user = get_user_value();
+  console.log("user_request", user);
   if (user?.sessionId) {
-    config.headers.key = user.sessionId;
+    config.headers.Authorization = `Bearer ${user.sessionId}`;
   }
   return config;
 });
@@ -34,7 +35,7 @@ apiClient.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      clear_user();
+      // clear_user();
       toast.info("Session expired. Please log in again.", { duration: 1500 });
       // window.location.href = "/home/auth/login";
     }

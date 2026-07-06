@@ -64,15 +64,15 @@ const statusBadge: Record<MemberStatus, string> = {
 };
 
 function ContributorGroups() {
-  // const query = useQuery({
-  //   queryKey: ["groups"],
-  //   queryFn: async () => {
-  //     let resp = await apiClient.get(
-  //       "groups/public?search=savings&limit=10&cursor=",
-  //     );
-  //     return resp.data;
-  //   },
-  // });
+  const query = useQuery({
+    queryKey: ["groups"],
+    queryFn: async () => {
+      let resp = await apiClient.get(
+        "groups/public?search=savings&limit=10&cursor=",
+      );
+      return resp.data;
+    },
+  });
 
   return (
     <div className="space-y-6">

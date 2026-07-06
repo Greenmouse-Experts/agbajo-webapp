@@ -7,11 +7,14 @@ import {
 import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
-  Folder,
+  Users,
+  UserCog,
   DollarSign,
   Wallet,
-  Shield,
+  ScrollText,
   MessageSquare,
+  BarChart2,
+  Settings,
   LogOut,
   Menu,
   Bell,
@@ -27,52 +30,36 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  {
-    to: "/contributor",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    exact: true,
-  },
-  { to: "/contributor/groups", label: "My Groups", icon: Folder },
-  {
-    to: "/contributor/contributions",
-    label: "Contributions",
-    icon: DollarSign,
-  },
-  { to: "/contributor/payouts", label: "Payouts", icon: Wallet },
-  { to: "/contributor/wallet", label: "Wallet", icon: Wallet },
-  { to: "/contributor/kyc", label: "KYC", icon: Shield },
-  { to: "/contributor/complaints", label: "Complaints", icon: MessageSquare },
+  { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { to: "/admin/groups", label: "Groups", icon: ScrollText },
+  { to: "/admin/contributors", label: "Contributors", icon: Users },
+  { to: "/admin/cluster-managers", label: "Cluster Managers", icon: UserCog },
+  { to: "/admin/contributions", label: "Contributions", icon: DollarSign },
+  { to: "/admin/payouts", label: "Payouts", icon: Wallet },
+  { to: "/admin/complaints", label: "Complaints", icon: MessageSquare },
+  { to: "/admin/reports", label: "Reports", icon: BarChart2 },
+  { to: "/admin/policies", label: "Policies", icon: Settings },
 ];
 
 export const Route = createFileRoute("/admin")({
-  component: ContributorLayout,
+  component: AdminLayout,
 });
 
-function ContributorLayout() {
+function AdminLayout() {
   const [rawUser] = useAuth();
   const user = rawUser as AUTHRECORD | null;
   const { location } = useRouterState();
-  const displayName: string = String(
-    (user as AUTHRECORD | null)?.user?.name ?? "User",
-  );
-  const initial: string = displayName.charAt(0).toUpperCase();
+  const displayName = String(user?.user?.name ?? "Admin");
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="drawer lg:drawer-open min-h-screen">
-      <input
-        id="contributor-drawer"
-        type="checkbox"
-        className="drawer-toggle"
-      />
+      <input id="admin-drawer" type="checkbox" className="drawer-toggle" />
 
       <div className="drawer-content flex flex-col">
         <nav className="navbar bg-base-100 border-b border-base-200 sticky top-0 z-30 px-4">
           <div className="flex-none lg:hidden">
-            <label
-              htmlFor="contributor-drawer"
-              className="btn btn-ghost btn-square"
-            >
+            <label htmlFor="admin-drawer" className="btn btn-ghost btn-square">
               <Menu className="w-5 h-5" />
             </label>
           </div>
@@ -107,7 +94,7 @@ function ContributorLayout() {
                       {displayName}
                     </p>
                     <p className="text-xs text-base-content/60">
-                      {String((user as AUTHRECORD | null)?.user?.email ?? "")}
+                      {String(user?.user?.email ?? "")}
                     </p>
                   </div>
                 </li>
@@ -135,7 +122,7 @@ function ContributorLayout() {
 
       <div className="drawer-side z-40">
         <label
-          htmlFor="contributor-drawer"
+          htmlFor="admin-drawer"
           aria-label="close sidebar"
           className="drawer-overlay"
         />
@@ -154,14 +141,14 @@ function ContributorLayout() {
               </span>
             </div>
             <label
-              htmlFor="contributor-drawer"
+              htmlFor="admin-drawer"
               className="btn btn-ghost btn-square btn-sm lg:hidden"
             >
               <X className="w-4 h-4" />
             </label>
           </div>
 
-          <nav className="flex-1 p-3">
+          <nav className="flex-1 p-3 overflow-y-auto">
             <ul className="menu menu-md gap-0.5 p-0 w-full">
               {navItems.map(({ to, label, icon: Icon, exact }) => {
                 const isActive = exact
@@ -184,9 +171,7 @@ function ContributorLayout() {
           </nav>
 
           <div className="p-4 border-t border-base-200">
-            <span className="badge badge-warning badge-outline">
-              Contributor
-            </span>
+            <span className="badge badge-error badge-outline">Admin</span>
           </div>
         </div>
       </div>

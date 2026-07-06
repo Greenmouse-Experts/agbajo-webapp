@@ -56,6 +56,7 @@ export const clear_user = () => {
 // };
 
 export const set_user_value = (user: AUTHRECORD) => {
+  console.log("setting_user", user);
   const store = getDefaultStore();
   store.set(user_atom, user);
 };
