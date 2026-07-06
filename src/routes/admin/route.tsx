@@ -129,16 +129,13 @@ function AdminLayout() {
         <div className="bg-base-100 w-64 min-h-full flex flex-col border-r border-base-200">
           <div className="flex items-center justify-between px-4 py-3 border-b border-base-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
+              <div className="w-full shadow rounded-xl overflow-hidden shrink-0">
                 <img
                   src="/agbajo-logo.jpeg"
                   alt="Agbajo"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="font-bold text-lg text-base-content">
-                AGBAJO
-              </span>
             </div>
             <label
               htmlFor="admin-drawer"
