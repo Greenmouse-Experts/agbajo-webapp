@@ -1,4 +1,9 @@
-import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  useRouterState,
+} from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard,
@@ -22,9 +27,18 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { to: "/contributor", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  {
+    to: "/contributor",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    exact: true,
+  },
   { to: "/contributor/groups", label: "My Groups", icon: Folder },
-  { to: "/contributor/contributions", label: "Contributions", icon: DollarSign },
+  {
+    to: "/contributor/contributions",
+    label: "Contributions",
+    icon: DollarSign,
+  },
   { to: "/contributor/payouts", label: "Payouts", icon: Wallet },
   { to: "/contributor/wallet", label: "Wallet", icon: Wallet },
   { to: "/contributor/kyc", label: "KYC", icon: Shield },
@@ -39,17 +53,26 @@ function ContributorLayout() {
   const [rawUser] = useAuth();
   const user = rawUser as AUTHRECORD | null;
   const { location } = useRouterState();
-  const displayName: string = String((user as AUTHRECORD | null)?.user?.name ?? "User");
+  const displayName: string = String(
+    (user as AUTHRECORD | null)?.user?.name ?? "User",
+  );
   const initial: string = displayName.charAt(0).toUpperCase();
 
   return (
     <div className="drawer lg:drawer-open min-h-screen">
-      <input id="contributor-drawer" type="checkbox" className="drawer-toggle" />
+      <input
+        id="contributor-drawer"
+        type="checkbox"
+        className="drawer-toggle"
+      />
 
       <div className="drawer-content flex flex-col">
         <nav className="navbar bg-base-100 border-b border-base-200 sticky top-0 z-30 px-4">
           <div className="flex-none lg:hidden">
-            <label htmlFor="contributor-drawer" className="btn btn-ghost btn-square">
+            <label
+              htmlFor="contributor-drawer"
+              className="btn btn-ghost btn-square"
+            >
               <Menu className="w-5 h-5" />
             </label>
           </div>
@@ -80,13 +103,20 @@ function ContributorLayout() {
               >
                 <li className="menu-title">
                   <div className="px-2 py-1">
-                    <p className="font-medium text-base-content">{displayName}</p>
-                    <p className="text-xs text-base-content/60">{String((user as AUTHRECORD | null)?.user?.email ?? "")}</p>
+                    <p className="font-medium text-base-content">
+                      {displayName}
+                    </p>
+                    <p className="text-xs text-base-content/60">
+                      {String((user as AUTHRECORD | null)?.user?.email ?? "")}
+                    </p>
                   </div>
                 </li>
                 <div className="divider my-1" />
                 <li>
-                  <button onClick={logout} className="text-error hover:bg-error/10">
+                  <button
+                    onClick={logout}
+                    className="text-error hover:bg-error/10"
+                  >
                     <LogOut className="w-4 h-4" />
                     Sign out
                   </button>
@@ -110,16 +140,15 @@ function ContributorLayout() {
           className="drawer-overlay"
         />
         <div className="bg-base-100 w-64 min-h-full flex flex-col border-r border-base-200">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-base-200">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0">
+          <div className="flex items-center justify-between px-4 py-3 ">
+            <div className="flex items-center gap-3 p-2">
+              <div className="w-full shadow rounded-xl overflow-hidden shrink-0">
                 <img
                   src="/agbajo-logo.jpeg"
                   alt="Agbajo"
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="font-bold text-lg text-base-content">AGBAJO</span>
             </div>
             <label
               htmlFor="contributor-drawer"
@@ -138,7 +167,10 @@ function ContributorLayout() {
                 return (
                   <li key={to}>
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    <Link to={to as any} className={isActive ? "active font-medium" : ""}>
+                    <Link
+                      to={to as any}
+                      className={isActive ? "active font-medium" : ""}
+                    >
                       <Icon className="w-5 h-5" />
                       {label}
                     </Link>
@@ -149,7 +181,9 @@ function ContributorLayout() {
           </nav>
 
           <div className="p-4 border-t border-base-200">
-            <span className="badge badge-warning badge-outline">Contributor</span>
+            <span className="badge badge-warning badge-outline">
+              Contributor
+            </span>
           </div>
         </div>
       </div>
