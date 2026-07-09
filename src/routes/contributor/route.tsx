@@ -128,7 +128,7 @@ function ContributorLayout() {
         </nav>
 
         <main className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
+          <div className=" mx-auto">
             <Outlet />
           </div>
         </main>
@@ -150,7 +150,9 @@ function ContributorLayout() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="font-bold text-base text-base-content">Agbajo</span>
+              <span className="font-bold text-base text-base-content">
+                Agbajo
+              </span>
             </div>
             <label
               htmlFor="contributor-drawer"
