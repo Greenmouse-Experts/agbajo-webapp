@@ -63,6 +63,7 @@ function AdminLayout() {
               <Menu className="w-5 h-5" />
             </label>
           </div>
+          <div className="font-bold text-base text-base-content">Dashboard</div>
           <div className="flex-1" />
           <div className="flex items-center gap-1">
             <button className="btn btn-ghost btn-square relative">
@@ -136,10 +137,8 @@ function AdminLayout() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="font-bold text-base text-base-content">
-                Agbajo
-              </span>
             </div>
+
             <label
               htmlFor="admin-drawer"
               className="btn btn-ghost btn-square btn-sm lg:hidden"
@@ -149,7 +148,7 @@ function AdminLayout() {
           </div>
 
           <nav className="flex-1 p-3 overflow-y-auto">
-            <ul className="menu menu-md gap-1 p-0 w-full">
+            <ul className="menu menu-md gap-3 p-0 w-full">
               {navItems.map(({ to, label, icon: Icon, exact }) => {
                 const isActive = exact
                   ? location.pathname === to
