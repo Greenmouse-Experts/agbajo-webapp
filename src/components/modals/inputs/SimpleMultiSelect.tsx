@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type PropsWithChildren } from "react";
-import type { RecordModel } from "pocketbase";
-import { useForm, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import apiClient, {
   type ApiResponse,
   type ApiResponseV2,
 } from "@/api/simpleApi";
-import QueryCompLayout from "@/components/layout/QueryCompLayout";
+import QueryCompLayout from "#/components/layout/QueryCompLayout";
 
 interface SimpleMultiSelectProps<T = any> extends PropsWithChildren {
   route: string;
@@ -43,8 +42,6 @@ export default function SimpleMultiSelect<
       return resp.data;
     },
   });
-  const internalForm = useForm();
-
   useEffect(() => {
     if (value !== undefined && value !== internalValue) {
       setInternalValue(value);
@@ -59,7 +56,7 @@ export default function SimpleMultiSelect<
   // const items: T[] = query.data?.data ?? [];
   return (
     <QueryCompLayout query={query}>
-      {(data) => {
+      {(data: any) => {
         const items: T[] = Array.isArray(data?.data)
           ? data.data
           : Array.isArray(data?.data.data)

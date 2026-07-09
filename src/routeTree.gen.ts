@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VerifyEmailRouteImport } from './routes/verify-email'
 import { Route as ContributorRouteRouteImport } from './routes/contributor/route'
+import { Route as ClusterManagerRouteRouteImport } from './routes/cluster-manager/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContributorIndexRouteImport } from './routes/contributor/index'
@@ -22,6 +23,12 @@ import { Route as ContributorKycIndexRouteImport } from './routes/contributor/ky
 import { Route as ContributorGroupsIndexRouteImport } from './routes/contributor/groups.index'
 import { Route as ContributorContributionsIndexRouteImport } from './routes/contributor/contributions.index'
 import { Route as ContributorComplaintsIndexRouteImport } from './routes/contributor/complaints.index'
+import { Route as ClusterManagerPayoutsIndexRouteImport } from './routes/cluster-manager/payouts.index'
+import { Route as ClusterManagerMembersIndexRouteImport } from './routes/cluster-manager/members.index'
+import { Route as ClusterManagerKycIndexRouteImport } from './routes/cluster-manager/kyc.index'
+import { Route as ClusterManagerIssuesIndexRouteImport } from './routes/cluster-manager/issues.index'
+import { Route as ClusterManagerGroupsIndexRouteImport } from './routes/cluster-manager/groups.index'
+import { Route as ClusterManagerContributionsIndexRouteImport } from './routes/cluster-manager/contributions.index'
 import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports.index'
 import { Route as AdminPoliciesIndexRouteImport } from './routes/admin/policies.index'
 import { Route as AdminPayoutsIndexRouteImport } from './routes/admin/payouts.index'
@@ -45,6 +52,11 @@ const ContributorRouteRoute = ContributorRouteRouteImport.update({
   path: '/contributor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClusterManagerRouteRoute = ClusterManagerRouteRouteImport.update({
+  id: '/cluster-manager',
+  path: '/cluster-manager',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -61,9 +73,9 @@ const ContributorIndexRoute = ContributorIndexRouteImport.update({
   getParentRoute: () => ContributorRouteRoute,
 } as any)
 const ClusterManagerIndexRoute = ClusterManagerIndexRouteImport.update({
-  id: '/cluster-manager/',
-  path: '/cluster-manager/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => ClusterManagerRouteRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -101,6 +113,41 @@ const ContributorComplaintsIndexRoute =
     id: '/complaints/',
     path: '/complaints/',
     getParentRoute: () => ContributorRouteRoute,
+  } as any)
+const ClusterManagerPayoutsIndexRoute =
+  ClusterManagerPayoutsIndexRouteImport.update({
+    id: '/payouts/',
+    path: '/payouts/',
+    getParentRoute: () => ClusterManagerRouteRoute,
+  } as any)
+const ClusterManagerMembersIndexRoute =
+  ClusterManagerMembersIndexRouteImport.update({
+    id: '/members/',
+    path: '/members/',
+    getParentRoute: () => ClusterManagerRouteRoute,
+  } as any)
+const ClusterManagerKycIndexRoute = ClusterManagerKycIndexRouteImport.update({
+  id: '/kyc/',
+  path: '/kyc/',
+  getParentRoute: () => ClusterManagerRouteRoute,
+} as any)
+const ClusterManagerIssuesIndexRoute =
+  ClusterManagerIssuesIndexRouteImport.update({
+    id: '/issues/',
+    path: '/issues/',
+    getParentRoute: () => ClusterManagerRouteRoute,
+  } as any)
+const ClusterManagerGroupsIndexRoute =
+  ClusterManagerGroupsIndexRouteImport.update({
+    id: '/groups/',
+    path: '/groups/',
+    getParentRoute: () => ClusterManagerRouteRoute,
+  } as any)
+const ClusterManagerContributionsIndexRoute =
+  ClusterManagerContributionsIndexRouteImport.update({
+    id: '/contributions/',
+    path: '/contributions/',
+    getParentRoute: () => ClusterManagerRouteRoute,
   } as any)
 const AdminReportsIndexRoute = AdminReportsIndexRouteImport.update({
   id: '/reports/',
@@ -169,6 +216,7 @@ const AuthResetPasswordConfirmRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/cluster-manager': typeof ClusterManagerRouteRouteWithChildren
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/admin/': typeof AdminIndexRoute
@@ -186,6 +234,12 @@ export interface FileRoutesByFullPath {
   '/admin/payouts/': typeof AdminPayoutsIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
+  '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
+  '/cluster-manager/groups/': typeof ClusterManagerGroupsIndexRoute
+  '/cluster-manager/issues/': typeof ClusterManagerIssuesIndexRoute
+  '/cluster-manager/kyc/': typeof ClusterManagerKycIndexRoute
+  '/cluster-manager/members/': typeof ClusterManagerMembersIndexRoute
+  '/cluster-manager/payouts/': typeof ClusterManagerPayoutsIndexRoute
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
@@ -211,6 +265,12 @@ export interface FileRoutesByTo {
   '/admin/payouts': typeof AdminPayoutsIndexRoute
   '/admin/policies': typeof AdminPoliciesIndexRoute
   '/admin/reports': typeof AdminReportsIndexRoute
+  '/cluster-manager/contributions': typeof ClusterManagerContributionsIndexRoute
+  '/cluster-manager/groups': typeof ClusterManagerGroupsIndexRoute
+  '/cluster-manager/issues': typeof ClusterManagerIssuesIndexRoute
+  '/cluster-manager/kyc': typeof ClusterManagerKycIndexRoute
+  '/cluster-manager/members': typeof ClusterManagerMembersIndexRoute
+  '/cluster-manager/payouts': typeof ClusterManagerPayoutsIndexRoute
   '/contributor/complaints': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions': typeof ContributorContributionsIndexRoute
   '/contributor/groups': typeof ContributorGroupsIndexRoute
@@ -222,6 +282,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/cluster-manager': typeof ClusterManagerRouteRouteWithChildren
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
   '/admin/': typeof AdminIndexRoute
@@ -239,6 +300,12 @@ export interface FileRoutesById {
   '/admin/payouts/': typeof AdminPayoutsIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
+  '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
+  '/cluster-manager/groups/': typeof ClusterManagerGroupsIndexRoute
+  '/cluster-manager/issues/': typeof ClusterManagerIssuesIndexRoute
+  '/cluster-manager/kyc/': typeof ClusterManagerKycIndexRoute
+  '/cluster-manager/members/': typeof ClusterManagerMembersIndexRoute
+  '/cluster-manager/payouts/': typeof ClusterManagerPayoutsIndexRoute
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
@@ -251,6 +318,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/cluster-manager'
     | '/contributor'
     | '/verify-email'
     | '/admin/'
@@ -268,6 +336,12 @@ export interface FileRouteTypes {
     | '/admin/payouts/'
     | '/admin/policies/'
     | '/admin/reports/'
+    | '/cluster-manager/contributions/'
+    | '/cluster-manager/groups/'
+    | '/cluster-manager/issues/'
+    | '/cluster-manager/kyc/'
+    | '/cluster-manager/members/'
+    | '/cluster-manager/payouts/'
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
@@ -293,6 +367,12 @@ export interface FileRouteTypes {
     | '/admin/payouts'
     | '/admin/policies'
     | '/admin/reports'
+    | '/cluster-manager/contributions'
+    | '/cluster-manager/groups'
+    | '/cluster-manager/issues'
+    | '/cluster-manager/kyc'
+    | '/cluster-manager/members'
+    | '/cluster-manager/payouts'
     | '/contributor/complaints'
     | '/contributor/contributions'
     | '/contributor/groups'
@@ -303,6 +383,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/cluster-manager'
     | '/contributor'
     | '/verify-email'
     | '/admin/'
@@ -320,6 +401,12 @@ export interface FileRouteTypes {
     | '/admin/payouts/'
     | '/admin/policies/'
     | '/admin/reports/'
+    | '/cluster-manager/contributions/'
+    | '/cluster-manager/groups/'
+    | '/cluster-manager/issues/'
+    | '/cluster-manager/kyc/'
+    | '/cluster-manager/members/'
+    | '/cluster-manager/payouts/'
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
@@ -331,9 +418,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  ClusterManagerRouteRoute: typeof ClusterManagerRouteRouteWithChildren
   ContributorRouteRoute: typeof ContributorRouteRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
-  ClusterManagerIndexRoute: typeof ClusterManagerIndexRoute
   AuthResetPasswordConfirmRoute: typeof AuthResetPasswordConfirmRoute
   AuthResetPasswordRequestRoute: typeof AuthResetPasswordRequestRoute
   HomeAuthLoginRoute: typeof HomeAuthLoginRoute
@@ -354,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/contributor'
       fullPath: '/contributor'
       preLoaderRoute: typeof ContributorRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cluster-manager': {
+      id: '/cluster-manager'
+      path: '/cluster-manager'
+      fullPath: '/cluster-manager'
+      preLoaderRoute: typeof ClusterManagerRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -379,10 +473,10 @@ declare module '@tanstack/react-router' {
     }
     '/cluster-manager/': {
       id: '/cluster-manager/'
-      path: '/cluster-manager'
+      path: '/'
       fullPath: '/cluster-manager/'
       preLoaderRoute: typeof ClusterManagerIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -432,6 +526,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/contributor/complaints/'
       preLoaderRoute: typeof ContributorComplaintsIndexRouteImport
       parentRoute: typeof ContributorRouteRoute
+    }
+    '/cluster-manager/payouts/': {
+      id: '/cluster-manager/payouts/'
+      path: '/payouts'
+      fullPath: '/cluster-manager/payouts/'
+      preLoaderRoute: typeof ClusterManagerPayoutsIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
+    '/cluster-manager/members/': {
+      id: '/cluster-manager/members/'
+      path: '/members'
+      fullPath: '/cluster-manager/members/'
+      preLoaderRoute: typeof ClusterManagerMembersIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
+    '/cluster-manager/kyc/': {
+      id: '/cluster-manager/kyc/'
+      path: '/kyc'
+      fullPath: '/cluster-manager/kyc/'
+      preLoaderRoute: typeof ClusterManagerKycIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
+    '/cluster-manager/issues/': {
+      id: '/cluster-manager/issues/'
+      path: '/issues'
+      fullPath: '/cluster-manager/issues/'
+      preLoaderRoute: typeof ClusterManagerIssuesIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
+    '/cluster-manager/groups/': {
+      id: '/cluster-manager/groups/'
+      path: '/groups'
+      fullPath: '/cluster-manager/groups/'
+      preLoaderRoute: typeof ClusterManagerGroupsIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
+    '/cluster-manager/contributions/': {
+      id: '/cluster-manager/contributions/'
+      path: '/contributions'
+      fullPath: '/cluster-manager/contributions/'
+      preLoaderRoute: typeof ClusterManagerContributionsIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
     }
     '/admin/reports/': {
       id: '/admin/reports/'
@@ -548,6 +684,29 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
   AdminRouteRouteChildren,
 )
 
+interface ClusterManagerRouteRouteChildren {
+  ClusterManagerIndexRoute: typeof ClusterManagerIndexRoute
+  ClusterManagerContributionsIndexRoute: typeof ClusterManagerContributionsIndexRoute
+  ClusterManagerGroupsIndexRoute: typeof ClusterManagerGroupsIndexRoute
+  ClusterManagerIssuesIndexRoute: typeof ClusterManagerIssuesIndexRoute
+  ClusterManagerKycIndexRoute: typeof ClusterManagerKycIndexRoute
+  ClusterManagerMembersIndexRoute: typeof ClusterManagerMembersIndexRoute
+  ClusterManagerPayoutsIndexRoute: typeof ClusterManagerPayoutsIndexRoute
+}
+
+const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
+  ClusterManagerIndexRoute: ClusterManagerIndexRoute,
+  ClusterManagerContributionsIndexRoute: ClusterManagerContributionsIndexRoute,
+  ClusterManagerGroupsIndexRoute: ClusterManagerGroupsIndexRoute,
+  ClusterManagerIssuesIndexRoute: ClusterManagerIssuesIndexRoute,
+  ClusterManagerKycIndexRoute: ClusterManagerKycIndexRoute,
+  ClusterManagerMembersIndexRoute: ClusterManagerMembersIndexRoute,
+  ClusterManagerPayoutsIndexRoute: ClusterManagerPayoutsIndexRoute,
+}
+
+const ClusterManagerRouteRouteWithChildren =
+  ClusterManagerRouteRoute._addFileChildren(ClusterManagerRouteRouteChildren)
+
 interface ContributorRouteRouteChildren {
   ContributorIndexRoute: typeof ContributorIndexRoute
   ContributorComplaintsIndexRoute: typeof ContributorComplaintsIndexRoute
@@ -574,9 +733,9 @@ const ContributorRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  ClusterManagerRouteRoute: ClusterManagerRouteRouteWithChildren,
   ContributorRouteRoute: ContributorRouteRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
-  ClusterManagerIndexRoute: ClusterManagerIndexRoute,
   AuthResetPasswordConfirmRoute: AuthResetPasswordConfirmRoute,
   AuthResetPasswordRequestRoute: AuthResetPasswordRequestRoute,
   HomeAuthLoginRoute: HomeAuthLoginRoute,

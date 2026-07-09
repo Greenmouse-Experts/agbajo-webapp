@@ -75,21 +75,33 @@ function ContributorDashboard() {
           iconClass="bg-success/10 text-success"
           value={formatCurrency(85000)}
           label="Wallet Balance"
-          link={{ to: "/contributor/wallet", label: "Fund wallet", colorClass: "text-success" }}
+          link={{
+            to: "/contributor/wallet",
+            label: "Fund wallet",
+            colorClass: "text-success",
+          }}
         />
         <StatCard
           icon={Folder}
           iconClass="bg-warning/10 text-warning"
           value={3}
           label="Active Groups"
-          link={{ to: "/contributor/groups", label: "View groups", colorClass: "text-warning" }}
+          link={{
+            to: "/contributor/groups",
+            label: "View groups",
+            colorClass: "text-warning",
+          }}
         />
         <StatCard
           icon={Clock}
           iconClass="bg-error/10 text-error"
           value={2}
           label="Pending Payouts"
-          link={{ to: "/contributor/payouts", label: "View payouts", colorClass: "text-error" }}
+          link={{
+            to: "/contributor/payouts",
+            label: "View payouts",
+            colorClass: "text-error",
+          }}
         />
       </div>
 
@@ -107,7 +119,9 @@ function ContributorDashboard() {
         <div className="lg:col-span-2 card bg-base-100 shadow-sm border border-base-200">
           <div className="card-body">
             <div className="mb-2">
-              <h3 className="font-semibold text-base-content">Contribution Activity</h3>
+              <h3 className="font-semibold text-base-content">
+                Contribution Activity
+              </h3>
               <p className="text-xs text-base-content/60">Last 7 days</p>
             </div>
             <div className="h-56">
@@ -115,12 +129,27 @@ function ContributorDashboard() {
                 <AreaChart data={chartData}>
                   <defs>
                     <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="oklch(52% 0.154 150.069)" stopOpacity={0.25} />
-                      <stop offset="95%" stopColor="oklch(52% 0.154 150.069)" stopOpacity={0} />
+                      <stop
+                        offset="5%"
+                        stopColor="oklch(52% 0.154 150.069)"
+                        stopOpacity={0.25}
+                      />
+                      <stop
+                        offset="95%"
+                        stopColor="oklch(52% 0.154 150.069)"
+                        stopOpacity={0}
+                      />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="oklch(86% 0 0)" />
-                  <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="oklch(86% 0 0)" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="oklch(86% 0 0)"
+                  />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 12 }}
+                    stroke="oklch(86% 0 0)"
+                  />
                   <YAxis
                     tick={{ fontSize: 12 }}
                     stroke="oklch(86% 0 0)"
@@ -153,9 +182,13 @@ function ContributorDashboard() {
             <h3 className="font-semibold text-base-content">Performance</h3>
             <div className="flex flex-col items-center justify-center p-5 rounded-xl bg-primary/5 gap-2">
               <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-content text-2xl font-bold">4.8</span>
+                <span className="text-primary-content text-2xl font-bold">
+                  4.8
+                </span>
               </div>
-              <p className="font-medium text-base-content text-sm">Your Rating</p>
+              <p className="font-medium text-base-content text-sm">
+                Your Rating
+              </p>
               <p className="text-xs text-base-content/60 text-center">
                 Based on contribution consistency
               </p>
@@ -163,11 +196,15 @@ function ContributorDashboard() {
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-base-200 p-3 text-center">
                 <p className="text-xl font-bold text-success">98%</p>
-                <p className="text-xs text-base-content/60 mt-0.5">On-time rate</p>
+                <p className="text-xs text-base-content/60 mt-0.5">
+                  On-time rate
+                </p>
               </div>
               <div className="rounded-xl bg-base-200 p-3 text-center">
                 <p className="text-xl font-bold text-secondary">3</p>
-                <p className="text-xs text-base-content/60 mt-0.5">Active groups</p>
+                <p className="text-xs text-base-content/60 mt-0.5">
+                  Active groups
+                </p>
               </div>
             </div>
           </div>
@@ -183,7 +220,9 @@ function ContributorDashboard() {
             <div key={item.id} className="flex items-center gap-4 px-6 py-4">
               <div
                 className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                  item.status === "completed" ? "bg-success/10" : "bg-warning/10"
+                  item.status === "completed"
+                    ? "bg-success/10"
+                    : "bg-warning/10"
                 }`}
               >
                 {item.status === "completed" ? (
@@ -193,13 +232,19 @@ function ContributorDashboard() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-base-content">Contribution</p>
-                <p className="text-xs text-base-content/60 capitalize">{item.status}</p>
+                <p className="text-sm font-medium text-base-content">
+                  Contribution
+                </p>
+                <p className="text-xs text-base-content/60 capitalize">
+                  {item.status}
+                </p>
               </div>
               <div className="text-right shrink-0">
                 <p
                   className={`text-sm font-semibold ${
-                    item.status === "completed" ? "text-success" : "text-warning"
+                    item.status === "completed"
+                      ? "text-success"
+                      : "text-warning"
                   }`}
                 >
                   {formatCurrency(item.amount)}

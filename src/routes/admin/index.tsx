@@ -15,7 +15,7 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function RouteComponent() {
-  const [stats, setStats] = useState<any | null>(null);
+  const [stats] = useState<any | null>(null);
 
   return (
     <>

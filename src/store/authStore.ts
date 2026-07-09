@@ -84,7 +84,7 @@ export const clear_temp_user = () => {
 
 const auth_logout = async () => {
   const session = get_user_value()?.sessionId;
-  let resp = await apiClient.post("/auth/logout");
+  let resp = await apiClient.post("/home/auth/logout");
   return resp.data;
 };
 

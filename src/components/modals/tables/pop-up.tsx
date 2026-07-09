@@ -2,8 +2,7 @@ import { Menu } from "lucide-react";
 import { useEffect, useState, useRef, type ReactNode } from "react";
 import { usePopper } from "react-popper";
 import Portal from "./Portal";
-import { useNavigate } from "@tanstack/react-router"; // Import useNavigate
-import ThemeProvider from "@/simpleComps/ThemeProvider";
+import { useNavigate } from "@tanstack/react-router";
 export type Actions<T = any> = {
   key: string;
   label: string;

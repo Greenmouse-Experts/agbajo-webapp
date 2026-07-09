@@ -1,5 +1,5 @@
 import axios from "axios";
-import { get_user_value, clear_user } from "#/store/authStore";
+import { get_user_value } from "#/store/authStore";
 import { toast } from "sonner";
 
 export interface ApiResponse<T = any> {

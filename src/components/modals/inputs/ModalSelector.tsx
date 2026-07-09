@@ -1,10 +1,8 @@
 import { usePagination } from "@/store/pagination";
 import { useQuery } from "@tanstack/react-query";
-import SimplePaginator from "../SimplePaginator";
 import type { ApiResponse } from "@/api/simpleApi";
 import apiClient from "@/api/simpleApi";
 import EmptyList from "../EmptyList";
-import useSelect from "@/helpers/selectors";
 
 interface ModalSelectorProps {
   route: string;

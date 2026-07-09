@@ -8,7 +8,7 @@ interface PaginationProps {
 
 export default function SimplePaginator({
   page,
-  setPage,
+  setPage: _setPage,
   incrementPage,
   decrementPage,
   hasMore = true,

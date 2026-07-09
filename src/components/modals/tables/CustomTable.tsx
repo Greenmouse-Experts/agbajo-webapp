@@ -29,7 +29,6 @@ export default function CustomTable(props: CustomTableProps) {
   // const setPagination = props.paginationProps?.setPagination;
   const { ring = true, totalCount = props.data?.length || 0 } = props;
 
-  const startRange = (page - 1) * pageSize + 1;
   const endRange = Math.min(page * pageSize, totalCount);
 
   return (
