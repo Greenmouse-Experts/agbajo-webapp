@@ -3,8 +3,6 @@ import { Users, DollarSign, Calendar, Star, AlertCircle } from "lucide-react";
 import { PageHeader } from "./-components/PageHeader";
 import { EmptyState } from "./-components/EmptyState";
 import { formatCurrency } from "#/helpers/currency";
-import { useQuery } from "@tanstack/react-query";
-import apiClient from "#/api/simpleApi.ts";
 
 export const Route = createFileRoute("/contributor/groups/")({
   component: ContributorGroups,
@@ -64,16 +62,6 @@ const statusBadge: Record<MemberStatus, string> = {
 };
 
 function ContributorGroups() {
-  const query = useQuery({
-    queryKey: ["groups"],
-    queryFn: async () => {
-      let resp = await apiClient.get(
-        "groups/public?search=savings&limit=10&cursor=",
-      );
-      return resp.data;
-    },
-  });
-
   return (
     <div className="space-y-6">
       <PageHeader

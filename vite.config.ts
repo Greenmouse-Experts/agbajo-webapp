@@ -16,7 +16,7 @@ const config = defineConfig({
     viteReact(),
     basicSsl(),
   ],
-  server: { https: true },
+  server: { https: {} as any },
 })
 
 export default config

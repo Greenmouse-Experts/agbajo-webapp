@@ -47,7 +47,7 @@ function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-60 from-primary  to-primary/50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
@@ -159,7 +159,7 @@ function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-base-content/40 mt-8">
+        <p className="text-center text-sm text-primary-content mt-8">
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>

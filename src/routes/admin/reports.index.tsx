@@ -154,7 +154,7 @@ function AdminReports() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(v: number) => `${v} groups`}
+                    formatter={(v) => `${v} groups`}
                     contentStyle={{ borderRadius: "8px" }}
                   />
                   <Legend />

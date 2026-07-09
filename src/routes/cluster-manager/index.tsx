@@ -242,7 +242,7 @@ function ClusterManagerDashboard() {
                   tickFormatter={(v) => `₦${(v / 1000).toFixed(0)}k`}
                 />
                 <Tooltip
-                  formatter={(v: number) => formatCurrency(v)}
+                  formatter={(v) => formatCurrency(Number(v))}
                   contentStyle={{
                     backgroundColor: "white",
                     border: "1px solid #E5E7EB",
