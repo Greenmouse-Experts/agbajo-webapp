@@ -62,7 +62,7 @@ function SignupPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-60 from-primary  to-primary/50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
@@ -72,8 +72,8 @@ function SignupPage() {
               className="w-full h-full object-contain"
             />
           </div>
-          <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
-          <p className="text-base-content/60 mt-1">
+          <h1 className="text-2xl font-bold text-primary-content">AGBAJO</h1>
+          <p className="text-primary-content mt-1">
             Digital Cooperative Savings
           </p>
         </div>

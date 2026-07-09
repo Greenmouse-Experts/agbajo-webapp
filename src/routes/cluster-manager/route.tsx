@@ -77,6 +77,7 @@ function ClusterManagerLayout() {
               <Menu className="w-5 h-5" />
             </label>
           </div>
+          <div className="text-xl font-bold">Cluster-manager</div>
           <div className="flex-1" />
           <div className="flex items-center gap-1">
             <button className="btn btn-ghost btn-square relative">
@@ -141,15 +142,16 @@ function ClusterManagerLayout() {
           className="drawer-overlay"
         />
         <div className="bg-base-100 w-64 min-h-full flex flex-col border-r border-base-200">
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-3 p-2">
-              <div className="w-full shadow rounded-xl overflow-hidden shrink-0">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-base-200">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg overflow-hidden shrink-0 shadow-sm">
                 <img
                   src="/agbajo-logo.jpeg"
                   alt="Agbajo"
                   className="w-full h-full object-cover"
                 />
               </div>
+              <span className="font-bold text-base text-base-content">Agbajo</span>
             </div>
             <label
               htmlFor="cluster-manager-drawer"
