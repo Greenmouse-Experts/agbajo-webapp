@@ -126,7 +126,7 @@ function ContributorLayout() {
           </div>
         </nav>
 
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 bg-base-200">
           <div className=" mx-auto">
             <Outlet />
           </div>
@@ -183,7 +183,7 @@ function ContributorLayout() {
             </ul>
           </nav>
 
-          <div className="p-4 border-t border-base-200">
+          <div className="p-4 border-t border-base-200 ">
             <span className="badge badge-warning badge-outline">
               Contributor
             </span>
