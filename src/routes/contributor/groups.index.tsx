@@ -100,40 +100,42 @@ function ContributorGroups() {
                   <h3 className="text-lg font-semibold text-base-content">
                     {group.group_name}
                   </h3>
-                  <p className="text-sm text-base-content/60 mt-0.5">
+                  <p className="text-base text-base-content mt-0.5">
                     Managed by {group.manager}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-xl bg-base-200 p-3">
-                    <div className="flex items-center gap-1.5 text-base-content/60 mb-1">
+                    <div className="flex items-center gap-1.5 text-base-content mb-1">
                       <DollarSign className="w-3.5 h-3.5" />
-                      <span className="text-xs">Amount</span>
+                      <span className="text-sm">Amount</span>
                     </div>
-                    <p className="font-semibold text-base-content text-sm">
+                    <p className="font-semibold text-base-content text-base">
                       {formatCurrency(group.contribution_amount)}
                     </p>
                   </div>
                   <div className="rounded-xl bg-base-200 p-3">
-                    <div className="flex items-center gap-1.5 text-base-content/60 mb-1">
+                    <div className="flex items-center gap-1.5 text-base-content mb-1">
                       <Calendar className="w-3.5 h-3.5" />
-                      <span className="text-xs">Frequency</span>
+                      <span className="text-sm">Frequency</span>
                     </div>
-                    <p className="font-semibold text-base-content text-sm capitalize">
+                    <p className="font-semibold text-base-content text-base capitalize">
                       {group.frequency}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-base-200">
-                  <div className="flex items-center gap-1.5 text-base-content/60">
+                  <div className="flex items-center gap-1.5 text-base-content">
                     <Users className="w-4 h-4" />
-                    <span className="text-sm">{group.max_members} members</span>
+                    <span className="text-base">
+                      {group.max_members} members
+                    </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Star className="w-4 h-4 text-warning fill-warning" />
-                    <span className="text-sm font-medium text-base-content">
+                    <span className="text-base font-medium text-base-content">
                       Cycle {group.current_cycle}
                     </span>
                   </div>

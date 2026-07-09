@@ -114,7 +114,7 @@ function AdminPolicies() {
         <h1 className="text-2xl font-bold text-base-content">
           Policies & Settings
         </h1>
-        <p className="text-base-content/60 mt-1">
+        <p className="text-base-content mt-1">
           Configure system-wide rules and penalties
         </p>
       </div>
@@ -141,29 +141,39 @@ function AdminPolicies() {
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Late Fee Amount</legend>
                   <label className="input w-full">
-                    <span className="text-base-content/50">₦</span>
+                    <span className="text-base-content">₦</span>
                     <input type="number" {...field("late_fee_amount")} />
                   </label>
-                  <p className="fieldset-label">Penalty for late contributions</p>
+                  <p className="fieldset-label">
+                    Penalty for late contributions
+                  </p>
                 </fieldset>
 
                 <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Missed Payment Fee</legend>
+                  <legend className="fieldset-legend">
+                    Missed Payment Fee
+                  </legend>
                   <label className="input w-full">
-                    <span className="text-base-content/50">₦</span>
+                    <span className="text-base-content">₦</span>
                     <input type="number" {...field("missed_fee_amount")} />
                   </label>
-                  <p className="fieldset-label">Penalty for missed contributions</p>
+                  <p className="fieldset-label">
+                    Penalty for missed contributions
+                  </p>
                 </fieldset>
 
                 <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Grace Period (Days)</legend>
+                  <legend className="fieldset-legend">
+                    Grace Period (Days)
+                  </legend>
                   <input
                     type="number"
                     className="input w-full"
                     {...field("grace_period_days")}
                   />
-                  <p className="fieldset-label">Days allowed before penalty applies</p>
+                  <p className="fieldset-label">
+                    Days allowed before penalty applies
+                  </p>
                 </fieldset>
 
                 <fieldset className="fieldset">
@@ -174,16 +184,22 @@ function AdminPolicies() {
                     className="input w-full"
                     {...field("rating_deduction")}
                   />
-                  <p className="fieldset-label">Points deducted per violation (0–5 scale)</p>
+                  <p className="fieldset-label">
+                    Points deducted per violation (0–5 scale)
+                  </p>
                 </fieldset>
 
                 <fieldset className="fieldset md:col-span-2">
-                  <legend className="fieldset-legend">Maximum Penalty Amount</legend>
+                  <legend className="fieldset-legend">
+                    Maximum Penalty Amount
+                  </legend>
                   <label className="input w-full">
-                    <span className="text-base-content/50">₦</span>
+                    <span className="text-base-content">₦</span>
                     <input type="number" {...field("max_penalty_amount")} />
                   </label>
-                  <p className="fieldset-label">Cap for total penalties per cycle</p>
+                  <p className="fieldset-label">
+                    Cap for total penalties per cycle
+                  </p>
                 </fieldset>
               </div>
 
@@ -213,18 +229,22 @@ function AdminPolicies() {
         <div className="space-y-6">
           <div className="card bg-base-100 shadow">
             <div className="card-body">
-              <h4 className="font-medium text-base-content/60 text-sm">
+              <h4 className="font-medium text-base-content text-base">
                 Current Policy Summary
               </h4>
               <div className="space-y-2 mt-2">
                 {[
                   {
                     label: "Late Fee",
-                    value: formatCurrency(parseFloat(formData.late_fee_amount) || 0),
+                    value: formatCurrency(
+                      parseFloat(formData.late_fee_amount) || 0,
+                    ),
                   },
                   {
                     label: "Missed Fee",
-                    value: formatCurrency(parseFloat(formData.missed_fee_amount) || 0),
+                    value: formatCurrency(
+                      parseFloat(formData.missed_fee_amount) || 0,
+                    ),
                   },
                   {
                     label: "Grace Period",
@@ -236,25 +256,27 @@ function AdminPolicies() {
                   },
                   {
                     label: "Max Penalty",
-                    value: formatCurrency(parseFloat(formData.max_penalty_amount) || 0),
+                    value: formatCurrency(
+                      parseFloat(formData.max_penalty_amount) || 0,
+                    ),
                   },
                 ].map(({ label, value }) => (
                   <div
                     key={label}
                     className="flex items-center justify-between p-3 rounded-lg bg-base-200"
                   >
-                    <span className="text-sm text-base-content/60">{label}</span>
-                    <span className="font-medium text-sm">{value}</span>
+                    <span className="text-base text-base-content">{label}</span>
+                    <span className="font-medium text-base">{value}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="card bg-info/10 border border-info/30">
+          <div className="card bg-info border border-info">
             <div className="card-body">
-              <h4 className="text-sm font-medium text-info">Policy Tips</h4>
-              <ul className="text-xs text-info/80 space-y-1 mt-1">
+              <h4 className="text-base font-medium text-info">Policy Tips</h4>
+              <ul className="text-sm text-info space-y-1 mt-1">
                 <li>- Updates apply immediately to all groups</li>
                 <li>- Rating deduction affects trust score</li>
                 <li>- Grace period allows flexibility</li>

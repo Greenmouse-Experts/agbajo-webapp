@@ -108,32 +108,32 @@ function ContributorWallet() {
           <div className="card bg-gradient-to-bl from-yellow-800 to-green-700 text-white shadow-lg">
             <div className="card-body gap-6">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
                   <WalletIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-white/70 text-sm">Main Wallet</p>
+                  <p className="text-white text-base">Main Wallet</p>
                   <p className="text-white font-medium">My Account</p>
                 </div>
               </div>
 
               <div>
-                <p className="text-white/70 text-sm">Available Balance</p>
+                <p className="text-white text-base">Available Balance</p>
                 <p className="text-4xl font-bold mt-1">
                   {formatCurrency(85000)}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-white/20">
+              <div className="flex items-center justify-between pt-4 border-t border-white">
                 <div>
-                  <p className="text-white/70 text-xs">Pending Balance</p>
+                  <p className="text-white text-sm">Pending Balance</p>
                   <p className="text-white font-medium">
                     {formatCurrency(12000)}
                   </p>
                 </div>
                 <button
                   onClick={openModal}
-                  className="btn bg-white text-green-800 hover:bg-white/90 border-0"
+                  className="btn bg-white text-green-800 hover:bg-white border-0"
                 >
                   Fund Wallet
                 </button>
@@ -149,30 +149,30 @@ function ContributorWallet() {
 
             <button
               onClick={openModal}
-              className="flex items-center gap-3 p-3 rounded-xl border border-base-200 hover:border-primary/40 hover:bg-primary/5 transition-colors text-left w-full"
+              className="flex items-center gap-3 p-3 rounded-xl border border-base-200 hover:border-primary hover:bg-primary/5 transition-colors text-left w-full"
             >
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shrink-0">
                 <ArrowDownRight className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">
+                <p className="text-base font-medium text-base-content">
                   Fund Wallet
                 </p>
-                <p className="text-xs text-base-content/60">
+                <p className="text-sm text-base-content">
                   Add money to your wallet
                 </p>
               </div>
             </button>
 
             <div className="flex items-center gap-3 p-3 rounded-xl border border-base-200">
-              <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-warning flex items-center justify-center shrink-0">
                 <Zap className="w-5 h-5 text-warning" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">
+                <p className="text-base font-medium text-base-content">
                   Auto Debit
                 </p>
-                <p className="text-xs text-base-content/60">
+                <p className="text-sm text-base-content">
                   Enabled for contributions
                 </p>
               </div>
@@ -210,16 +210,16 @@ function ContributorWallet() {
               return (
                 <div
                   key={tx.id}
-                  className="flex items-center gap-4 px-5 py-4 hover:bg-base-200/40 transition-colors"
+                  className="flex items-center gap-4 px-5 py-4 hover:bg-base-200 transition-colors"
                 >
                   <div className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center shrink-0">
                     {txIcon(tx.type)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-base-content capitalize">
+                    <p className="text-base font-medium text-base-content capitalize">
                       {tx.type}
                     </p>
-                    <p className="text-xs text-base-content/60 mt-0.5">
+                    <p className="text-sm text-base-content mt-0.5">
                       {tx.description}
                     </p>
                   </div>
@@ -230,7 +230,7 @@ function ContributorWallet() {
                       {isCredit ? "+" : "-"}
                       {formatCurrency(tx.amount)}
                     </p>
-                    <p className="text-xs text-base-content/40">
+                    <p className="text-sm text-base-content">
                       {new Date(tx.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -247,7 +247,7 @@ function ContributorWallet() {
           <h3 className="text-lg font-semibold text-base-content">
             Fund Wallet
           </h3>
-          <p className="text-sm text-base-content/60 mt-0.5">
+          <p className="text-base text-base-content mt-0.5">
             Add money to your wallet
           </p>
 
@@ -255,7 +255,7 @@ function ContributorWallet() {
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Amount</legend>
               <label className="input flex items-center gap-2">
-                <span className="text-base-content/50 font-medium">₦</span>
+                <span className="text-base-content font-medium">₦</span>
                 <input
                   type="number"
                   placeholder="10,000"

@@ -62,7 +62,7 @@ function SignupPage() {
   });
 
   return (
-    <div className="min-h-screen bg-linear-60 from-primary  to-primary/50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-60 from-primary  to-primary flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
@@ -83,7 +83,7 @@ function SignupPage() {
             <h2 className="text-xl font-semibold text-base-content mb-0">
               Create your account
             </h2>
-            <p className="text-base-content/60 text-sm mb-2">
+            <p className="text-base-content text-base mb-2">
               Join AGBAJO to start saving together
             </p>
 
@@ -172,7 +172,7 @@ function SignupPage() {
                   )}
                 />
                 {errors.roleId && (
-                  <p className="text-error text-sm flex items-center gap-1 -mt-3">
+                  <p className="text-error text-base flex items-center gap-1 -mt-3">
                     <AlertCircle className="w-3.5 h-3.5" />
                     {errors.roleId.message}
                   </p>
@@ -191,7 +191,7 @@ function SignupPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content hover:text-base-content"
                     >
                       {showPassword ? (
                         <EyeOff className="w-5 h-5" />
@@ -243,7 +243,7 @@ function SignupPage() {
             </FormProvider>
 
             <div className="mt-4 text-center">
-              <p className="text-sm text-base-content/60">
+              <p className="text-base text-base-content">
                 Already have an account?{" "}
                 <Link
                   to="/home/auth/login"

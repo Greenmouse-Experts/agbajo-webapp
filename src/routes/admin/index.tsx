@@ -22,7 +22,7 @@ function RouteComponent() {
       <div className="space-y-6 animate-fade-in">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-base-content/60 mt-1">
+            <p className="text-base-content mt-1">
               Overview of platform performance and activities
             </p>
           </div>
@@ -32,10 +32,10 @@ function RouteComponent() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="stat-card group hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
                 <Users className="w-6 h-6 text-secondary" />
               </div>
-              <span className="flex items-center text-success text-sm font-medium">
+              <span className="flex items-center text-success text-base font-medium">
                 <ArrowUpRight className="w-4 h-4" />
                 12%
               </span>
@@ -44,11 +44,11 @@ function RouteComponent() {
               <h3 className="text-2xl font-bold text-base-content">
                 {stats?.totalUsers || 0}
               </h3>
-              <p className="text-sm text-base-content/60">Total Users</p>
+              <p className="text-base text-base-content">Total Users</p>
             </div>
             <Link
               to="/admin/contributors"
-              className="text-xs text-secondary hover:underline mt-2 inline-block font-medium"
+              className="text-sm text-secondary hover:underline mt-2 inline-block font-medium"
             >
               View all users
             </Link>
@@ -56,10 +56,10 @@ function RouteComponent() {
 
           <div className="stat-card group hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
                 <Folder className="w-6 h-6 text-primary" />
               </div>
-              <span className="flex items-center text-success text-sm font-medium">
+              <span className="flex items-center text-success text-base font-medium">
                 <ArrowUpRight className="w-4 h-4" />
                 8%
               </span>
@@ -68,11 +68,11 @@ function RouteComponent() {
               <h3 className="text-2xl font-bold text-base-content">
                 {stats?.totalGroups || 0}
               </h3>
-              <p className="text-sm text-base-content/60">Active Groups</p>
+              <p className="text-base text-base-content">Active Groups</p>
             </div>
             <Link
               to="/admin/groups"
-              className="text-xs text-primary hover:underline mt-2 inline-block font-medium"
+              className="text-sm text-primary hover:underline mt-2 inline-block font-medium"
             >
               View all groups
             </Link>
@@ -80,10 +80,10 @@ function RouteComponent() {
 
           <div className="stat-card group hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
                 <DollarSign className="w-6 h-6 text-accent" />
               </div>
-              <span className="flex items-center text-success text-sm font-medium">
+              <span className="flex items-center text-success text-base font-medium">
                 <TrendingUp className="w-4 h-4" />
                 23%
               </span>
@@ -92,13 +92,11 @@ function RouteComponent() {
               <h3 className="text-2xl font-bold text-base-content">
                 {formatCurrency(stats?.totalContributions || 0)}
               </h3>
-              <p className="text-sm text-base-content/60">
-                Total Contributions
-              </p>
+              <p className="text-base text-base-content">Total Contributions</p>
             </div>
             <Link
               to="/admin/contributions"
-              className="text-xs text-accent hover:underline mt-2 inline-block font-medium"
+              className="text-sm text-accent hover:underline mt-2 inline-block font-medium"
             >
               View contributions
             </Link>
@@ -106,10 +104,10 @@ function RouteComponent() {
 
           <div className="stat-card group hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
-              <div className="w-12 h-12 bg-error/10 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-error rounded-xl flex items-center justify-center">
                 <AlertTriangle className="w-6 h-6 text-error" />
               </div>
-              <span className="flex items-center text-error text-sm font-medium">
+              <span className="flex items-center text-error text-base font-medium">
                 {stats?.defaultersCount || 0}
               </span>
             </div>
@@ -117,13 +115,13 @@ function RouteComponent() {
               <h3 className="text-2xl font-bold text-base-content">
                 {stats?.pendingVerifications || 0}
               </h3>
-              <p className="text-sm text-base-content/60">
+              <p className="text-base text-base-content">
                 Pending Verifications
               </p>
             </div>
             <Link
               to="/admin/cluster-managers"
-              className="text-xs text-error hover:underline mt-2 inline-block font-medium"
+              className="text-sm text-error hover:underline mt-2 inline-block font-medium"
             >
               Review KYC
             </Link>
@@ -137,11 +135,11 @@ function RouteComponent() {
                 <h3 className="text-lg font-semibold text-base-content">
                   Contributions Trend
                 </h3>
-                <p className="text-sm text-base-content/60">Last 7 days</p>
+                <p className="text-base text-base-content">Last 7 days</p>
               </div>
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-base">
                 <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                <span className="text-base-content/70">Contributions</span>
+                <span className="text-base-content">Contributions</span>
               </div>
             </div>
             <div className="h-64">
@@ -198,7 +196,7 @@ function RouteComponent() {
                 <h3 className="text-lg font-semibold text-base-content">
                   Groups Performance
                 </h3>
-                <p className="text-sm text-base-content/60">
+                <p className="text-base text-base-content">
                   Top 5 groups by contributions
                 </p>
               </div>

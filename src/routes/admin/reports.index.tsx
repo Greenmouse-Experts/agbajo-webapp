@@ -68,7 +68,7 @@ function AdminReports() {
           <h1 className="text-2xl font-bold text-base-content">
             Reports & Analytics
           </h1>
-          <p className="text-base-content/60 mt-1">
+          <p className="text-base-content mt-1">
             Comprehensive platform insights
           </p>
         </div>
@@ -94,10 +94,26 @@ function AdminReports() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Contributions", value: "₦3.63M", change: "+15% from last month" },
-          { label: "Total Payouts", value: "₦3.18M", change: "+12% from last month" },
-          { label: "Active Users", value: "342", change: "+28% from last month" },
-          { label: "Avg. Collection Rate", value: "94.5%", change: "+2% from last month" },
+          {
+            label: "Total Contributions",
+            value: "₦3.63M",
+            change: "+15% from last month",
+          },
+          {
+            label: "Total Payouts",
+            value: "₦3.18M",
+            change: "+12% from last month",
+          },
+          {
+            label: "Active Users",
+            value: "342",
+            change: "+28% from last month",
+          },
+          {
+            label: "Avg. Collection Rate",
+            value: "94.5%",
+            change: "+2% from last month",
+          },
         ].map(({ label, value, change }) => (
           <div key={label} className="stat bg-base-100 rounded-box shadow">
             <div className="stat-title">{label}</div>
@@ -115,7 +131,11 @@ function AdminReports() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontSize: 12 }}
+                    stroke="#9CA3AF"
+                  />
                   <YAxis
                     tick={{ fontSize: 12 }}
                     stroke="#9CA3AF"
@@ -126,7 +146,11 @@ function AdminReports() {
                     contentStyle={{ borderRadius: "8px" }}
                   />
                   <Legend />
-                  <Bar dataKey="contributions" fill="#1e4b24" radius={[4, 4, 0, 0]} />
+                  <Bar
+                    dataKey="contributions"
+                    fill="#1e4b24"
+                    radius={[4, 4, 0, 0]}
+                  />
                   <Bar dataKey="payouts" fill="#10B981" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -173,7 +197,11 @@ function AdminReports() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={userGrowth}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis dataKey="month" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontSize: 12 }}
+                    stroke="#9CA3AF"
+                  />
                   <YAxis tick={{ fontSize: 12 }} stroke="#9CA3AF" />
                   <Tooltip contentStyle={{ borderRadius: "8px" }} />
                   <Legend />
@@ -204,7 +232,11 @@ function AdminReports() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={frequencyDistribution} layout="vertical">
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis type="number" tick={{ fontSize: 12 }} stroke="#9CA3AF" />
+                  <XAxis
+                    type="number"
+                    tick={{ fontSize: 12 }}
+                    stroke="#9CA3AF"
+                  />
                   <YAxis
                     dataKey="name"
                     type="category"
@@ -229,18 +261,24 @@ function AdminReports() {
               <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl font-bold">A+</span>
               </div>
-              <h4 className="font-semibold text-base-content">Collection Rate</h4>
+              <h4 className="font-semibold text-base-content">
+                Collection Rate
+              </h4>
               <p className="text-3xl font-bold text-blue-600 mt-2">94.5%</p>
-              <p className="text-sm text-base-content/60 mt-1">Target: 95%</p>
+              <p className="text-base text-base-content mt-1">Target: 95%</p>
             </div>
 
             <div className="text-center p-6 rounded-xl bg-green-50">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white text-2xl font-bold">₦</span>
               </div>
-              <h4 className="font-semibold text-base-content">Avg. Transaction</h4>
+              <h4 className="font-semibold text-base-content">
+                Avg. Transaction
+              </h4>
               <p className="text-3xl font-bold text-green-600 mt-2">₦45K</p>
-              <p className="text-sm text-base-content/60 mt-1">Per contribution</p>
+              <p className="text-base text-base-content mt-1">
+                Per contribution
+              </p>
             </div>
 
             <div className="text-center p-6 rounded-xl bg-amber-50">
@@ -249,7 +287,9 @@ function AdminReports() {
               </div>
               <h4 className="font-semibold text-base-content">Avg. Rating</h4>
               <p className="text-3xl font-bold text-amber-600 mt-2">4.8/5</p>
-              <p className="text-sm text-base-content/60 mt-1">Platform satisfaction</p>
+              <p className="text-base text-base-content mt-1">
+                Platform satisfaction
+              </p>
             </div>
           </div>
         </div>

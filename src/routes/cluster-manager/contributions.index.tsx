@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Search,
-  CheckCircle,
-  Clock,
-  XCircle,
-  AlertCircle,
-} from "lucide-react";
+import { Search, CheckCircle, Clock, XCircle, AlertCircle } from "lucide-react";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
 
 export const Route = createFileRoute("/cluster-manager/contributions/")({
@@ -87,15 +81,13 @@ function ClusterManagerContributions() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-base-content">Contributions</h1>
-        <p className="text-base-content/60 mt-1">
-          Track all member contributions
-        </p>
+        <p className="text-base-content mt-1">Track all member contributions</p>
       </div>
 
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search contributors..."
@@ -118,10 +110,26 @@ function ClusterManagerContributions() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Amount", value: formatCurrency(completedTotal), cls: "" },
-          { label: "Completed", value: filtered.filter((c) => c.status === "completed").length, cls: "text-success" },
-          { label: "Pending", value: filtered.filter((c) => c.status === "pending").length, cls: "text-warning" },
-          { label: "Late Payments", value: filtered.filter((c) => c.is_late).length, cls: "text-error" },
+          {
+            label: "Total Amount",
+            value: formatCurrency(completedTotal),
+            cls: "",
+          },
+          {
+            label: "Completed",
+            value: filtered.filter((c) => c.status === "completed").length,
+            cls: "text-success",
+          },
+          {
+            label: "Pending",
+            value: filtered.filter((c) => c.status === "pending").length,
+            cls: "text-warning",
+          },
+          {
+            label: "Late Payments",
+            value: filtered.filter((c) => c.is_late).length,
+            cls: "text-error",
+          },
         ].map(({ label, value, cls }) => (
           <div key={label} className="stat bg-base-100 rounded-box shadow">
             <div className="stat-title">{label}</div>
@@ -137,12 +145,12 @@ function ClusterManagerContributions() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No contributions found
           </h3>
-          <p className="text-base-content/60">Contributions will appear here</p>
+          <p className="text-base-content">Contributions will appear here</p>
         </div>
       ) : (
         <div className="card bg-base-100 shadow overflow-x-auto">
@@ -165,15 +173,15 @@ function ClusterManagerContributions() {
                     <div className="font-medium">
                       {c.contributor?.name ?? "—"}
                     </div>
-                    <div className="text-xs text-base-content/50">
+                    <div className="text-sm text-base-content">
                       {c.contributor?.email}
                     </div>
                   </td>
-                  <td className="text-base-content/70">
+                  <td className="text-base-content">
                     {c.group?.group_name ?? "—"}
                   </td>
                   <td className="font-medium">{formatCurrency(c.amount)}</td>
-                  <td className="text-base-content/70 capitalize">
+                  <td className="text-base-content capitalize">
                     {c.contribution_type ?? "—"}
                   </td>
                   <td>
@@ -186,7 +194,7 @@ function ClusterManagerContributions() {
                   <td>
                     <StatusBadge status={c.status} />
                   </td>
-                  <td className="text-sm text-base-content/60">
+                  <td className="text-base text-base-content">
                     {new Date(c.created_at).toLocaleDateString()}
                   </td>
                 </tr>

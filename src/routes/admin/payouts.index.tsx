@@ -99,7 +99,15 @@ function AdminPayouts() {
 
   const handleExport = () => {
     const csv = [
-      ["Date", "Recipient", "Group", "Amount", "Status", "Manual", "Reason"].join(","),
+      [
+        "Date",
+        "Recipient",
+        "Group",
+        "Amount",
+        "Status",
+        "Manual",
+        "Reason",
+      ].join(","),
       ...filtered.map((p) =>
         [
           new Date(p.created_at).toLocaleDateString(),
@@ -139,7 +147,7 @@ function AdminPayouts() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-base-content">Payouts</h1>
-          <p className="text-base-content/60 mt-1">
+          <p className="text-base-content mt-1">
             Track and manage all payout transactions
           </p>
         </div>
@@ -161,7 +169,7 @@ function AdminPayouts() {
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search recipient or group..."
@@ -185,10 +193,26 @@ function AdminPayouts() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Payouts", value: formatCurrency(completedTotal), cls: "" },
-          { label: "Completed", value: filtered.filter((p) => p.status === "completed").length, cls: "text-success" },
-          { label: "Pending", value: filtered.filter((p) => p.status === "pending").length, cls: "text-warning" },
-          { label: "Manual Payouts", value: filtered.filter((p) => p.is_manual).length, cls: "text-info" },
+          {
+            label: "Total Payouts",
+            value: formatCurrency(completedTotal),
+            cls: "",
+          },
+          {
+            label: "Completed",
+            value: filtered.filter((p) => p.status === "completed").length,
+            cls: "text-success",
+          },
+          {
+            label: "Pending",
+            value: filtered.filter((p) => p.status === "pending").length,
+            cls: "text-warning",
+          },
+          {
+            label: "Manual Payouts",
+            value: filtered.filter((p) => p.is_manual).length,
+            cls: "text-info",
+          },
         ].map(({ label, value, cls }) => (
           <div key={label} className="stat bg-base-100 rounded-box shadow">
             <div className="stat-title">{label}</div>
@@ -204,12 +228,12 @@ function AdminPayouts() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No payouts found
           </h3>
-          <p className="text-base-content/60">Try adjusting your filters</p>
+          <p className="text-base-content">Try adjusting your filters</p>
         </div>
       ) : (
         <div className="card bg-base-100 shadow overflow-x-auto">
@@ -229,13 +253,19 @@ function AdminPayouts() {
               {filtered.map((payout) => (
                 <tr key={payout.id} className="hover">
                   <td>
-                    <div className="font-medium">{payout.recipient?.name ?? "—"}</div>
-                    <div className="text-xs text-base-content/50">
+                    <div className="font-medium">
+                      {payout.recipient?.name ?? "—"}
+                    </div>
+                    <div className="text-sm text-base-content">
                       {payout.recipient?.email}
                     </div>
                   </td>
-                  <td className="text-base-content/70">{payout.group?.name ?? "—"}</td>
-                  <td className="font-medium">{formatCurrency(payout.amount)}</td>
+                  <td className="text-base-content">
+                    {payout.group?.name ?? "—"}
+                  </td>
+                  <td className="font-medium">
+                    {formatCurrency(payout.amount)}
+                  </td>
                   <td>
                     {payout.is_manual ? (
                       <span className="badge badge-primary">Manual</span>
@@ -246,12 +276,12 @@ function AdminPayouts() {
                   <td>
                     <StatusBadge status={payout.status} />
                   </td>
-                  <td className="text-base-content/60 text-sm">
+                  <td className="text-base-content text-base">
                     {payout.payout_date
                       ? new Date(payout.payout_date).toLocaleDateString()
                       : "—"}
                   </td>
-                  <td className="text-base-content/60 text-sm max-w-xs truncate">
+                  <td className="text-base-content text-base max-w-xs truncate">
                     {payout.reason ?? "—"}
                   </td>
                 </tr>
@@ -264,7 +294,7 @@ function AdminPayouts() {
       <dialog ref={modalRef} className="modal">
         <div className="modal-box">
           <h3 className="text-xl font-semibold">Manual Payout</h3>
-          <p className="text-sm text-base-content/60 mt-1">
+          <p className="text-base text-base-content mt-1">
             Process an emergency payout
           </p>
 
@@ -272,7 +302,7 @@ function AdminPayouts() {
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Amount</legend>
               <label className="input w-full">
-                <span className="text-base-content/50">₦</span>
+                <span className="text-base-content">₦</span>
                 <input
                   type="number"
                   placeholder="50000"

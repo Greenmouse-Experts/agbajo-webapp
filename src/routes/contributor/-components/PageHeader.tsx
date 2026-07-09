@@ -11,7 +11,7 @@ export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
     <div className="flex items-center justify-between">
       <div>
         <h1 className="text-2xl font-bold text-base-content">{title}</h1>
-        {subtitle && <p className="text-base-content/60 mt-0.5">{subtitle}</p>}
+        {subtitle && <p className="text-base-content mt-0.5">{subtitle}</p>}
       </div>
       {action && <div>{action}</div>}
     </div>

@@ -1,6 +1,12 @@
 import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageSquare, Send, Search, CheckCircle, AlertCircle } from "lucide-react";
+import {
+  MessageSquare,
+  Send,
+  Search,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 import { PageHeader } from "./-components/PageHeader";
 import { EmptyState } from "./-components/EmptyState";
 
@@ -8,9 +14,11 @@ export const Route = createFileRoute("/contributor/complaints/")({
   component: ContributorComplaints,
 });
 
-type ComplaintStatus = "open" | "in_progress" | "resolved" | "escalated" | "closed";
+type ComplaintStatus =
+  "open" | "in_progress" | "resolved" | "escalated" | "closed";
 type Priority = "low" | "normal" | "high" | "urgent";
-type Category = "contribution" | "payout" | "group" | "manager" | "technical" | "other";
+type Category =
+  "contribution" | "payout" | "group" | "manager" | "technical" | "other";
 
 interface Complaint {
   id: number;
@@ -27,7 +35,8 @@ const mockComplaints: Complaint[] = [
   {
     id: 1,
     title: "Contribution not reflected in my account",
-    description: "I made a contribution of ₦10,000 on the 1st of July but it hasn't reflected on my dashboard yet.",
+    description:
+      "I made a contribution of ₦10,000 on the 1st of July but it hasn't reflected on my dashboard yet.",
     category: "contribution",
     priority: "high",
     status: "in_progress",
@@ -40,13 +49,15 @@ const mockComplaints: Complaint[] = [
     category: "payout",
     priority: "urgent",
     status: "resolved",
-    response_message: "Your payout has been processed and should reflect in your wallet within 24 hours. Apologies for the delay.",
+    response_message:
+      "Your payout has been processed and should reflect in your wallet within 24 hours. Apologies for the delay.",
     created_at: "2026-06-20",
   },
   {
     id: 3,
     title: "Unable to access group details",
-    description: "The Victoria Island Circle group page keeps showing an error.",
+    description:
+      "The Victoria Island Circle group page keeps showing an error.",
     category: "technical",
     priority: "normal",
     status: "open",
@@ -69,7 +80,12 @@ const priorityBadge: Record<Priority, string> = {
   urgent: "badge-error",
 };
 
-const defaultForm = { title: "", description: "", category: "other" as Category, priority: "normal" as Priority };
+const defaultForm = {
+  title: "",
+  description: "",
+  category: "other" as Category,
+  priority: "normal" as Priority,
+};
 
 function ContributorComplaints() {
   const [search, setSearch] = useState("");
@@ -77,7 +93,10 @@ function ContributorComplaints() {
   const modalRef = useRef<HTMLDialogElement>(null);
 
   const openModal = () => modalRef.current?.showModal();
-  const closeModal = () => { modalRef.current?.close(); setForm(defaultForm); };
+  const closeModal = () => {
+    modalRef.current?.close();
+    setForm(defaultForm);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,7 +124,7 @@ function ContributorComplaints() {
       <div className="card bg-base-100 border border-base-200 shadow-sm">
         <div className="card-body p-4">
           <label className="input flex items-center gap-2">
-            <Search className="w-4 h-4 text-base-content/40 shrink-0" />
+            <Search className="w-4 h-4 text-base-content shrink-0" />
             <input
               type="text"
               placeholder="Search complaints..."
@@ -135,22 +154,30 @@ function ContributorComplaints() {
                 {/* Header row */}
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center shrink-0">
-                    <MessageSquare className="w-5 h-5 text-base-content/50" />
+                    <MessageSquare className="w-5 h-5 text-base-content" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3 flex-wrap">
-                      <h3 className="font-semibold text-base-content">{c.title}</h3>
+                      <h3 className="font-semibold text-base-content">
+                        {c.title}
+                      </h3>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className={`badge badge-sm ${priorityBadge[c.priority]} capitalize`}>
+                        <span
+                          className={`badge badge-sm ${priorityBadge[c.priority]} capitalize`}
+                        >
                           {c.priority}
                         </span>
-                        <span className={`badge badge-sm ${statusBadge[c.status]} capitalize`}>
+                        <span
+                          className={`badge badge-sm ${statusBadge[c.status]} capitalize`}
+                        >
                           {c.status.replace("_", " ")}
                         </span>
                       </div>
                     </div>
-                    <p className="text-sm text-base-content/60 mt-1 line-clamp-2">{c.description}</p>
-                    <div className="flex items-center gap-2 mt-2 text-xs text-base-content/40">
+                    <p className="text-base text-base-content mt-1 line-clamp-2">
+                      {c.description}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2 text-sm text-base-content">
                       <span className="capitalize">{c.category}</span>
                       <span>·</span>
                       <span>{new Date(c.created_at).toLocaleDateString()}</span>
@@ -160,11 +187,15 @@ function ContributorComplaints() {
 
                 {/* Admin response */}
                 {c.response_message && (
-                  <div className="flex items-start gap-3 p-4 rounded-xl bg-success/5 border border-success/20">
+                  <div className="flex items-start gap-3 p-4 rounded-xl bg-success/5 border border-success">
                     <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-medium text-success mb-1">Admin Response</p>
-                      <p className="text-sm text-base-content/70">{c.response_message}</p>
+                      <p className="text-sm font-medium text-success mb-1">
+                        Admin Response
+                      </p>
+                      <p className="text-base text-base-content">
+                        {c.response_message}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -177,8 +208,12 @@ function ContributorComplaints() {
       {/* New complaint modal */}
       <dialog ref={modalRef} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
-          <h3 className="text-lg font-semibold text-base-content">New Complaint</h3>
-          <p className="text-sm text-base-content/60 mt-0.5">Submit your issue for admin review</p>
+          <h3 className="text-lg font-semibold text-base-content">
+            New Complaint
+          </h3>
+          <p className="text-base text-base-content mt-0.5">
+            Submit your issue for admin review
+          </p>
 
           <form onSubmit={handleSubmit} className="mt-5 space-y-4">
             <fieldset className="fieldset">
@@ -199,7 +234,9 @@ function ContributorComplaints() {
                 className="textarea w-full h-24"
                 placeholder="Detailed description of the issue..."
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
                 required
               />
             </fieldset>
@@ -210,7 +247,9 @@ function ContributorComplaints() {
                 <select
                   className="select w-full"
                   value={form.category}
-                  onChange={(e) => setForm({ ...form, category: e.target.value as Category })}
+                  onChange={(e) =>
+                    setForm({ ...form, category: e.target.value as Category })
+                  }
                 >
                   <option value="contribution">Contribution</option>
                   <option value="payout">Payout</option>
@@ -226,7 +265,9 @@ function ContributorComplaints() {
                 <select
                   className="select w-full"
                   value={form.priority}
-                  onChange={(e) => setForm({ ...form, priority: e.target.value as Priority })}
+                  onChange={(e) =>
+                    setForm({ ...form, priority: e.target.value as Priority })
+                  }
                 >
                   <option value="low">Low</option>
                   <option value="normal">Normal</option>
@@ -237,7 +278,11 @@ function ContributorComplaints() {
             </div>
 
             <div className="modal-action">
-              <button type="button" className="btn btn-ghost" onClick={closeModal}>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={closeModal}
+              >
                 Cancel
               </button>
               <button type="submit" className="btn btn-primary gap-2">

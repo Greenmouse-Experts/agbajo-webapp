@@ -76,7 +76,9 @@ function ClusterManagerPayouts() {
     mutationFn: (id: string) =>
       apiClient.patch(`cluster-manager/payouts/${id}/process`),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["cluster-manager", "payouts"] }),
+      queryClient.invalidateQueries({
+        queryKey: ["cluster-manager", "payouts"],
+      }),
   });
 
   const filtered = payouts.filter((p) =>
@@ -103,13 +105,13 @@ function ClusterManagerPayouts() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-base-content">Payouts</h1>
-        <p className="text-base-content/60 mt-1">Manage member payouts</p>
+        <p className="text-base-content mt-1">Manage member payouts</p>
       </div>
 
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search recipients..."
@@ -132,10 +134,26 @@ function ClusterManagerPayouts() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Payouts", value: formatCurrency(completedTotal), cls: "" },
-          { label: "Completed", value: filtered.filter((p) => p.status === "completed").length, cls: "text-success" },
-          { label: "Pending", value: filtered.filter((p) => p.status === "pending").length, cls: "text-warning" },
-          { label: "This Month", value: formatCurrency(thisMonthTotal), cls: "text-info" },
+          {
+            label: "Total Payouts",
+            value: formatCurrency(completedTotal),
+            cls: "",
+          },
+          {
+            label: "Completed",
+            value: filtered.filter((p) => p.status === "completed").length,
+            cls: "text-success",
+          },
+          {
+            label: "Pending",
+            value: filtered.filter((p) => p.status === "pending").length,
+            cls: "text-warning",
+          },
+          {
+            label: "This Month",
+            value: formatCurrency(thisMonthTotal),
+            cls: "text-info",
+          },
         ].map(({ label, value, cls }) => (
           <div key={label} className="stat bg-base-100 rounded-box shadow">
             <div className="stat-title">{label}</div>
@@ -151,12 +169,12 @@ function ClusterManagerPayouts() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No payouts found
           </h3>
-          <p className="text-base-content/60">Payouts will appear here</p>
+          <p className="text-base-content">Payouts will appear here</p>
         </div>
       ) : (
         <div className="card bg-base-100 shadow overflow-x-auto">
@@ -179,11 +197,11 @@ function ClusterManagerPayouts() {
                     <div className="font-medium">
                       {payout.recipient?.name ?? "—"}
                     </div>
-                    <div className="text-xs text-base-content/50">
+                    <div className="text-sm text-base-content">
                       {payout.recipient?.email}
                     </div>
                   </td>
-                  <td className="text-base-content/70">
+                  <td className="text-base-content">
                     {payout.group?.group_name ?? "—"}
                   </td>
                   <td className="font-medium">
@@ -199,7 +217,7 @@ function ClusterManagerPayouts() {
                   <td>
                     <StatusBadge status={payout.status} />
                   </td>
-                  <td className="text-sm text-base-content/60">
+                  <td className="text-base text-base-content">
                     {new Date(payout.created_at).toLocaleDateString()}
                   </td>
                   <td>

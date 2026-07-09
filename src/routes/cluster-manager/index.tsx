@@ -93,9 +93,7 @@ function ClusterManagerDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-base-content">Dashboard</h1>
-          <p className="text-base-content/60 mt-1">
-            Welcome back, {displayName}
-          </p>
+          <p className="text-base-content mt-1">Welcome back, {displayName}</p>
         </div>
         <span className="badge badge-success badge-outline">
           Cluster Manager
@@ -184,7 +182,7 @@ function ClusterManagerDashboard() {
                 </div>
                 {trend && (
                   <span
-                    className={`flex items-center text-sm font-medium ${trendCls}`}
+                    className={`flex items-center text-base font-medium ${trendCls}`}
                   >
                     {trend}
                   </span>
@@ -194,11 +192,11 @@ function ClusterManagerDashboard() {
                 <h3 className="text-2xl font-bold text-base-content">
                   {value}
                 </h3>
-                <p className="text-sm text-base-content/60">{label}</p>
+                <p className="text-base text-base-content">{label}</p>
               </div>
               <Link
                 to={link}
-                className={`text-xs ${linkCls} hover:underline mt-2 inline-block`}
+                className={`text-sm ${linkCls} hover:underline mt-2 inline-block`}
               >
                 {linkLabel}
               </Link>
@@ -213,7 +211,7 @@ function ClusterManagerDashboard() {
             <h3 className="text-lg font-semibold text-base-content">
               Collection Trend
             </h3>
-            <p className="text-sm text-base-content/60">Last 7 days</p>
+            <p className="text-base text-base-content">Last 7 days</p>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -311,10 +309,10 @@ function ClusterManagerDashboard() {
                     {icon}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-base-content">
+                    <p className="text-base font-medium text-base-content">
                       {label}
                     </p>
-                    <p className="text-xs text-base-content/60">{sub}</p>
+                    <p className="text-sm text-base-content">{sub}</p>
                   </div>
                 </Link>
               ))}
@@ -329,7 +327,7 @@ function ClusterManagerDashboard() {
         </div>
         <div className="divide-y divide-base-200">
           {recentActivity.length === 0 ? (
-            <div className="p-6 text-center text-base-content/60">
+            <div className="p-6 text-center text-base-content">
               No recent contributions
             </div>
           ) : (
@@ -338,22 +336,22 @@ function ClusterManagerDashboard() {
                 key={activity.id}
                 className="flex items-center gap-4 p-4 hover:bg-base-50"
               >
-                <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-success flex items-center justify-center shrink-0">
                   <ArrowDownRight className="w-5 h-5 text-success" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-base-content truncate">
+                  <p className="text-base font-medium text-base-content truncate">
                     {activity.contributor?.name ?? "Unknown"}
                   </p>
-                  <p className="text-xs text-base-content/60">
+                  <p className="text-sm text-base-content">
                     Contribution received
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-medium text-success">
+                  <p className="text-base font-medium text-success">
                     {formatCurrency(activity.amount)}
                   </p>
-                  <p className="text-xs text-base-content/40">
+                  <p className="text-sm text-base-content">
                     {new Date(activity.created_at).toLocaleDateString()}
                   </p>
                 </div>

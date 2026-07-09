@@ -60,10 +60,13 @@ function ConfirmResetPage() {
         <div className="card bg-base-100 shadow-xl w-full max-w-md">
           <div className="card-body text-center">
             <h2 className="text-xl font-semibold text-error">Invalid link</h2>
-            <p className="text-base-content/60 text-sm">
+            <p className="text-base-content text-base">
               This password reset link is missing or invalid.
             </p>
-            <Link to="/auth/reset-password/request" className="btn btn-primary mt-4">
+            <Link
+              to="/auth/reset-password/request"
+              className="btn btn-primary mt-4"
+            >
               Request a new link
             </Link>
           </div>
@@ -84,7 +87,7 @@ function ConfirmResetPage() {
             />
           </div>
           <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
-          <p className="text-base-content/60 mt-1">Digital Cooperative Savings</p>
+          <p className="text-base-content mt-1">Digital Cooperative Savings</p>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
@@ -92,7 +95,7 @@ function ConfirmResetPage() {
             <h2 className="text-xl font-semibold text-base-content mb-0">
               Set new password
             </h2>
-            <p className="text-base-content/60 text-sm mb-2">
+            <p className="text-base-content text-base mb-2">
               Choose a strong password for your account.
             </p>
 
@@ -113,20 +116,26 @@ function ConfirmResetPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content hover:text-base-content"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
                 {errors.newPassword && (
-                  <p className="fieldset-label text-error text-xs mt-1">
+                  <p className="fieldset-label text-error text-sm mt-1">
                     {errors.newPassword.message}
                   </p>
                 )}
               </fieldset>
 
               <fieldset className="fieldset">
-                <legend className="fieldset-legend">Confirm new password</legend>
+                <legend className="fieldset-legend">
+                  Confirm new password
+                </legend>
                 <div className="relative">
                   <input
                     type={showConfirm ? "text" : "password"}
@@ -138,13 +147,17 @@ function ConfirmResetPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content hover:text-base-content"
                   >
-                    {showConfirm ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showConfirm ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="fieldset-label text-error text-xs mt-1">
+                  <p className="fieldset-label text-error text-sm mt-1">
                     {errors.confirmPassword.message}
                   </p>
                 )}
@@ -169,7 +182,7 @@ function ConfirmResetPage() {
             <div className="mt-4 text-center">
               <Link
                 to="/home/auth/login"
-                className="text-sm text-base-content/60 hover:text-base-content inline-flex items-center gap-1"
+                className="text-base text-base-content hover:text-base-content inline-flex items-center gap-1"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Back to sign in

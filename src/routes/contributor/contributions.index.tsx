@@ -22,12 +22,60 @@ interface Contribution {
 }
 
 const mockContributions: Contribution[] = [
-  { id: 1, group_name: "Lagos Savers", amount: 10000, status: "completed", is_late: false, contribution_type: "auto", created_at: "2026-07-01" },
-  { id: 2, group_name: "Victoria Island Circle", amount: 25000, status: "pending", is_late: false, contribution_type: "manual", created_at: "2026-06-28" },
-  { id: 3, group_name: "Lagos Savers", amount: 10000, status: "completed", is_late: true, contribution_type: "auto", created_at: "2026-06-21" },
-  { id: 4, group_name: "Ibadan Cooperative", amount: 5000, status: "failed", is_late: false, contribution_type: "manual", created_at: "2026-06-14" },
-  { id: 5, group_name: "Lagos Savers", amount: 10000, status: "completed", is_late: false, contribution_type: "auto", created_at: "2026-06-07" },
-  { id: 6, group_name: "Victoria Island Circle", amount: 25000, status: "completed", is_late: false, contribution_type: "auto", created_at: "2026-05-30" },
+  {
+    id: 1,
+    group_name: "Lagos Savers",
+    amount: 10000,
+    status: "completed",
+    is_late: false,
+    contribution_type: "auto",
+    created_at: "2026-07-01",
+  },
+  {
+    id: 2,
+    group_name: "Victoria Island Circle",
+    amount: 25000,
+    status: "pending",
+    is_late: false,
+    contribution_type: "manual",
+    created_at: "2026-06-28",
+  },
+  {
+    id: 3,
+    group_name: "Lagos Savers",
+    amount: 10000,
+    status: "completed",
+    is_late: true,
+    contribution_type: "auto",
+    created_at: "2026-06-21",
+  },
+  {
+    id: 4,
+    group_name: "Ibadan Cooperative",
+    amount: 5000,
+    status: "failed",
+    is_late: false,
+    contribution_type: "manual",
+    created_at: "2026-06-14",
+  },
+  {
+    id: 5,
+    group_name: "Lagos Savers",
+    amount: 10000,
+    status: "completed",
+    is_late: false,
+    contribution_type: "auto",
+    created_at: "2026-06-07",
+  },
+  {
+    id: 6,
+    group_name: "Victoria Island Circle",
+    amount: 25000,
+    status: "completed",
+    is_late: false,
+    contribution_type: "auto",
+    created_at: "2026-05-30",
+  },
 ];
 
 const statusIcon: Record<ContributionStatus, ReactElement> = {
@@ -49,7 +97,9 @@ function ContributorContributions() {
   const [statusFilter, setStatusFilter] = useState("all");
 
   const filtered = mockContributions.filter((c) => {
-    const matchesSearch = c.group_name.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = c.group_name
+      .toLowerCase()
+      .includes(search.toLowerCase());
     const matchesStatus = statusFilter === "all" || c.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -60,18 +110,23 @@ function ContributorContributions() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="My Contributions" subtitle="Track all your savings contributions" />
+      <PageHeader
+        title="My Contributions"
+        subtitle="Track all your savings contributions"
+      />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">Total Saved</p>
-            <p className="text-xl font-bold text-base-content">{formatCurrency(totalSaved)}</p>
+            <p className="text-sm text-base-content">Total Saved</p>
+            <p className="text-xl font-bold text-base-content">
+              {formatCurrency(totalSaved)}
+            </p>
           </div>
         </div>
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">Completed</p>
+            <p className="text-sm text-base-content">Completed</p>
             <p className="text-xl font-bold text-success">
               {mockContributions.filter((c) => c.status === "completed").length}
             </p>
@@ -79,7 +134,7 @@ function ContributorContributions() {
         </div>
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">Pending</p>
+            <p className="text-sm text-base-content">Pending</p>
             <p className="text-xl font-bold text-warning">
               {mockContributions.filter((c) => c.status === "pending").length}
             </p>
@@ -87,7 +142,7 @@ function ContributorContributions() {
         </div>
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">Late Payments</p>
+            <p className="text-sm text-base-content">Late Payments</p>
             <p className="text-xl font-bold text-error">
               {mockContributions.filter((c) => c.is_late).length}
             </p>
@@ -99,7 +154,7 @@ function ContributorContributions() {
         <div className="card-body p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <label className="input flex-1 flex items-center gap-2">
-              <Search className="w-4 h-4 text-base-content/40 shrink-0" />
+              <Search className="w-4 h-4 text-base-content shrink-0" />
               <input
                 type="text"
                 placeholder="Search by group..."
@@ -134,7 +189,7 @@ function ContributorContributions() {
             {filtered.map((c) => (
               <div
                 key={c.id}
-                className="flex items-center gap-4 px-5 py-4 hover:bg-base-200/40 transition-colors"
+                className="flex items-center gap-4 px-5 py-4 hover:bg-base-200 transition-colors"
               >
                 <div className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center shrink-0">
                   {statusIcon[c.status]}
@@ -142,21 +197,31 @@ function ContributorContributions() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-medium text-base-content">{c.group_name}</p>
-                    {c.is_late && <span className="badge badge-error badge-sm">Late</span>}
+                    <p className="font-medium text-base-content">
+                      {c.group_name}
+                    </p>
+                    {c.is_late && (
+                      <span className="badge badge-error badge-sm">Late</span>
+                    )}
                   </div>
-                  <p className="text-xs text-base-content/60 mt-0.5">
-                    {c.contribution_type === "auto" ? "Auto debit" : "Manual payment"}
+                  <p className="text-sm text-base-content mt-0.5">
+                    {c.contribution_type === "auto"
+                      ? "Auto debit"
+                      : "Manual payment"}
                   </p>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <p className="font-semibold text-base-content">{formatCurrency(c.amount)}</p>
+                  <p className="font-semibold text-base-content">
+                    {formatCurrency(c.amount)}
+                  </p>
                   <div className="flex items-center justify-end gap-2 mt-0.5">
-                    <span className={`badge badge-sm ${statusBadge[c.status]} capitalize`}>
+                    <span
+                      className={`badge badge-sm ${statusBadge[c.status]} capitalize`}
+                    >
                       {c.status}
                     </span>
-                    <p className="text-xs text-base-content/40">
+                    <p className="text-sm text-base-content">
                       {new Date(c.created_at).toLocaleDateString()}
                     </p>
                   </div>

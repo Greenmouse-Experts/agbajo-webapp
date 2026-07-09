@@ -61,7 +61,7 @@ function ContributorDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={DollarSign}
-          iconClass="bg-secondary/10 text-secondary"
+          iconClass="bg-secondary text-secondary"
           value={formatCurrency(240000)}
           label="Total Contributions"
           trend={
@@ -72,7 +72,7 @@ function ContributorDashboard() {
         />
         <StatCard
           icon={Wallet}
-          iconClass="bg-success/10 text-success"
+          iconClass="bg-success text-success"
           value={formatCurrency(85000)}
           label="Wallet Balance"
           link={{
@@ -83,7 +83,7 @@ function ContributorDashboard() {
         />
         <StatCard
           icon={Folder}
-          iconClass="bg-warning/10 text-warning"
+          iconClass="bg-warning text-warning"
           value={3}
           label="Active Groups"
           link={{
@@ -94,7 +94,7 @@ function ContributorDashboard() {
         />
         <StatCard
           icon={Clock}
-          iconClass="bg-error/10 text-error"
+          iconClass="bg-error text-error"
           value={2}
           label="Pending Payouts"
           link={{
@@ -109,7 +109,7 @@ function ContributorDashboard() {
         <AlertTriangle className="w-5 h-5" />
         <div>
           <p className="font-medium">Payment Performance Notice</p>
-          <p className="text-sm opacity-80">
+          <p className="text-base opacity-80">
             You have 1 missed and 2 late payments. This affects your rating.
           </p>
         </div>
@@ -122,7 +122,7 @@ function ContributorDashboard() {
               <h3 className="font-semibold text-base-content">
                 Contribution Activity
               </h3>
-              <p className="text-xs text-base-content/60">Last 7 days</p>
+              <p className="text-sm text-base-content">Last 7 days</p>
             </div>
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -186,23 +186,21 @@ function ContributorDashboard() {
                   4.8
                 </span>
               </div>
-              <p className="font-medium text-base-content text-sm">
+              <p className="font-medium text-base-content text-base">
                 Your Rating
               </p>
-              <p className="text-xs text-base-content/60 text-center">
+              <p className="text-sm text-base-content text-center">
                 Based on contribution consistency
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-xl bg-base-200 p-3 text-center">
                 <p className="text-xl font-bold text-success">98%</p>
-                <p className="text-xs text-base-content/60 mt-0.5">
-                  On-time rate
-                </p>
+                <p className="text-sm text-base-content mt-0.5">On-time rate</p>
               </div>
               <div className="rounded-xl bg-base-200 p-3 text-center">
                 <p className="text-xl font-bold text-secondary">3</p>
-                <p className="text-xs text-base-content/60 mt-0.5">
+                <p className="text-sm text-base-content mt-0.5">
                   Active groups
                 </p>
               </div>
@@ -220,9 +218,7 @@ function ContributorDashboard() {
             <div key={item.id} className="flex items-center gap-4 px-6 py-4">
               <div
                 className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
-                  item.status === "completed"
-                    ? "bg-success/10"
-                    : "bg-warning/10"
+                  item.status === "completed" ? "bg-success" : "bg-warning"
                 }`}
               >
                 {item.status === "completed" ? (
@@ -232,16 +228,16 @@ function ContributorDashboard() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-base-content">
+                <p className="text-base font-medium text-base-content">
                   Contribution
                 </p>
-                <p className="text-xs text-base-content/60 capitalize">
+                <p className="text-sm text-base-content capitalize">
                   {item.status}
                 </p>
               </div>
               <div className="text-right shrink-0">
                 <p
-                  className={`text-sm font-semibold ${
+                  className={`text-base font-semibold ${
                     item.status === "completed"
                       ? "text-success"
                       : "text-warning"
@@ -249,7 +245,7 @@ function ContributorDashboard() {
                 >
                   {formatCurrency(item.amount)}
                 </p>
-                <p className="text-xs text-base-content/40">
+                <p className="text-sm text-base-content">
                   {new Date(item.date).toLocaleDateString()}
                 </p>
               </div>

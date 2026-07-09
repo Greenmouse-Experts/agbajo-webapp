@@ -9,11 +9,7 @@ export const Route = createFileRoute("/admin/complaints/")({
 });
 
 type ComplaintStatus =
-  | "open"
-  | "in_progress"
-  | "resolved"
-  | "escalated"
-  | "closed";
+  "open" | "in_progress" | "resolved" | "escalated" | "closed";
 type Priority = "low" | "normal" | "high" | "urgent";
 
 interface Complaint {
@@ -133,7 +129,7 @@ function AdminComplaints() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-base-content">Complaints</h1>
-        <p className="text-base-content/60 mt-1">
+        <p className="text-base-content mt-1">
           Handle user complaints and escalations
         </p>
       </div>
@@ -141,7 +137,7 @@ function AdminComplaints() {
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search complaints..."
@@ -180,14 +176,12 @@ function AdminComplaints() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No complaints found
           </h3>
-          <p className="text-base-content/60">
-            All complaints have been resolved
-          </p>
+          <p className="text-base-content">All complaints have been resolved</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -200,24 +194,24 @@ function AdminComplaints() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center shrink-0">
-                    <MessageSquare className="w-5 h-5 text-base-content/50" />
+                    <MessageSquare className="w-5 h-5 text-base-content" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-base-content">
                       {complaint.title}
                     </h3>
-                    <p className="text-sm text-base-content/60 mt-1 line-clamp-2">
+                    <p className="text-base text-base-content mt-1 line-clamp-2">
                       {complaint.description}
                     </p>
-                    <div className="flex items-center gap-2 mt-3 text-sm text-base-content/60 flex-wrap">
+                    <div className="flex items-center gap-2 mt-3 text-base text-base-content flex-wrap">
                       <span>{complaint.profile?.full_name ?? "—"}</span>
                       {complaint.group && (
                         <>
-                          <span className="text-base-content/30">|</span>
+                          <span className="text-base-content">|</span>
                           <span>{complaint.group.group_name}</span>
                         </>
                       )}
-                      <span className="text-base-content/30">|</span>
+                      <span className="text-base-content">|</span>
                       <span>
                         {new Date(complaint.created_at).toLocaleDateString()}
                       </span>
@@ -246,25 +240,25 @@ function AdminComplaints() {
             </div>
 
             <div className="space-y-6 mt-6">
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 text-base">
                 <div>
-                  <p className="text-base-content/60">Submitted by</p>
+                  <p className="text-base-content">Submitted by</p>
                   <p className="font-medium">
                     {selected.profile?.full_name ?? "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-base-content/60">Category</p>
+                  <p className="text-base-content">Category</p>
                   <p className="font-medium capitalize">{selected.category}</p>
                 </div>
                 <div>
-                  <p className="text-base-content/60">Group</p>
+                  <p className="text-base-content">Group</p>
                   <p className="font-medium">
                     {selected.group?.group_name ?? "N/A"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-base-content/60">Submitted</p>
+                  <p className="text-base-content">Submitted</p>
                   <p className="font-medium">
                     {new Date(selected.created_at).toLocaleDateString()}
                   </p>
@@ -272,18 +266,18 @@ function AdminComplaints() {
               </div>
 
               <div className="card bg-base-200 p-4">
-                <h4 className="text-sm font-medium text-base-content/60 mb-2">
+                <h4 className="text-base font-medium text-base-content mb-2">
                   Description
                 </h4>
-                <p className="text-base-content/80">{selected.description}</p>
+                <p className="text-base-content">{selected.description}</p>
               </div>
 
               {selected.response_message && (
-                <div className="card bg-success/10 border border-success/30 p-4">
-                  <h4 className="text-sm font-medium text-success mb-2">
+                <div className="card bg-success border border-success p-4">
+                  <h4 className="text-base font-medium text-success mb-2">
                     Admin Response
                   </h4>
-                  <p className="text-base-content/80">
+                  <p className="text-base-content">
                     {selected.response_message}
                   </p>
                 </div>

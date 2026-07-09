@@ -56,7 +56,7 @@ function ClusterManagerIssues() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-base-content">Issues</h1>
-          <p className="text-base-content/60 mt-1">Report issues to admin</p>
+          <p className="text-base-content mt-1">Report issues to admin</p>
         </div>
         <button
           onClick={() => modalRef.current?.showModal()}
@@ -68,13 +68,13 @@ function ClusterManagerIssues() {
       </div>
 
       <div className="card bg-base-100 shadow p-12 text-center">
-        <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 rounded-full bg-success flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="w-8 h-8 text-success" />
         </div>
         <h3 className="text-lg font-medium text-base-content mb-1">
           No Active Issues
         </h3>
-        <p className="text-base-content/60">
+        <p className="text-base-content">
           Report any issues you encounter to the admin
         </p>
       </div>
@@ -82,7 +82,7 @@ function ClusterManagerIssues() {
       <dialog ref={modalRef} className="modal">
         <div className="modal-box">
           <h3 className="text-xl font-semibold">Report an Issue</h3>
-          <p className="text-sm text-base-content/60 mt-1">
+          <p className="text-base text-base-content mt-1">
             Describe the issue for admin review
           </p>
 

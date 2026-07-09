@@ -72,7 +72,9 @@ function ClusterManagerGroups() {
     onSuccess: () => {
       modalRef.current?.close();
       setCreateForm(defaultForm);
-      queryClient.invalidateQueries({ queryKey: ["cluster-manager", "groups"] });
+      queryClient.invalidateQueries({
+        queryKey: ["cluster-manager", "groups"],
+      });
     },
   });
 
@@ -96,7 +98,7 @@ function ClusterManagerGroups() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-base-content">My Groups</h1>
-          <p className="text-base-content/60 mt-1">
+          <p className="text-base-content mt-1">
             Manage your Ajo savings groups
           </p>
         </div>
@@ -111,7 +113,7 @@ function ClusterManagerGroups() {
 
       <div className="card bg-base-100 shadow p-4">
         <label className="input w-full">
-          <Search className="w-5 h-5 text-base-content/40" />
+          <Search className="w-5 h-5 text-base-content" />
           <input
             type="text"
             placeholder="Search groups..."
@@ -128,12 +130,12 @@ function ClusterManagerGroups() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No groups found
           </h3>
-          <p className="text-base-content/60">
+          <p className="text-base-content">
             Create your first group to get started
           </p>
         </div>
@@ -179,9 +181,9 @@ function ClusterManagerGroups() {
                 ].map(({ icon, label, value }) => (
                   <div
                     key={label}
-                    className="flex items-center justify-between text-sm"
+                    className="flex items-center justify-between text-base"
                   >
-                    <div className="flex items-center gap-2 text-base-content/60">
+                    <div className="flex items-center gap-2 text-base-content">
                       {icon}
                       {label}
                     </div>
@@ -191,8 +193,8 @@ function ClusterManagerGroups() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-base-200">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-base-content/60">Total Collected</span>
+                <div className="flex items-center justify-between text-base">
+                  <span className="text-base-content">Total Collected</span>
                   <span className="font-semibold text-emerald-600">
                     {formatCurrency(group.total_contributions)}
                   </span>
@@ -206,7 +208,7 @@ function ClusterManagerGroups() {
       <dialog ref={modalRef} className="modal">
         <div className="modal-box max-w-lg">
           <h3 className="text-xl font-semibold">Create New Group</h3>
-          <p className="text-sm text-base-content/60 mt-1">
+          <p className="text-base text-base-content mt-1">
             Set up a new Ajo savings group
           </p>
 
@@ -229,7 +231,7 @@ function ClusterManagerGroups() {
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Contribution Amount</legend>
                 <label className="input w-full">
-                  <span className="text-base-content/50">₦</span>
+                  <span className="text-base-content">₦</span>
                   <input
                     type="number"
                     placeholder="5000"

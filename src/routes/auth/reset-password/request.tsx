@@ -53,7 +53,7 @@ function RequestResetPage() {
             />
           </div>
           <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
-          <p className="text-base-content/60 mt-1">Digital Cooperative Savings</p>
+          <p className="text-base-content mt-1">Digital Cooperative Savings</p>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
@@ -61,17 +61,21 @@ function RequestResetPage() {
             {sent ? (
               <div className="text-center py-4 space-y-4">
                 <div className="flex justify-center">
-                  <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-success flex items-center justify-center">
                     <CheckCircle className="w-8 h-8 text-success" />
                   </div>
                 </div>
-                <h2 className="text-xl font-semibold text-base-content">Check your email</h2>
-                <p className="text-base-content/60 text-sm">
+                <h2 className="text-xl font-semibold text-base-content">
+                  Check your email
+                </h2>
+                <p className="text-base-content text-base">
                   We sent a password reset link to{" "}
-                  <span className="font-medium text-base-content">{submittedEmail}</span>.
-                  Follow the link to set a new password.
+                  <span className="font-medium text-base-content">
+                    {submittedEmail}
+                  </span>
+                  . Follow the link to set a new password.
                 </p>
-                <p className="text-xs text-base-content/40">
+                <p className="text-sm text-base-content">
                   Didn't receive it? Check your spam folder or{" "}
                   <button
                     type="button"
@@ -88,7 +92,7 @@ function RequestResetPage() {
                 <h2 className="text-xl font-semibold text-base-content mb-0">
                   Reset your password
                 </h2>
-                <p className="text-base-content/60 text-sm mb-2">
+                <p className="text-base-content text-base mb-2">
                   Enter your email and we'll send you a reset link.
                 </p>
 
@@ -106,10 +110,10 @@ function RequestResetPage() {
                         autoComplete="email"
                         {...register("email")}
                       />
-                      <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" />
+                      <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-base-content" />
                     </div>
                     {errors.email && (
-                      <p className="fieldset-label text-error text-xs mt-1">
+                      <p className="fieldset-label text-error text-sm mt-1">
                         {errors.email.message}
                       </p>
                     )}
@@ -136,7 +140,7 @@ function RequestResetPage() {
             <div className="mt-4 text-center">
               <Link
                 to="/home/auth/login"
-                className="text-sm text-base-content/60 hover:text-base-content inline-flex items-center gap-1"
+                className="text-base text-base-content hover:text-base-content inline-flex items-center gap-1"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Back to sign in

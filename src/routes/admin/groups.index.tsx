@@ -156,7 +156,7 @@ function AdminGroups() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-base-content">Ajo Groups</h1>
-          <p className="text-base-content/60 mt-1">Manage all savings groups</p>
+          <p className="text-base-content mt-1">Manage all savings groups</p>
         </div>
         <button
           onClick={() => createModalRef.current?.showModal()}
@@ -170,7 +170,7 @@ function AdminGroups() {
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search groups..."
@@ -199,12 +199,12 @@ function AdminGroups() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No groups found
           </h3>
-          <p className="text-base-content/60">
+          <p className="text-base-content">
             Try adjusting your search or create a new group
           </p>
         </div>
@@ -229,26 +229,26 @@ function AdminGroups() {
                   <td className="font-medium">{group.group_name}</td>
                   <td>
                     <div>{group.cluster_manager?.name ?? "—"}</div>
-                    <div className="text-xs text-base-content/50">
+                    <div className="text-sm text-base-content">
                       {group.cluster_manager?.email}
                     </div>
                   </td>
                   <td>
                     <div className="flex items-center gap-1">
-                      <Users className="w-4 h-4 text-base-content/40" />
+                      <Users className="w-4 h-4 text-base-content" />
                       {group.member_count}/{group.max_members}
                     </div>
                   </td>
                   <td className="font-medium">
                     {formatCurrency(group.contribution_amount)}
                   </td>
-                  <td className="capitalize text-base-content/70">
+                  <td className="capitalize text-base-content">
                     {group.frequency}
                   </td>
                   <td>
                     <StatusBadge status={group.status} />
                   </td>
-                  <td className="text-sm text-base-content/60">
+                  <td className="text-base text-base-content">
                     {new Date(group.created_at).toLocaleDateString()}
                   </td>
                   <td>
@@ -270,7 +270,7 @@ function AdminGroups() {
       <dialog ref={createModalRef} className="modal">
         <div className="modal-box max-w-lg">
           <h3 className="text-xl font-semibold">Create New Group</h3>
-          <p className="text-sm text-base-content/60 mt-1">
+          <p className="text-base text-base-content mt-1">
             Set up a new Ajo savings group
           </p>
 
@@ -293,7 +293,7 @@ function AdminGroups() {
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Contribution Amount</legend>
                 <label className="input w-full">
-                  <span className="text-base-content/50">₦</span>
+                  <span className="text-base-content">₦</span>
                   <input
                     type="number"
                     placeholder="5000"
@@ -358,7 +358,9 @@ function AdminGroups() {
             </div>
 
             <fieldset className="fieldset">
-              <legend className="fieldset-legend">Assign Cluster Manager</legend>
+              <legend className="fieldset-legend">
+                Assign Cluster Manager
+              </legend>
               <select
                 className="select w-full"
                 value={createForm.clusterManagerId}
@@ -414,7 +416,7 @@ function AdminGroups() {
                 <h3 className="text-xl font-semibold">
                   {selectedGroup.group_name}
                 </h3>
-                <p className="text-sm text-base-content/60 mt-1">
+                <p className="text-base text-base-content mt-1">
                   Group Details
                 </p>
               </div>
@@ -446,9 +448,9 @@ function AdminGroups() {
                   },
                 ].map(({ icon, label, value }) => (
                   <div key={label} className="card bg-base-200 p-4">
-                    <div className="flex items-center gap-2 text-base-content/60 mb-1">
+                    <div className="flex items-center gap-2 text-base-content mb-1">
                       {icon}
-                      <span className="text-xs">{label}</span>
+                      <span className="text-sm">{label}</span>
                     </div>
                     <p className="text-lg font-bold capitalize">{value}</p>
                   </div>
@@ -456,30 +458,30 @@ function AdminGroups() {
               </div>
 
               <div className="card bg-base-200 p-4">
-                <h4 className="text-sm font-medium text-base-content/60 mb-3">
+                <h4 className="text-base font-medium text-base-content mb-3">
                   Group Information
                 </h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-4 text-base">
                   <div>
-                    <p className="text-base-content/60">Cluster Manager</p>
+                    <p className="text-base-content">Cluster Manager</p>
                     <p className="font-medium">
                       {selectedGroup.cluster_manager?.name ?? "—"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-base-content/60">Current Cycle</p>
+                    <p className="text-base-content">Current Cycle</p>
                     <p className="font-medium">
                       {selectedGroup.current_cycle ?? "—"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-base-content/60">Start Date</p>
+                    <p className="text-base-content">Start Date</p>
                     <p className="font-medium">
                       {new Date(selectedGroup.start_date).toLocaleDateString()}
                     </p>
                   </div>
                   <div>
-                    <p className="text-base-content/60">Created</p>
+                    <p className="text-base-content">Created</p>
                     <p className="font-medium">
                       {new Date(selectedGroup.created_at).toLocaleDateString()}
                     </p>
@@ -488,11 +490,11 @@ function AdminGroups() {
               </div>
 
               {selectedGroup.status_reason && (
-                <div className="card bg-warning/10 border border-warning/30 p-4">
-                  <h4 className="text-sm font-medium text-warning mb-1">
+                <div className="card bg-warning border border-warning p-4">
+                  <h4 className="text-base font-medium text-warning mb-1">
                     Status Reason
                   </h4>
-                  <p className="text-sm">{selectedGroup.status_reason}</p>
+                  <p className="text-base">{selectedGroup.status_reason}</p>
                 </div>
               )}
 

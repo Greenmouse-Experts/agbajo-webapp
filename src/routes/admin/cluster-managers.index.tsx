@@ -55,8 +55,7 @@ const StatusBadge = ({ status }: { status: VerificationStatus }) => {
 const StatusIcon = ({ status }: { status: VerificationStatus }) => {
   if (status === "verified")
     return <CheckCircle className="w-5 h-5 text-success" />;
-  if (status === "rejected")
-    return <XCircle className="w-5 h-5 text-error" />;
+  if (status === "rejected") return <XCircle className="w-5 h-5 text-error" />;
   return <Clock className="w-5 h-5 text-warning" />;
 };
 
@@ -98,7 +97,9 @@ function AdminClusterManagers() {
       }),
     onSuccess: () => {
       detailsModalRef.current?.close();
-      queryClient.invalidateQueries({ queryKey: ["admin", "cluster-managers"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "cluster-managers"],
+      });
     },
   });
 
@@ -138,7 +139,7 @@ function AdminClusterManagers() {
           <h1 className="text-2xl font-bold text-base-content">
             Cluster Managers
           </h1>
-          <p className="text-base-content/60 mt-1">
+          <p className="text-base-content mt-1">
             Manage and verify cluster managers
           </p>
         </div>
@@ -154,7 +155,7 @@ function AdminClusterManagers() {
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search by name or email..."
@@ -182,12 +183,12 @@ function AdminClusterManagers() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No cluster managers found
           </h3>
-          <p className="text-base-content/60">
+          <p className="text-base-content">
             Try adjusting your search or filter criteria
           </p>
         </div>
@@ -205,7 +206,7 @@ function AdminClusterManagers() {
                     <h3 className="font-semibold text-base-content">
                       {manager.profile?.full_name ?? "—"}
                     </h3>
-                    <p className="text-sm text-base-content/60">
+                    <p className="text-base text-base-content">
                       {manager.profile?.email}
                     </p>
                   </div>
@@ -214,15 +215,15 @@ function AdminClusterManagers() {
               </div>
 
               <div className="mt-4 space-y-2">
-                <div className="flex items-center gap-2 text-sm text-base-content/70">
+                <div className="flex items-center gap-2 text-base text-base-content">
                   <Phone className="w-4 h-4" />
                   {manager.profile?.phone_number ?? "No phone"}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-base-content/70">
+                <div className="flex items-center gap-2 text-base text-base-content">
                   <Calendar className="w-4 h-4" />
                   Joined {new Date(manager.created_at).toLocaleDateString()}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-base-content/70">
+                <div className="flex items-center gap-2 text-base text-base-content">
                   <Star className="w-4 h-4 text-amber-500" />
                   Rating: {manager.rating?.toFixed(1) ?? "0.0"}
                 </div>
@@ -230,15 +231,15 @@ function AdminClusterManagers() {
 
               <div className="mt-4 pt-4 border-t border-base-200">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-4 text-base">
                     <div>
-                      <p className="text-base-content/60">Groups</p>
+                      <p className="text-base-content">Groups</p>
                       <p className="font-semibold">
                         {manager.total_groups_managed ?? 0}
                       </p>
                     </div>
                     <div>
-                      <p className="text-base-content/60">Handled</p>
+                      <p className="text-base-content">Handled</p>
                       <p className="font-semibold">
                         ₦
                         {manager.total_contributions_handled?.toLocaleString() ??
@@ -312,7 +313,7 @@ function AdminClusterManagers() {
                   <h4 className="text-lg font-semibold">
                     {selected.profile?.full_name ?? "—"}
                   </h4>
-                  <p className="text-base-content/60">{selected.profile?.email}</p>
+                  <p className="text-base-content">{selected.profile?.email}</p>
                   <div className="mt-1">
                     <StatusBadge status={selected.verification_status} />
                   </div>
@@ -321,36 +322,34 @@ function AdminClusterManagers() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="card bg-base-200 p-4">
-                  <h4 className="text-sm font-medium text-base-content/60 mb-2">
+                  <h4 className="text-base font-medium text-base-content mb-2">
                     Contact Information
                   </h4>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-2 text-base">
                     <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-base-content/40" />
+                      <Phone className="w-4 h-4 text-base-content" />
                       {selected.profile?.phone_number ?? "Not provided"}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-base-content/40" />
+                      <Mail className="w-4 h-4 text-base-content" />
                       {selected.profile?.email}
                     </div>
                   </div>
                 </div>
 
                 <div className="card bg-base-200 p-4">
-                  <h4 className="text-sm font-medium text-base-content/60 mb-2">
+                  <h4 className="text-base font-medium text-base-content mb-2">
                     Performance
                   </h4>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-2 text-base">
                     <div className="flex items-center justify-between">
-                      <span className="text-base-content/60">
-                        Groups Managed
-                      </span>
+                      <span className="text-base-content">Groups Managed</span>
                       <span className="font-medium">
                         {selected.total_groups_managed ?? 0}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-base-content/60">Rating</span>
+                      <span className="text-base-content">Rating</span>
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                         <span className="font-medium">
@@ -363,32 +362,52 @@ function AdminClusterManagers() {
               </div>
 
               <div className="card bg-base-200 p-4">
-                <h4 className="text-sm font-medium text-base-content/60 mb-3">
+                <h4 className="text-base font-medium text-base-content mb-3">
                   KYC Documents
                 </h4>
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-2 gap-3 text-base">
                   {[
-                    { label: "NIN", value: selected.nin_number, text: (v: string | undefined) => v ? "Provided" : "Not provided" },
-                    { label: "BVN", value: selected.bvn_number, text: (v: string | undefined) => v ? "Provided" : "Not provided" },
-                    { label: "Face Image", value: selected.face_image_url, text: (v: string | undefined) => v ? "Uploaded" : "Missing" },
-                    { label: "Selfie", value: selected.selfie_image_url, text: (v: string | undefined) => v ? "Uploaded" : "Missing" },
+                    {
+                      label: "NIN",
+                      value: selected.nin_number,
+                      text: (v: string | undefined) =>
+                        v ? "Provided" : "Not provided",
+                    },
+                    {
+                      label: "BVN",
+                      value: selected.bvn_number,
+                      text: (v: string | undefined) =>
+                        v ? "Provided" : "Not provided",
+                    },
+                    {
+                      label: "Face Image",
+                      value: selected.face_image_url,
+                      text: (v: string | undefined) =>
+                        v ? "Uploaded" : "Missing",
+                    },
+                    {
+                      label: "Selfie",
+                      value: selected.selfie_image_url,
+                      text: (v: string | undefined) =>
+                        v ? "Uploaded" : "Missing",
+                    },
                   ].map(({ label, value, text }) => (
                     <div
                       key={label}
                       className="flex items-center justify-between p-2 rounded-lg bg-base-100"
                     >
-                      <span className="text-base-content/60">{label}</span>
+                      <span className="text-base-content">{label}</span>
                       <span
-                        className={`font-medium ${value ? "text-success" : "text-base-content/40"}`}
+                        className={`font-medium ${value ? "text-success" : "text-base-content"}`}
                       >
                         {text(value)}
                       </span>
                     </div>
                   ))}
                   <div className="flex items-center justify-between p-2 rounded-lg bg-base-100 col-span-2">
-                    <span className="text-base-content/60">Address</span>
+                    <span className="text-base-content">Address</span>
                     <span
-                      className={`font-medium ${selected.address ? "text-success" : "text-base-content/40"}`}
+                      className={`font-medium ${selected.address ? "text-success" : "text-base-content"}`}
                     >
                       {selected.address ?? "Not provided"}
                     </span>
@@ -402,7 +421,10 @@ function AdminClusterManagers() {
                     className="btn btn-success flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({ id: selected.id, status: "verified" })
+                      kycMutation.mutate({
+                        id: selected.id,
+                        status: "verified",
+                      })
                     }
                   >
                     <UserCheck className="w-4 h-4" />
@@ -412,7 +434,10 @@ function AdminClusterManagers() {
                     className="btn btn-error flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({ id: selected.id, status: "rejected" })
+                      kycMutation.mutate({
+                        id: selected.id,
+                        status: "rejected",
+                      })
                     }
                   >
                     <UserX className="w-4 h-4" />
@@ -438,7 +463,7 @@ function AdminClusterManagers() {
       <dialog ref={inviteModalRef} className="modal">
         <div className="modal-box">
           <h3 className="text-xl font-semibold">Invite Cluster Manager</h3>
-          <p className="text-sm text-base-content/60 mt-1">
+          <p className="text-base text-base-content mt-1">
             Send an invitation to onboard a new manager
           </p>
 

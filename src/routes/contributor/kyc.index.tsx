@@ -63,8 +63,8 @@ function UploadRow({
   return (
     <div className="flex items-center justify-between p-4 rounded-xl border border-base-200">
       <div>
-        <p className="font-medium text-base-content text-sm">{label}</p>
-        <p className="text-xs text-base-content/60 mt-0.5">{hint}</p>
+        <p className="font-medium text-base-content text-base">{label}</p>
+        <p className="text-sm text-base-content mt-0.5">{hint}</p>
       </div>
       <label className="btn btn-sm btn-outline cursor-pointer gap-1.5">
         {uploading ? (
@@ -125,7 +125,7 @@ function ContributorKYC() {
           <AlertCircle className="w-5 h-5" />
           <div>
             <p className="font-medium">KYC Verification Rejected</p>
-            <p className="text-sm opacity-80">
+            <p className="text-base opacity-80">
               Please review and update your documents. Ensure all information is
               accurate and documents are clear.
             </p>
@@ -138,14 +138,14 @@ function ContributorKYC() {
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body gap-5">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-secondary/10 flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-secondary flex items-center justify-center shrink-0">
                 <Shield className="w-5 h-5 text-secondary" />
               </div>
               <div>
                 <h3 className="font-semibold text-base-content">
                   Identity Documents
                 </h3>
-                <p className="text-xs text-base-content/60">
+                <p className="text-sm text-base-content">
                   Upload your verification documents
                 </p>
               </div>
@@ -197,14 +197,14 @@ function ContributorKYC() {
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body gap-5">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-success/10 flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-success flex items-center justify-center shrink-0">
                 <User className="w-5 h-5 text-success" />
               </div>
               <div>
                 <h3 className="font-semibold text-base-content">
                   Biometric Verification
                 </h3>
-                <p className="text-xs text-base-content/60">
+                <p className="text-sm text-base-content">
                   Upload face and selfie images
                 </p>
               </div>
@@ -233,14 +233,14 @@ function ContributorKYC() {
         <div className="card bg-base-100 border border-base-200 shadow-sm lg:col-span-2">
           <div className="card-body gap-5">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
+              <div className="w-11 h-11 rounded-xl bg-warning flex items-center justify-center shrink-0">
                 <MapPin className="w-5 h-5 text-warning" />
               </div>
               <div>
                 <h3 className="font-semibold text-base-content">
                   Address Verification
                 </h3>
-                <p className="text-xs text-base-content/60">
+                <p className="text-sm text-base-content">
                   Confirm your residential address
                 </p>
               </div>
@@ -260,7 +260,7 @@ function ContributorKYC() {
               </fieldset>
 
               <div className="flex flex-col gap-2">
-                <span className="fieldset-legend text-sm font-medium">
+                <span className="fieldset-legend text-base font-medium">
                   Address Proof Document
                 </span>
                 <UploadRow
@@ -294,10 +294,10 @@ function ContributorKYC() {
             ].map((item) => (
               <div
                 key={item.label}
-                className={`flex items-center gap-2 p-3 rounded-xl border text-sm ${
+                className={`flex items-center gap-2 p-3 rounded-xl border text-base ${
                   item.done
-                    ? "border-success/30 bg-success/5 text-success"
-                    : "border-base-200 text-base-content/40"
+                    ? "border-success bg-success/5 text-success"
+                    : "border-base-200 text-base-content"
                 }`}
               >
                 {item.done ? (

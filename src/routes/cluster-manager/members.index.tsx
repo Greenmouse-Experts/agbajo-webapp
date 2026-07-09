@@ -46,7 +46,7 @@ const formatCurrency = (amount = 0) =>
   }).format(amount);
 
 const Avatar = ({ name }: { name?: string }) => (
-  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white text-sm font-medium shrink-0">
+  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white text-base font-medium shrink-0">
     {(name?.[0] ?? "M").toUpperCase()}
   </div>
 );
@@ -78,7 +78,9 @@ function ClusterManagerMembers() {
     mutationFn: ({ id, status }: { id: string; status: MemberStatus }) =>
       apiClient.patch(`cluster-manager/members/${id}/status`, { status }),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["cluster-manager", "members"] }),
+      queryClient.invalidateQueries({
+        queryKey: ["cluster-manager", "members"],
+      }),
   });
 
   const inviteMutation = useMutation({
@@ -110,7 +112,7 @@ function ClusterManagerMembers() {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-base-content">Members</h1>
-          <p className="text-base-content/60 mt-1">
+          <p className="text-base-content mt-1">
             Manage members across your groups
           </p>
         </div>
@@ -126,7 +128,7 @@ function ClusterManagerMembers() {
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search by name or email..."
@@ -154,12 +156,12 @@ function ClusterManagerMembers() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No members found
           </h3>
-          <p className="text-base-content/60">Invite members to your groups</p>
+          <p className="text-base-content">Invite members to your groups</p>
         </div>
       ) : (
         <div className="card bg-base-100 shadow overflow-x-auto">
@@ -186,10 +188,10 @@ function ClusterManagerMembers() {
                       </span>
                     </div>
                   </td>
-                  <td className="text-base-content/70">
+                  <td className="text-base-content">
                     {member.profile?.email ?? "—"}
                   </td>
-                  <td className="text-base-content/70">
+                  <td className="text-base-content">
                     {member.group?.group_name ?? "—"}
                   </td>
                   <td className="font-medium">
@@ -248,7 +250,7 @@ function ClusterManagerMembers() {
       <dialog ref={modalRef} className="modal">
         <div className="modal-box">
           <h3 className="text-xl font-semibold">Invite Member</h3>
-          <p className="text-sm text-base-content/60 mt-1">
+          <p className="text-base text-base-content mt-1">
             Invite a contributor to a group
           </p>
 

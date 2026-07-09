@@ -53,7 +53,7 @@ const StatusBadge = ({ status }: { status: VerificationStatus }) => {
 
 const Avatar = ({ name, size = "sm" }: { name?: string; size?: "sm" | "lg" }) => (
   <div
-    className={`rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-medium shrink-0 ${size === "lg" ? "w-16 h-16 text-xl" : "w-8 h-8 text-sm"}`}
+    className={`rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-medium shrink-0 ${size === "lg" ? "w-16 h-16 text-xl" : "w-8 h-8 text-base"}`}
   >
     {(name?.[0] ?? "C").toUpperCase()}
   </div>
@@ -104,7 +104,7 @@ function AdminContributors() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-base-content">Contributors</h1>
-        <p className="text-base-content/60 mt-1">
+        <p className="text-base-content mt-1">
           Monitor all platform contributors
         </p>
       </div>
@@ -112,7 +112,7 @@ function AdminContributors() {
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content/40" />
+            <Search className="w-5 h-5 text-base-content" />
             <input
               type="text"
               placeholder="Search by name or email..."
@@ -140,12 +140,12 @@ function AdminContributors() {
       ) : filtered.length === 0 ? (
         <div className="card bg-base-100 shadow p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+            <AlertCircle className="w-8 h-8 text-base-content" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No contributors found
           </h3>
-          <p className="text-base-content/60">
+          <p className="text-base-content">
             Try adjusting your search criteria
           </p>
         </div>
@@ -175,10 +175,10 @@ function AdminContributors() {
                       </span>
                     </div>
                   </td>
-                  <td className="text-base-content/70">
+                  <td className="text-base-content">
                     {c.profile?.email ?? "—"}
                   </td>
-                  <td className="text-base-content/70">
+                  <td className="text-base-content">
                     {c.profile?.phone_number ?? "—"}
                   </td>
                   <td className="font-medium">
@@ -193,7 +193,7 @@ function AdminContributors() {
                   <td>
                     <StatusBadge status={c.verification_status} />
                   </td>
-                  <td className="text-sm text-base-content/60">
+                  <td className="text-base text-base-content">
                     {new Date(c.created_at).toLocaleDateString()}
                   </td>
                   <td>
@@ -223,7 +223,7 @@ function AdminContributors() {
                   <h4 className="text-lg font-semibold">
                     {selected.profile?.full_name ?? "—"}
                   </h4>
-                  <p className="text-base-content/60">{selected.profile?.email}</p>
+                  <p className="text-base-content">{selected.profile?.email}</p>
                   <div className="mt-1">
                     <StatusBadge status={selected.verification_status} />
                   </div>
@@ -232,28 +232,28 @@ function AdminContributors() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="card bg-base-200 p-4">
-                  <h4 className="text-sm font-medium text-base-content/60 mb-2">
+                  <h4 className="text-base font-medium text-base-content mb-2">
                     Contact Information
                   </h4>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-2 text-base">
                     <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-base-content/40" />
+                      <Phone className="w-4 h-4 text-base-content" />
                       {selected.profile?.phone_number ?? "Not provided"}
                     </div>
                     <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-base-content/40" />
+                      <Mail className="w-4 h-4 text-base-content" />
                       {selected.profile?.email}
                     </div>
                   </div>
                 </div>
 
                 <div className="card bg-base-200 p-4">
-                  <h4 className="text-sm font-medium text-base-content/60 mb-2">
+                  <h4 className="text-base font-medium text-base-content mb-2">
                     Performance
                   </h4>
-                  <div className="space-y-2 text-sm">
+                  <div className="space-y-2 text-base">
                     <div className="flex items-center justify-between">
-                      <span className="text-base-content/60">
+                      <span className="text-base-content">
                         Total Contributions
                       </span>
                       <span className="font-medium">
@@ -261,7 +261,7 @@ function AdminContributors() {
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-base-content/60">Rating</span>
+                      <span className="text-base-content">Rating</span>
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                         <span className="font-medium">
@@ -274,26 +274,26 @@ function AdminContributors() {
               </div>
 
               <div className="card bg-base-200 p-4">
-                <h4 className="text-sm font-medium text-base-content/60 mb-3">
+                <h4 className="text-base font-medium text-base-content mb-3">
                   Payment Statistics
                 </h4>
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-2 gap-3 text-base">
                   <div className="p-2 rounded-lg bg-base-100">
-                    <p className="text-base-content/60">Missed Payments</p>
+                    <p className="text-base-content">Missed Payments</p>
                     <p className="font-medium">{selected.missed_payments}</p>
                   </div>
                   <div className="p-2 rounded-lg bg-base-100">
-                    <p className="text-base-content/60">Late Payments</p>
+                    <p className="text-base-content">Late Payments</p>
                     <p className="font-medium">{selected.late_payments}</p>
                   </div>
                 </div>
               </div>
 
               <div className="card bg-base-200 p-4">
-                <h4 className="text-sm font-medium text-base-content/60 mb-3">
+                <h4 className="text-base font-medium text-base-content mb-3">
                   KYC Documents
                 </h4>
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-2 gap-3 text-base">
                   {[
                     { label: "NIN", value: selected.nin_number },
                     { label: "BVN", value: selected.bvn_number },
@@ -302,9 +302,9 @@ function AdminContributors() {
                       key={label}
                       className="flex items-center justify-between p-2 rounded-lg bg-base-100"
                     >
-                      <span className="text-base-content/60">{label}</span>
+                      <span className="text-base-content">{label}</span>
                       <span
-                        className={`font-medium ${value ? "text-success" : "text-base-content/40"}`}
+                        className={`font-medium ${value ? "text-success" : "text-base-content"}`}
                       >
                         {value ? "Provided" : "Not provided"}
                       </span>

@@ -27,29 +27,39 @@ function VerifyEmailPage() {
       <div className="card bg-base-100 shadow-xl w-full max-w-sm">
         <div className="card-body items-center text-center gap-4">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mx-auto">
-            <img src="/agbajo-logo.jpeg" alt="Agbajo Africa" className="w-full h-full object-contain" />
+            <img
+              src="/agbajo-logo.jpeg"
+              alt="Agbajo Africa"
+              className="w-full h-full object-contain"
+            />
           </div>
 
           {mutation.isPending && (
             <>
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-base-content">Verifying your email</h2>
-                <p className="text-base-content/60 text-sm mt-1">Please wait a moment...</p>
+                <h2 className="text-xl font-semibold text-base-content">
+                  Verifying your email
+                </h2>
+                <p className="text-base-content text-base mt-1">
+                  Please wait a moment...
+                </p>
               </div>
             </>
           )}
 
           {mutation.isSuccess && (
             <>
-              <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center">
                 <CheckCircle className="w-8 h-8 text-success" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-base-content">Email verified!</h2>
-                <p className="text-base-content/60 text-sm mt-1">
+                <h2 className="text-xl font-semibold text-base-content">
+                  Email verified!
+                </h2>
+                <p className="text-base-content text-base mt-1">
                   Your account is now active. You can sign in.
                 </p>
               </div>
@@ -61,18 +71,23 @@ function VerifyEmailPage() {
 
           {mutation.isError && (
             <>
-              <div className="w-16 h-16 bg-error/20 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-error rounded-full flex items-center justify-center">
                 <XCircle className="w-8 h-8 text-error" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-base-content">Verification failed</h2>
-                <p className="text-base-content/60 text-sm mt-1">
+                <h2 className="text-xl font-semibold text-base-content">
+                  Verification failed
+                </h2>
+                <p className="text-base-content text-base mt-1">
                   {(mutation.error as any)?.response?.data?.message ??
                     "This link may be invalid or expired."}
                 </p>
               </div>
               <div className="flex flex-col gap-2 w-full">
-                <button className="btn btn-primary w-full" onClick={() => mutation.mutate()}>
+                <button
+                  className="btn btn-primary w-full"
+                  onClick={() => mutation.mutate()}
+                >
                   Try again
                 </button>
                 <Link to="/home/auth/login" className="btn btn-ghost w-full">
@@ -84,12 +99,14 @@ function VerifyEmailPage() {
 
           {!token && (
             <>
-              <div className="w-16 h-16 bg-warning/20 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-warning rounded-full flex items-center justify-center">
                 <XCircle className="w-8 h-8 text-warning" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-base-content">Invalid link</h2>
-                <p className="text-base-content/60 text-sm mt-1">
+                <h2 className="text-xl font-semibold text-base-content">
+                  Invalid link
+                </h2>
+                <p className="text-base-content text-base mt-1">
                   No verification token found. Check the link in your email.
                 </p>
               </div>

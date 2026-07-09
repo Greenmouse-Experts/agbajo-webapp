@@ -91,11 +91,11 @@ function ClusterManagerLayout() {
                 className="btn btn-ghost flex items-center gap-2 px-2"
               >
                 <div className="avatar avatar-placeholder">
-                  <div className="bg-primary text-primary-content rounded-full w-8 text-sm font-semibold">
+                  <div className="bg-primary text-primary-content rounded-full w-8 text-base font-semibold">
                     <span>{initial}</span>
                   </div>
                 </div>
-                <span className="hidden sm:inline text-sm font-medium">
+                <span className="hidden sm:inline text-base font-medium">
                   {displayName}
                 </span>
               </div>
@@ -108,7 +108,7 @@ function ClusterManagerLayout() {
                     <p className="font-medium text-base-content">
                       {displayName}
                     </p>
-                    <p className="text-xs text-base-content/60">
+                    <p className="text-sm text-base-content">
                       {String((user as AUTHRECORD | null)?.user?.email ?? "")}
                     </p>
                   </div>
@@ -117,7 +117,7 @@ function ClusterManagerLayout() {
                 <li>
                   <button
                     onClick={logout}
-                    className="text-error hover:bg-error/10"
+                    className="text-error hover:bg-error"
                   >
                     <LogOut className="w-4 h-4" />
                     Sign out
@@ -151,7 +151,9 @@ function ClusterManagerLayout() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="font-bold text-base text-base-content">Agbajo</span>
+              <span className="font-bold text-base text-base-content">
+                Agbajo
+              </span>
             </div>
             <label
               htmlFor="cluster-manager-drawer"

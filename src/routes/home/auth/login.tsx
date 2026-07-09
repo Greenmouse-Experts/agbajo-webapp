@@ -47,7 +47,7 @@ function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen bg-linear-60 from-primary  to-primary/50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-60 from-primary  to-primary flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
@@ -58,9 +58,7 @@ function LoginPage() {
             />
           </div>
           <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
-          <p className="text-base-content/60 mt-1">
-            Digital Cooperative Savings
-          </p>
+          <p className="text-base-content mt-1">Digital Cooperative Savings</p>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
@@ -68,7 +66,7 @@ function LoginPage() {
             <h2 className="text-xl font-semibold text-base-content mb-0">
               Welcome back
             </h2>
-            <p className="text-base-content/60 text-sm mb-2">
+            <p className="text-base-content text-base mb-2">
               Sign in to your account to continue
             </p>
 
@@ -86,7 +84,7 @@ function LoginPage() {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <p className="fieldset-label text-error text-xs mt-1">
+                  <p className="fieldset-label text-error text-sm mt-1">
                     {errors.email.message}
                   </p>
                 )}
@@ -97,7 +95,7 @@ function LoginPage() {
                   Password
                   <Link
                     to="/auth/reset-password/request"
-                    className="text-xs text-primary hover:underline font-normal"
+                    className="text-sm text-primary hover:underline font-normal"
                   >
                     Forgot password?
                   </Link>
@@ -113,7 +111,7 @@ function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content hover:text-base-content"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -123,7 +121,7 @@ function LoginPage() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="fieldset-label text-error text-xs mt-1">
+                  <p className="fieldset-label text-error text-sm mt-1">
                     {errors.password.message}
                   </p>
                 )}
@@ -146,7 +144,7 @@ function LoginPage() {
             </form>
 
             <div className="mt-2 text-center">
-              <p className="text-sm text-base-content/60">
+              <p className="text-base text-base-content">
                 Don't have an account?{" "}
                 <Link
                   to="/home/auth/signup"
@@ -159,7 +157,7 @@ function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-sm text-primary-content mt-8">
+        <p className="text-center text-base text-primary-content mt-8">
           By continuing, you agree to our Terms of Service and Privacy Policy.
         </p>
       </div>

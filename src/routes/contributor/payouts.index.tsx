@@ -22,11 +22,51 @@ interface Payout {
 }
 
 const mockPayouts: Payout[] = [
-  { id: 1, group_name: "Lagos Savers", amount: 120000, status: "completed", payout_date: "2026-07-01", is_manual: false, created_at: "2026-07-01" },
-  { id: 2, group_name: "Victoria Island Circle", amount: 200000, status: "pending", payout_date: null, is_manual: false, created_at: "2026-06-20" },
-  { id: 3, group_name: "Ibadan Cooperative", amount: 100000, status: "completed", payout_date: "2026-06-05", is_manual: true, created_at: "2026-06-05" },
-  { id: 4, group_name: "Lagos Savers", amount: 120000, status: "failed", payout_date: null, is_manual: false, created_at: "2026-05-15" },
-  { id: 5, group_name: "Lagos Savers", amount: 120000, status: "completed", payout_date: "2026-07-02", is_manual: false, created_at: "2026-07-02" },
+  {
+    id: 1,
+    group_name: "Lagos Savers",
+    amount: 120000,
+    status: "completed",
+    payout_date: "2026-07-01",
+    is_manual: false,
+    created_at: "2026-07-01",
+  },
+  {
+    id: 2,
+    group_name: "Victoria Island Circle",
+    amount: 200000,
+    status: "pending",
+    payout_date: null,
+    is_manual: false,
+    created_at: "2026-06-20",
+  },
+  {
+    id: 3,
+    group_name: "Ibadan Cooperative",
+    amount: 100000,
+    status: "completed",
+    payout_date: "2026-06-05",
+    is_manual: true,
+    created_at: "2026-06-05",
+  },
+  {
+    id: 4,
+    group_name: "Lagos Savers",
+    amount: 120000,
+    status: "failed",
+    payout_date: null,
+    is_manual: false,
+    created_at: "2026-05-15",
+  },
+  {
+    id: 5,
+    group_name: "Lagos Savers",
+    amount: 120000,
+    status: "completed",
+    payout_date: "2026-07-02",
+    is_manual: false,
+    created_at: "2026-07-02",
+  },
 ];
 
 const statusIcon: Record<PayoutStatus, React.ReactElement> = {
@@ -66,19 +106,24 @@ function ContributorPayouts() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="My Payouts" subtitle="Track all your received payouts" />
+      <PageHeader
+        title="My Payouts"
+        subtitle="Track all your received payouts"
+      />
 
       {/* Summary stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">Total Received</p>
-            <p className="text-xl font-bold text-base-content">{formatCurrency(totalReceived)}</p>
+            <p className="text-sm text-base-content">Total Received</p>
+            <p className="text-xl font-bold text-base-content">
+              {formatCurrency(totalReceived)}
+            </p>
           </div>
         </div>
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">Completed</p>
+            <p className="text-sm text-base-content">Completed</p>
             <p className="text-xl font-bold text-success">
               {mockPayouts.filter((p) => p.status === "completed").length}
             </p>
@@ -86,7 +131,7 @@ function ContributorPayouts() {
         </div>
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">Pending</p>
+            <p className="text-sm text-base-content">Pending</p>
             <p className="text-xl font-bold text-warning">
               {mockPayouts.filter((p) => p.status === "pending").length}
             </p>
@@ -94,8 +139,10 @@ function ContributorPayouts() {
         </div>
         <div className="card bg-base-100 border border-base-200 shadow-sm">
           <div className="card-body p-4 gap-1">
-            <p className="text-xs text-base-content/60">This Month</p>
-            <p className="text-xl font-bold text-secondary">{formatCurrency(thisMonth)}</p>
+            <p className="text-sm text-base-content">This Month</p>
+            <p className="text-xl font-bold text-secondary">
+              {formatCurrency(thisMonth)}
+            </p>
           </div>
         </div>
       </div>
@@ -129,15 +176,17 @@ function ContributorPayouts() {
             {filtered.map((p) => (
               <div
                 key={p.id}
-                className="flex items-center gap-4 px-5 py-4 hover:bg-base-200/40 transition-colors"
+                className="flex items-center gap-4 px-5 py-4 hover:bg-base-200 transition-colors"
               >
                 <div className="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center shrink-0">
                   {statusIcon[p.status]}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-base-content">{p.group_name}</p>
-                  <p className="text-xs text-base-content/60 mt-0.5">
+                  <p className="font-medium text-base-content">
+                    {p.group_name}
+                  </p>
+                  <p className="text-sm text-base-content mt-0.5">
                     {p.payout_date
                       ? new Date(p.payout_date).toLocaleDateString()
                       : "Processing"}
@@ -145,13 +194,19 @@ function ContributorPayouts() {
                 </div>
 
                 <div className="text-right shrink-0">
-                  <p className="font-semibold text-success">{formatCurrency(p.amount)}</p>
+                  <p className="font-semibold text-success">
+                    {formatCurrency(p.amount)}
+                  </p>
                   <div className="flex items-center justify-end gap-2 mt-0.5">
-                    <span className={`badge badge-sm ${statusBadge[p.status]} capitalize`}>
+                    <span
+                      className={`badge badge-sm ${statusBadge[p.status]} capitalize`}
+                    >
                       {p.status}
                     </span>
                     {p.is_manual && (
-                      <span className="badge badge-sm badge-neutral">Manual</span>
+                      <span className="badge badge-sm badge-neutral">
+                        Manual
+                      </span>
                     )}
                   </div>
                 </div>
