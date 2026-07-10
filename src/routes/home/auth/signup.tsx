@@ -1,11 +1,11 @@
-import { useState } from "react";
+import {} from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import apiClient from "#/api/simpleApi";
 import SimpleSelect from "#/components/modals/inputs/SimpleSelect";
 import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
@@ -32,7 +32,6 @@ const schema = z
 type FormValues = z.infer<typeof schema>;
 
 function SignupPage() {
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const methods = useForm<FormValues>({

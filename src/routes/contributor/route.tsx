@@ -16,6 +16,7 @@ import {
   LogOut,
   Menu,
   Bell,
+  Settings,
   X,
 } from "lucide-react";
 import {
@@ -124,7 +125,7 @@ function ContributorLayout() {
                     <p className="font-medium text-base-content">
                       {displayName}
                     </p>
-                    <p className="text-sm text-base-content">
+                    <p className="text-sm text-base-content truncate max-w-full">
                       {String((user as AUTHRECORD | null)?.user?.email ?? "")}
                     </p>
                   </div>
@@ -199,10 +200,15 @@ function ContributorLayout() {
             </ul>
           </nav>
 
-          <div className="p-4 border-t border-base-200 ">
-            <span className="badge badge-warning badge-outline">
-              Contributor
-            </span>
+          <div className="p-3 border-t border-base-200">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <Link
+              to={"/contributor/settings" as any}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-200 text-base-content/60 hover:text-base-content text-sm font-medium transition-colors w-full"
+            >
+              <Settings className="w-4 h-4" />
+              Settings
+            </Link>
           </div>
         </div>
       </div>
