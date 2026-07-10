@@ -23,7 +23,10 @@ export default function ProfileSettings() {
     },
   });
 
-  const { handleSubmit, formState: { isDirty } } = methods;
+  const {
+    handleSubmit,
+    formState: { isDirty },
+  } = methods;
 
   const mutation = useMutation({
     mutationFn: (data: ProfileForm) => apiClient.patch("auth/me", data),
@@ -43,10 +46,14 @@ export default function ProfileSettings() {
   });
 
   return (
-    <div className="max-w-lg mx-auto space-y-6">
+    <div className=" mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-base-content">Profile Settings</h1>
-        <p className="text-base-content/60 mt-1">Update your account information</p>
+        <h1 className="text-2xl font-bold text-base-content">
+          Profile Settings
+        </h1>
+        <p className="text-base-content/60 mt-1">
+          Update your account information
+        </p>
       </div>
 
       <div className="card bg-base-100 shadow-sm p-6">
@@ -55,13 +62,20 @@ export default function ProfileSettings() {
             {(user?.user?.name?.[0] ?? "U").toUpperCase()}
           </div>
           <div>
-            <p className="font-semibold text-base-content">{user?.user?.name ?? "—"}</p>
-            <p className="text-sm text-base-content/60">{user?.user?.email ?? "—"}</p>
+            <p className="font-semibold text-base-content">
+              {user?.user?.name ?? "—"}
+            </p>
+            <p className="text-sm text-base-content/60">
+              {user?.user?.email ?? "—"}
+            </p>
           </div>
         </div>
 
         <FormProvider {...methods}>
-          <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
+          <form
+            onSubmit={handleSubmit((data) => mutation.mutate(data))}
+            className="space-y-4"
+          >
             <SimpleInput
               label="Full Name"
               placeholder="Enter your full name"
@@ -91,7 +105,9 @@ export default function ProfileSettings() {
                   disabled
                 />
               </div>
-              <p className="text-xs text-base-content/40">Email cannot be changed</p>
+              <p className="text-xs text-base-content/40">
+                Email cannot be changed
+              </p>
             </div>
 
             <div className="pt-2">
