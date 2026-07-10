@@ -1,14 +1,7 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Search,
-  Plus,
-  Users,
-  DollarSign,
-  Calendar,
-  AlertCircle,
-} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Search, Users, DollarSign, Calendar, AlertCircle } from "lucide-react";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
 
 export const Route = createFileRoute("/cluster-manager/groups/")({
@@ -30,14 +23,6 @@ interface Group {
   created_at: string;
 }
 
-const defaultForm = {
-  groupName: "",
-  contributionAmount: "",
-  frequency: "weekly" as ContributionFrequency,
-  maxMembers: "10",
-  startDate: "",
-};
-
 const formatCurrency = (amount = 0) =>
   new Intl.NumberFormat("en-NG", {
     style: "currency",
@@ -53,10 +38,7 @@ const statusBadgeClass: Record<GroupStatus, string> = {
 };
 
 function ClusterManagerGroups() {
-  const queryClient = useQueryClient();
-  const modalRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [createForm, setCreateForm] = useState(defaultForm);
 
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ["cluster-manager", "groups"],
@@ -66,32 +48,9 @@ function ClusterManagerGroups() {
         .then((r) => r.data.data),
   });
 
-  const createMutation = useMutation({
-    mutationFn: (body: object) =>
-      apiClient.post("cluster-manager/groups", body),
-    onSuccess: () => {
-      modalRef.current?.close();
-      setCreateForm(defaultForm);
-      queryClient.invalidateQueries({
-        queryKey: ["cluster-manager", "groups"],
-      });
-    },
-  });
-
   const filtered = groups.filter((g) =>
     g.group_name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
-  const handleCreate = (e: React.FormEvent) => {
-    e.preventDefault();
-    createMutation.mutate({
-      group_name: createForm.groupName,
-      contribution_amount: parseFloat(createForm.contributionAmount),
-      frequency: createForm.frequency,
-      max_members: parseInt(createForm.maxMembers),
-      start_date: createForm.startDate,
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -102,13 +61,6 @@ function ClusterManagerGroups() {
             Manage your Ajo savings groups
           </p>
         </div>
-        <button
-          onClick={() => modalRef.current?.showModal()}
-          className="btn btn-primary"
-        >
-          <Plus className="w-4 h-4" />
-          Create Group
-        </button>
       </div>
 
       <div className="card bg-base-100 shadow p-4">
@@ -136,7 +88,7 @@ function ClusterManagerGroups() {
             No groups found
           </h3>
           <p className="text-base-content">
-            Create your first group to get started
+            You don't manage any groups yet
           </p>
         </div>
       ) : (
@@ -204,122 +156,6 @@ function ClusterManagerGroups() {
           ))}
         </div>
       )}
-
-      <dialog ref={modalRef} className="modal">
-        <div className="modal-box max-w-lg">
-          <h3 className="text-xl font-semibold">Create New Group</h3>
-          <p className="text-base text-base-content mt-1">
-            Set up a new Ajo savings group
-          </p>
-
-          <form onSubmit={handleCreate} className="space-y-4 mt-6">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Group Name</legend>
-              <input
-                type="text"
-                className="input w-full"
-                placeholder="Enter group name"
-                value={createForm.groupName}
-                onChange={(e) =>
-                  setCreateForm({ ...createForm, groupName: e.target.value })
-                }
-                required
-              />
-            </fieldset>
-
-            <div className="grid grid-cols-2 gap-4">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Contribution Amount</legend>
-                <label className="input w-full">
-                  <span className="text-base-content">₦</span>
-                  <input
-                    type="number"
-                    placeholder="5000"
-                    value={createForm.contributionAmount}
-                    onChange={(e) =>
-                      setCreateForm({
-                        ...createForm,
-                        contributionAmount: e.target.value,
-                      })
-                    }
-                    required
-                  />
-                </label>
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Max Members</legend>
-                <input
-                  type="number"
-                  className="input w-full"
-                  placeholder="10"
-                  value={createForm.maxMembers}
-                  onChange={(e) =>
-                    setCreateForm({ ...createForm, maxMembers: e.target.value })
-                  }
-                  required
-                />
-              </fieldset>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Frequency</legend>
-                <select
-                  className="select w-full"
-                  value={createForm.frequency}
-                  onChange={(e) =>
-                    setCreateForm({
-                      ...createForm,
-                      frequency: e.target.value as ContributionFrequency,
-                    })
-                  }
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                </select>
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Start Date</legend>
-                <input
-                  type="date"
-                  className="input w-full"
-                  value={createForm.startDate}
-                  onChange={(e) =>
-                    setCreateForm({ ...createForm, startDate: e.target.value })
-                  }
-                  required
-                />
-              </fieldset>
-            </div>
-
-            <div className="modal-action">
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => modalRef.current?.close()}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={createMutation.isPending}
-              >
-                {createMutation.isPending && (
-                  <span className="loading loading-spinner loading-sm" />
-                )}
-                Create Group
-              </button>
-            </div>
-          </form>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
     </div>
   );
 }

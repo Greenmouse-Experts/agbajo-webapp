@@ -23,6 +23,20 @@ export const Route = createFileRoute("/admin/groups/")({
   component: AdminGroups,
 });
 
+type ContributionFrequency = "daily" | "weekly" | "monthly";
+type GroupType = "private" | "public";
+
+const defaultForm = {
+  groupName: "",
+  contributionAmount: "",
+  frequency: "weekly" as ContributionFrequency,
+  frequencyAmount: "1",
+  maxMembers: "10",
+  startDate: "",
+  type: "private" as GroupType,
+  clusterManagerId: "",
+};
+
 interface GroupManager {
   id: string;
   firstName: string;
@@ -141,12 +155,16 @@ const AssignManagerModal = forwardRef<ModalHandle, AssignModalProps>(
 
     const assignMutation = useMutation({
       mutationFn: (userId: string) =>
-        apiClient.post(`groups/${group?.id}/assign-manager/${userId}`),
-      onSuccess: () => {
-        toast.success("Manager assigned");
-        onChanged();
-      },
-      onError: (err) => toast.error(extract_message(err)),
+        toast.promise(
+          apiClient
+            .post(`groups/${group?.id}/assign-manager/${userId}`)
+            .then(onChanged),
+          {
+            loading: "Assigning manager...",
+            success: "Manager assigned",
+            error: extract_message,
+          },
+        ).unwrap(),
     });
 
     const assignedIds = new Set((group?.managers ?? []).map((m) => m.id));
@@ -216,8 +234,10 @@ function AdminGroups() {
   const queryClient = useQueryClient();
   const detailsModalRef = useRef<HTMLDialogElement>(null);
   const assignModalRef = useRef<ModalHandle>(null);
+  const createModalRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [createForm, setCreateForm] = useState(defaultForm);
 
   const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
     queryKey: ["admin", "groups"],
@@ -227,20 +247,65 @@ function AdminGroups() {
     },
   });
 
+  const managersListQuery = useQuery<ApiResponseV2<GroupManager[]>>({
+    queryKey: ["admin", "cluster-managers", "all"],
+    queryFn: async () => {
+      const resp = await apiClient.get("users/cluster-managers");
+      return resp.data;
+    },
+  });
+
+  const managerOptions = (managersListQuery.data?.data?.users ??
+    []) as GroupManager[];
+
   const groups = (groupsQuery.data?.data?.groups ?? []) as Group[];
   const selected = groups.find((g) => g.id === selectedId) ?? null;
 
   const invalidateGroups = () =>
     queryClient.invalidateQueries({ queryKey: ["admin", "groups"] });
 
-  const unassignMutation = useMutation({
-    mutationFn: ({ groupId, userId }: { groupId: string; userId: string }) =>
-      apiClient.delete(`groups/${groupId}/unassign-manager/${userId}`),
+  const createMutation = useMutation({
+    mutationFn: (body: object) =>
+      toast
+        .promise(apiClient.post("groups", body), {
+          loading: "Creating group...",
+          success: "Group created",
+          error: extract_message,
+        })
+        .unwrap(),
     onSuccess: () => {
-      toast.success("Manager removed");
+      createModalRef.current?.close();
+      setCreateForm(defaultForm);
       invalidateGroups();
     },
-    onError: (err) => toast.error(extract_message(err)),
+  });
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    createMutation.mutate({
+      groupName: createForm.groupName,
+      contributionAmount: parseFloat(createForm.contributionAmount),
+      frequency: createForm.frequency,
+      frequencyAmount: parseInt(createForm.frequencyAmount),
+      maxMembers: parseInt(createForm.maxMembers),
+      startDate: new Date(createForm.startDate).toISOString(),
+      clusterManagerId: createForm.clusterManagerId,
+      type: createForm.type,
+    });
+  };
+
+  const unassignMutation = useMutation({
+    mutationFn: ({ groupId, userId }: { groupId: string; userId: string }) =>
+      toast.promise(
+        apiClient
+          .delete(`groups/${groupId}/unassign-manager/${userId}`)
+          .then(invalidateGroups),
+        {
+          loading: "Removing manager...",
+          success: "Manager removed",
+          error: extract_message,
+        },
+      ).unwrap(),
   });
 
   const openDetails = (group: Group) => {
@@ -257,7 +322,10 @@ function AdminGroups() {
             View and manage all savings groups
           </p>
         </div>
-        <button className="btn btn-primary">
+        <button
+          className="btn btn-primary"
+          onClick={() => createModalRef.current?.showModal()}
+        >
           <Plus className="w-4 h-4" />
           Create Group
         </button>
@@ -419,6 +487,184 @@ function AdminGroups() {
             </div>
           </div>
         )}
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+
+      {/* Create Group Modal */}
+      <dialog ref={createModalRef} className="modal">
+        <div className="modal-box max-w-lg">
+          <h3 className="text-xl font-semibold">Create New Group</h3>
+          <p className="text-sm text-base-content/60 mt-1">
+            Set up a new Ajo savings group
+          </p>
+
+          <form onSubmit={handleCreate} className="space-y-4 mt-6">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Group Name</legend>
+              <input
+                type="text"
+                className="input w-full"
+                placeholder="Enter group name"
+                value={createForm.groupName}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, groupName: e.target.value })
+                }
+                required
+              />
+            </fieldset>
+
+            <div className="grid grid-cols-2 gap-4">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Contribution Amount</legend>
+                <label className="input w-full">
+                  <span className="text-base-content">₦</span>
+                  <input
+                    type="number"
+                    placeholder="5000"
+                    value={createForm.contributionAmount}
+                    onChange={(e) =>
+                      setCreateForm({
+                        ...createForm,
+                        contributionAmount: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </label>
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Max Members</legend>
+                <input
+                  type="number"
+                  className="input w-full"
+                  placeholder="10"
+                  value={createForm.maxMembers}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, maxMembers: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Frequency</legend>
+                <select
+                  className="select w-full"
+                  value={createForm.frequency}
+                  onChange={(e) =>
+                    setCreateForm({
+                      ...createForm,
+                      frequency: e.target.value as ContributionFrequency,
+                    })
+                  }
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Every (interval)</legend>
+                <input
+                  type="number"
+                  min={1}
+                  className="input w-full"
+                  placeholder="1"
+                  value={createForm.frequencyAmount}
+                  onChange={(e) =>
+                    setCreateForm({
+                      ...createForm,
+                      frequencyAmount: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Type</legend>
+                <select
+                  className="select w-full"
+                  value={createForm.type}
+                  onChange={(e) =>
+                    setCreateForm({
+                      ...createForm,
+                      type: e.target.value as GroupType,
+                    })
+                  }
+                >
+                  <option value="private">Private</option>
+                  <option value="public">Public</option>
+                </select>
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Start Date</legend>
+                <input
+                  type="date"
+                  className="input w-full"
+                  value={createForm.startDate}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, startDate: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
+
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">
+                Assign Cluster Manager
+              </legend>
+              <select
+                className="select w-full"
+                value={createForm.clusterManagerId}
+                onChange={(e) =>
+                  setCreateForm({
+                    ...createForm,
+                    clusterManagerId: e.target.value,
+                  })
+                }
+                required
+              >
+                <option value="">Select a manager</option>
+                {managerOptions.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {managerName(m)} — {m.email}
+                  </option>
+                ))}
+              </select>
+            </fieldset>
+
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => createModalRef.current?.close()}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending && (
+                  <span className="loading loading-spinner loading-sm" />
+                )}
+                Create Group
+              </button>
+            </div>
+          </form>
+        </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>

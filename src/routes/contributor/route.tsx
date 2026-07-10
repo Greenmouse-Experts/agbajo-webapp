@@ -201,7 +201,7 @@ function ContributorLayout() {
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <Link
               to={"/contributor/settings" as any}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-200 text-base-content/60 hover:text-base-content text-sm font-medium transition-colors w-full"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-200  hover:text-base-content  font-medium transition-colors w-full"
             >
               <Settings className="w-4 h-4" />
               Settings
