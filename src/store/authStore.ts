@@ -98,7 +98,7 @@ export const logout = () => {
     loading: "loading",
     success: () => {
       clear_user();
-      window.location.href = "/login";
+      window.location.href = "/home/auth/login";
       return "success";
     },
     error: extract_message,
