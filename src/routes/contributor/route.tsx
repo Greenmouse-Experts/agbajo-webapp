@@ -159,9 +159,9 @@ function ContributorLayout() {
           className="drawer-overlay"
         />
         <div className="bg-base-100 w-64 min-h-full flex flex-col border-r border-base-200">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-base-200">
+          <div className="flex items-center justify-between px-4 py-3">
             <div className="flex items-center gap-2">
-              <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 shadow-sm">
+              <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 shadow-sm">
                 <img
                   src="/agbajo-logo.jpeg"
                   alt="Agbajo"
