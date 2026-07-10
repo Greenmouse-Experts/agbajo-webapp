@@ -15,6 +15,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
+import PageLoader from "#/components/layout/PageLoader";
 
 export const Route = createFileRoute("/admin/cluster-managers/")({
   component: AdminClusterManagers,
@@ -83,13 +84,14 @@ function AdminClusterManagers() {
   const [selected, setSelected] = useState<Manager | null>(null);
   const [inviteForm, setInviteForm] = useState(defaultInviteForm);
 
-  const { data: managers = [], isLoading } = useQuery<Manager[]>({
+  const managersQuery = useQuery<Manager[]>({
     queryKey: ["admin", "cluster-managers"],
     queryFn: () =>
       apiClient
         .get<ApiResponseV2<Manager[]>>("users/cluster-managers")
         .then((r) => r.data.data.data),
   });
+  const managers = managersQuery.data ?? [];
 
   const kycMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: VerificationStatus }) =>
@@ -175,25 +177,22 @@ function AdminClusterManagers() {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center h-64">
-          <span className="loading loading-spinner loading-lg" />
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="card bg-base-100 shadow-sm p-12 text-center">
-          <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content/40" />
+      <PageLoader query={managersQuery}>
+        {filtered.length === 0 ? (
+          <div className="card bg-base-100 shadow-sm p-12 text-center">
+            <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-8 h-8 text-base-content/40" />
+            </div>
+            <h3 className="text-lg font-medium text-base-content mb-1">
+              No cluster managers found
+            </h3>
+            <p className="text-base-content/60">
+              Try adjusting your search or filter criteria
+            </p>
           </div>
-          <h3 className="text-lg font-medium text-base-content mb-1">
-            No cluster managers found
-          </h3>
-          <p className="text-base-content/60">
-            Try adjusting your search or filter criteria
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((manager) => (
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((manager) => (
             <div
               key={manager.id}
               className="card bg-base-100 shadow-sm p-6 hover:shadow-md transition-shadow"
@@ -283,9 +282,10 @@ function AdminClusterManagers() {
                 </button>
               )}
             </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </PageLoader>
 
       {/* Details Modal */}
       <dialog ref={detailsModalRef} className="modal">
