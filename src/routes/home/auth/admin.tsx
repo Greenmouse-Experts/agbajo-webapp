@@ -11,7 +11,7 @@ import { set_user_value, type AUTHRECORD } from "#/store/authStore";
 import { extract_message } from "#/helpers/apihelpers";
 import axios from "axios";
 
-export const Route = createFileRoute("/home/auth/login")({
+export const Route = createFileRoute("/home/auth/admin")({
   component: LoginPage,
 });
 
@@ -52,7 +52,7 @@ function LoginPage() {
   });
 
   return (
-    <div className="min-h-screen bg-linear-60 from-primary  to-primary flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-60 from-primary  to-primary/80 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
@@ -62,8 +62,10 @@ function LoginPage() {
               className="w-full h-full object-contain"
             />
           </div>
-          <h1 className="text-2xl font-bold text-base-content">AGBAJO</h1>
-          <p className="text-base-content mt-1">Digital Cooperative Savings</p>
+          <h1 className="text-2xl font-bold text-primary-content">AGBAJO</h1>
+          <p className="text-primary-content mt-1">
+            Digital Cooperative Savings
+          </p>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
@@ -96,7 +98,7 @@ function LoginPage() {
               </fieldset>
 
               <fieldset className="fieldset">
-                <legend className="fieldset-legend flex items-center justify-between">
+                {/*<legend className="fieldset-legend flex items-center justify-between">
                   Password
                   <Link
                     to="/auth/reset-password/request"
@@ -104,7 +106,7 @@ function LoginPage() {
                   >
                     Forgot password?
                   </Link>
-                </legend>
+                </legend>*/}
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}

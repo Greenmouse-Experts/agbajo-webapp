@@ -9,7 +9,7 @@ export interface USER {
   id: string | number;
   email: string;
   name: string;
-  roles: string[];
+  roles: "user" | "admin"[];
   phoneNumber?: string;
   [key: string]: unknown;
 }

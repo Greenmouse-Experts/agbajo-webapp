@@ -84,14 +84,13 @@ function AdminClusterManagers() {
   const [selected, setSelected] = useState<Manager | null>(null);
   const [inviteForm, setInviteForm] = useState(defaultInviteForm);
 
-  const managersQuery = useQuery<Manager[]>({
+  const managersQuery = useQuery<ApiResponseV2<Manager[]>>({
     queryKey: ["admin", "cluster-managers"],
-    queryFn: () =>
-      apiClient
-        .get<ApiResponseV2<Manager[]>>("users/cluster-managers")
-        .then((r) => r.data.data.data),
+    queryFn: async () => {
+      let resp = await apiClient.get("users/cluster-managers");
+      return resp.data;
+    },
   });
-  const managers = managersQuery.data ?? [];
 
   const kycMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: VerificationStatus }) =>
@@ -100,7 +99,9 @@ function AdminClusterManagers() {
       }),
     onSuccess: () => {
       detailsModalRef.current?.close();
-      queryClient.invalidateQueries({ queryKey: ["admin", "cluster-managers"] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "cluster-managers"],
+      });
     },
   });
 
@@ -113,15 +114,15 @@ function AdminClusterManagers() {
     },
   });
 
-  const filtered = managers.filter((m) => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch =
-      fullName(m).toLowerCase().includes(q) ||
-      m.email.toLowerCase().includes(q);
-    const matchesStatus =
-      statusFilter === "all" || getStatus(m) === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  // const filtered = managers.filter((m) => {
+  //   const q = searchQuery.toLowerCase();
+  //   const matchesSearch =
+  //     fullName(m).toLowerCase().includes(q) ||
+  //     m.email.toLowerCase().includes(q);
+  //   const matchesStatus =
+  //     statusFilter === "all" || getStatus(m) === statusFilter;
+  //   return matchesSearch && matchesStatus;
+  // });
 
   const openDetails = (manager: Manager) => {
     setSelected(manager);
@@ -172,113 +173,129 @@ function AdminClusterManagers() {
       </div>
 
       <PageLoader query={managersQuery}>
-        {filtered.length === 0 ? (
-          <div className="card bg-base-100 shadow-sm p-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="w-8 h-8 text-base-content/40" />
-            </div>
-            <h3 className="text-lg font-medium text-base-content mb-1">
-              No cluster managers found
-            </h3>
-            <p className="text-base-content/60">
-              Try adjusting your search or filter criteria
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((manager) => (
-            <div
-              key={manager.id}
-              className="card bg-base-100 shadow-sm p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar name={manager.firstName} />
-                  <div>
-                    <h3 className="font-semibold text-base-content">
-                      {fullName(manager)}
-                    </h3>
-                    <p className="text-sm text-base-content/60">
-                      {manager.email}
-                    </p>
+        {(data) => {
+          const users = data.data.users as Manager[];
+          return (
+            <>
+              {users.length === 0 ? (
+                <div className="card bg-base-100 shadow-sm p-12 text-center">
+                  <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
+                    <AlertCircle className="w-8 h-8 text-base-content/40" />
                   </div>
-                </div>
-                <StatusIcon status={getStatus(manager)} />
-              </div>
-
-              <div className="mt-4 space-y-2">
-                <div className="flex items-center gap-2 text-sm text-base-content/60">
-                  <Calendar className="w-4 h-4" />
-                  Joined {new Date(manager.createdAt).toLocaleDateString()}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-base-content/60">
-                  <Star className="w-4 h-4 text-warning" />
-                  Rating: {manager.rating?.toFixed(1) ?? "—"}
-                </div>
-              </div>
-
-              <div className="mt-4 pt-4 border-t border-base-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-sm">
-                    <div>
-                      <p className="text-base-content/60">Groups</p>
-                      <p className="font-semibold text-base-content">
-                        {manager.total_groups_managed ?? 0}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-base-content/60">Handled</p>
-                      <p className="font-semibold text-base-content">
-                        ₦{manager.total_contributions_handled?.toLocaleString() ?? "0"}
-                      </p>
-                    </div>
-                  </div>
-                  <StatusBadge status={getStatus(manager)} />
-                </div>
-              </div>
-
-              {getStatus(manager) === "pending" ? (
-                <div className="mt-4 flex gap-2">
-                  <button
-                    className="btn btn-success btn-sm flex-1"
-                    disabled={kycMutation.isPending}
-                    onClick={() =>
-                      kycMutation.mutate({ id: manager.id, status: "verified" })
-                    }
-                  >
-                    <UserCheck className="w-4 h-4" />
-                    Approve
-                  </button>
-                  <button
-                    className="btn btn-error btn-sm flex-1"
-                    disabled={kycMutation.isPending}
-                    onClick={() =>
-                      kycMutation.mutate({ id: manager.id, status: "rejected" })
-                    }
-                  >
-                    <UserX className="w-4 h-4" />
-                    Reject
-                  </button>
-                  <button
-                    className="btn btn-outline btn-sm btn-square"
-                    onClick={() => openDetails(manager)}
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
+                  <h3 className="text-lg font-medium text-base-content mb-1">
+                    No cluster managers found
+                  </h3>
+                  <p className="text-base-content/60">
+                    Try adjusting your search or filter criteria
+                  </p>
                 </div>
               ) : (
-                <button
-                  className="btn btn-outline btn-sm w-full mt-4"
-                  onClick={() => openDetails(manager)}
-                >
-                  <Eye className="w-4 h-4" />
-                  View Details
-                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {users.map((manager) => (
+                    <div
+                      key={manager.id}
+                      className="card bg-base-100 shadow-sm p-6 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <Avatar name={manager.firstName} />
+                          <div>
+                            <h3 className="font-semibold text-base-content">
+                              {fullName(manager)}
+                            </h3>
+                            <p className="text-sm text-base-content/60">
+                              {manager.email}
+                            </p>
+                          </div>
+                        </div>
+                        <StatusIcon status={getStatus(manager)} />
+                      </div>
+
+                      <div className="mt-4 space-y-2">
+                        <div className="flex items-center gap-2 text-sm text-base-content/60">
+                          <Calendar className="w-4 h-4" />
+                          Joined{" "}
+                          {new Date(manager.createdAt).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-base-content/60">
+                          <Star className="w-4 h-4 text-warning" />
+                          Rating: {manager.rating?.toFixed(1) ?? "—"}
+                        </div>
+                      </div>
+
+                      <div className="mt-4 pt-4 border-t border-base-200">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4 text-sm">
+                            <div>
+                              <p className="text-base-content/60">Groups</p>
+                              <p className="font-semibold text-base-content">
+                                {manager.total_groups_managed ?? 0}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-base-content/60">Handled</p>
+                              <p className="font-semibold text-base-content">
+                                ₦
+                                {manager.total_contributions_handled?.toLocaleString() ??
+                                  "0"}
+                              </p>
+                            </div>
+                          </div>
+                          <StatusBadge status={getStatus(manager)} />
+                        </div>
+                      </div>
+
+                      {getStatus(manager) === "pending" ? (
+                        <div className="mt-4 flex gap-2">
+                          <button
+                            className="btn btn-success btn-sm flex-1"
+                            disabled={kycMutation.isPending}
+                            onClick={() =>
+                              kycMutation.mutate({
+                                id: manager.id,
+                                status: "verified",
+                              })
+                            }
+                          >
+                            <UserCheck className="w-4 h-4" />
+                            Approve
+                          </button>
+                          <button
+                            className="btn btn-error btn-sm flex-1"
+                            disabled={kycMutation.isPending}
+                            onClick={() =>
+                              kycMutation.mutate({
+                                id: manager.id,
+                                status: "rejected",
+                              })
+                            }
+                          >
+                            <UserX className="w-4 h-4" />
+                            Reject
+                          </button>
+                          <button
+                            className="btn btn-outline btn-sm btn-square"
+                            onClick={() => openDetails(manager)}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="btn btn-outline btn-sm w-full mt-4"
+                          onClick={() => openDetails(manager)}
+                        >
+                          <Eye className="w-4 h-4" />
+                          View Details
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
-            </div>
-            ))}
-          </div>
-        )}
+            </>
+          );
+        }}
       </PageLoader>
 
       {/* Details Modal */}
@@ -324,7 +341,9 @@ function AdminClusterManagers() {
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-base-content/60">Groups Managed</span>
+                      <span className="text-base-content/60">
+                        Groups Managed
+                      </span>
                       <span className="font-medium text-base-content">
                         {selected.total_groups_managed ?? 0}
                       </span>
@@ -402,7 +421,10 @@ function AdminClusterManagers() {
                     className="btn btn-success flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({ id: selected.id, status: "verified" })
+                      kycMutation.mutate({
+                        id: selected.id,
+                        status: "verified",
+                      })
                     }
                   >
                     <UserCheck className="w-4 h-4" />
@@ -412,7 +434,10 @@ function AdminClusterManagers() {
                     className="btn btn-error flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({ id: selected.id, status: "rejected" })
+                      kycMutation.mutate({
+                        id: selected.id,
+                        status: "rejected",
+                      })
                     }
                   >
                     <UserX className="w-4 h-4" />

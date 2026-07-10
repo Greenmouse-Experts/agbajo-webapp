@@ -2,6 +2,7 @@ import {
   createFileRoute,
   Link,
   Outlet,
+  redirect,
   useRouterState,
 } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
@@ -20,7 +21,12 @@ import {
   Bell,
   X,
 } from "lucide-react";
-import { logout, useAuth, type AUTHRECORD } from "#/store/authStore";
+import {
+  get_user_value,
+  logout,
+  useAuth,
+  type AUTHRECORD,
+} from "#/store/authStore";
 
 interface NavItem {
   to: string;
@@ -43,6 +49,11 @@ const navItems: NavItem[] = [
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,
+  loader: () => {
+    const user = get_user_value();
+    if (user?.user.roles.includes("admin")) return user;
+    redirect({ to: "/contributor" });
+  },
 });
 
 function AdminLayout() {
@@ -114,7 +125,7 @@ function AdminLayout() {
           </div>
         </nav>
 
-        <main className="flex-1 p-6 bg-base-200">
+        <main className="flex-1 p-6 bg-base-200/50">
           <div className=" mx-auto">
             <Outlet />
           </div>

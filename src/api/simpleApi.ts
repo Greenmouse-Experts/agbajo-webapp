@@ -9,11 +9,17 @@ export interface ApiResponse<T = any> {
   statusCode: number;
   path: string;
 }
+export interface Pagination {
+  hasMore: boolean;
+  limit: number;
+  nextCursor: string | null;
+  total: number;
+}
 export interface ApiResponseV2<T = any> {
-  message: string;
-  data: { data: T; meta: any };
+  message?: string;
+  data: { data: T; pagination: Pagination } & { [key: string]: any };
   // status: string;
-  statusCode: number;
+  status: number;
   path: string;
 }
 export const new_url = "https://agbajo-backend.onrender.com/";
