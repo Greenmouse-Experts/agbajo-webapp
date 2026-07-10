@@ -40,11 +40,12 @@ function LoginPage() {
       set_user_value(data.data);
       const user = data.data.user;
       if (user.roles.includes("admin")) {
-        navigate({ to: "/admin" });
-      } else {
-        navigate({ to: "/contributor" });
+        return navigate({ to: "/admin" });
+      } else if (user.roles.includes("user")) {
+        return navigate({ to: "/contributor" });
       }
-      return;
+
+      return navigate({ to: "/cluster-manager" });
     },
     onError: (err) => {
       toast.error(extract_message(err));
