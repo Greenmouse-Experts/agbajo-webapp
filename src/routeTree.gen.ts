@@ -39,6 +39,7 @@ import { Route as AdminComplaintsIndexRouteImport } from './routes/admin/complai
 import { Route as AdminClusterManagersIndexRouteImport } from './routes/admin/cluster-managers.index'
 import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
 import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
+import { Route as HomeAuthAdminRouteImport } from './routes/home/auth/admin'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
 import { Route as AuthResetPasswordConfirmRouteImport } from './routes/auth/reset-password/confirm'
 
@@ -200,6 +201,11 @@ const HomeAuthLoginRoute = HomeAuthLoginRouteImport.update({
   path: '/home/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomeAuthAdminRoute = HomeAuthAdminRouteImport.update({
+  id: '/home/auth/admin',
+  path: '/home/auth/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthResetPasswordRequestRoute =
   AuthResetPasswordRequestRouteImport.update({
     id: '/auth/reset-password/request',
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/contributor/': typeof ContributorIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
+  '/home/auth/admin': typeof HomeAuthAdminRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
   '/admin/cluster-managers/': typeof AdminClusterManagersIndexRoute
@@ -255,6 +262,7 @@ export interface FileRoutesByTo {
   '/contributor': typeof ContributorIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
+  '/home/auth/admin': typeof HomeAuthAdminRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
   '/admin/cluster-managers': typeof AdminClusterManagersIndexRoute
@@ -290,6 +298,7 @@ export interface FileRoutesById {
   '/contributor/': typeof ContributorIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
+  '/home/auth/admin': typeof HomeAuthAdminRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
   '/admin/cluster-managers/': typeof AdminClusterManagersIndexRoute
@@ -326,6 +335,7 @@ export interface FileRouteTypes {
     | '/contributor/'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
+    | '/home/auth/admin'
     | '/home/auth/login'
     | '/home/auth/signup'
     | '/admin/cluster-managers/'
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
     | '/contributor'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
+    | '/home/auth/admin'
     | '/home/auth/login'
     | '/home/auth/signup'
     | '/admin/cluster-managers'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/contributor/'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
+    | '/home/auth/admin'
     | '/home/auth/login'
     | '/home/auth/signup'
     | '/admin/cluster-managers/'
@@ -423,6 +435,7 @@ export interface RootRouteChildren {
   VerifyEmailRoute: typeof VerifyEmailRoute
   AuthResetPasswordConfirmRoute: typeof AuthResetPasswordConfirmRoute
   AuthResetPasswordRequestRoute: typeof AuthResetPasswordRequestRoute
+  HomeAuthAdminRoute: typeof HomeAuthAdminRoute
   HomeAuthLoginRoute: typeof HomeAuthLoginRoute
   HomeAuthSignupRoute: typeof HomeAuthSignupRoute
 }
@@ -639,6 +652,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeAuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/home/auth/admin': {
+      id: '/home/auth/admin'
+      path: '/home/auth/admin'
+      fullPath: '/home/auth/admin'
+      preLoaderRoute: typeof HomeAuthAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/reset-password/request': {
       id: '/auth/reset-password/request'
       path: '/auth/reset-password/request'
@@ -738,6 +758,7 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyEmailRoute: VerifyEmailRoute,
   AuthResetPasswordConfirmRoute: AuthResetPasswordConfirmRoute,
   AuthResetPasswordRequestRoute: AuthResetPasswordRequestRoute,
+  HomeAuthAdminRoute: HomeAuthAdminRoute,
   HomeAuthLoginRoute: HomeAuthLoginRoute,
   HomeAuthSignupRoute: HomeAuthSignupRoute,
 }
