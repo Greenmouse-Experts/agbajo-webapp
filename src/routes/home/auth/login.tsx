@@ -68,10 +68,10 @@ function LoginPage() {
 
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
-            <h2 className="text-xl font-semibold text-base-content mb-0">
+            <h2 className="text-xl font-semibold text-primary-content mb-0">
               Welcome back
             </h2>
-            <p className="text-base-content text-base mb-2">
+            <p className="text-primary-content text-base mb-2">
               Sign in to your account to continue
             </p>
 
