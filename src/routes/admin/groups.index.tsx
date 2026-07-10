@@ -5,13 +5,13 @@ import {
   Users,
   DollarSign,
   Calendar,
-  Eye,
   AlertCircle,
   Plus,
 } from "lucide-react";
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
+import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 
 export const Route = createFileRoute("/admin/groups/")({
   component: AdminGroups,
@@ -48,6 +48,69 @@ const formatCurrency = (amount = 0) =>
 
 const managerName = (m: GroupManager) =>
   `${m.firstName} ${m.lastName}`.trim();
+
+const columns: columnType<Group>[] = [
+  { key: "groupName", label: "Group Name" },
+  {
+    key: "managers",
+    label: "Managers",
+    render: (managers: GroupManager[]) =>
+      managers.length === 0 ? (
+        <span className="text-base-content/40">—</span>
+      ) : (
+        <div>
+          <div className="text-sm text-base-content">{managerName(managers[0])}</div>
+          {managers.length > 1 && (
+            <div className="text-xs text-base-content/60">
+              +{managers.length - 1} more
+            </div>
+          )}
+        </div>
+      ),
+  },
+  {
+    key: "maxMembers",
+    label: "Members",
+    render: (value: number) => (
+      <div className="flex items-center gap-1 text-base-content/60">
+        <Users className="w-4 h-4" />
+        {value}
+      </div>
+    ),
+  },
+  {
+    key: "contributionAmount",
+    label: "Amount",
+    render: (value: number) => (
+      <span className="font-medium text-base-content">
+        {formatCurrency(value)}
+      </span>
+    ),
+  },
+  {
+    key: "frequency",
+    label: "Frequency",
+    render: (value: string) => (
+      <span className="capitalize text-base-content/60">{value}</span>
+    ),
+  },
+  {
+    key: "type",
+    label: "Type",
+    render: (value: string) => (
+      <span className="badge badge-outline capitalize">{value}</span>
+    ),
+  },
+  {
+    key: "startDate",
+    label: "Start Date",
+    render: (value: string) => (
+      <span className="text-sm text-base-content/60">
+        {new Date(value).toLocaleDateString()}
+      </span>
+    ),
+  },
+];
 
 function AdminGroups() {
   const detailsModalRef = useRef<HTMLDialogElement>(null);
@@ -97,92 +160,28 @@ function AdminGroups() {
               g.frequency.toLowerCase().includes(q),
           );
 
+          if (filtered.length === 0) {
+            return (
+              <div className="card bg-base-100 shadow-sm p-12 text-center">
+                <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="w-8 h-8 text-base-content/40" />
+                </div>
+                <h3 className="text-lg font-medium text-base-content mb-1">
+                  No groups found
+                </h3>
+                <p className="text-base-content/60">
+                  Try adjusting your search or create a new group
+                </p>
+              </div>
+            );
+          }
+
           return (
-            <>
-              {filtered.length === 0 ? (
-                <div className="card bg-base-100 shadow-sm p-12 text-center">
-                  <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-                    <AlertCircle className="w-8 h-8 text-base-content/40" />
-                  </div>
-                  <h3 className="text-lg font-medium text-base-content mb-1">
-                    No groups found
-                  </h3>
-                  <p className="text-base-content/60">
-                    Try adjusting your search or create a new group
-                  </p>
-                </div>
-              ) : (
-                <div className="card bg-base-100 shadow-sm overflow-x-auto">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Group Name</th>
-                        <th>Managers</th>
-                        <th>Members</th>
-                        <th>Amount</th>
-                        <th>Frequency</th>
-                        <th>Type</th>
-                        <th>Start Date</th>
-                        <th className="w-12"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filtered.map((group) => (
-                        <tr key={group.id} className="hover">
-                          <td className="font-medium text-base-content">
-                            {group.groupName}
-                          </td>
-                          <td>
-                            {group.managers.length === 0 ? (
-                              <span className="text-base-content/40">—</span>
-                            ) : (
-                              <div>
-                                <div className="text-sm text-base-content">
-                                  {managerName(group.managers[0])}
-                                </div>
-                                {group.managers.length > 1 && (
-                                  <div className="text-xs text-base-content/60">
-                                    +{group.managers.length - 1} more
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </td>
-                          <td>
-                            <div className="flex items-center gap-1 text-base-content/60">
-                              <Users className="w-4 h-4" />
-                              {group.maxMembers}
-                            </div>
-                          </td>
-                          <td className="font-medium text-base-content">
-                            {formatCurrency(group.contributionAmount)}
-                          </td>
-                          <td className="capitalize text-base-content/60">
-                            {group.frequency}
-                          </td>
-                          <td>
-                            <span className="badge badge-outline capitalize">
-                              {group.type}
-                            </span>
-                          </td>
-                          <td className="text-sm text-base-content/60">
-                            {new Date(group.startDate).toLocaleDateString()}
-                          </td>
-                          <td>
-                            <button
-                              onClick={() => openDetails(group)}
-                              className="btn btn-ghost btn-sm btn-square"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </>
+            <CustomTable
+              data={filtered}
+              columns={columns}
+              onRowClick={openDetails}
+            />
           );
         }}
       </PageLoader>
