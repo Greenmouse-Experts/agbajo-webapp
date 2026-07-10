@@ -1,71 +1,81 @@
 import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MessageSquare,
   Send,
-  Search,
   CheckCircle,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { PageHeader } from "./-components/PageHeader";
 import { EmptyState } from "./-components/EmptyState";
+import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
+import { extract_message } from "#/helpers/apihelpers";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/contributor/complaints/")({
   component: ContributorComplaints,
 });
 
 type ComplaintStatus =
-  "open" | "in_progress" | "resolved" | "escalated" | "closed";
-type Priority = "low" | "normal" | "high" | "urgent";
-type Category =
-  "contribution" | "payout" | "group" | "manager" | "technical" | "other";
+  | "pending"
+  | "open"
+  | "in_progress"
+  | "resolved"
+  | "escalated"
+  | "closed";
 
-interface Complaint {
+interface ComplaintRef {
   id: number;
-  title: string;
-  description: string;
-  category: Category;
-  priority: Priority;
-  status: ComplaintStatus;
-  response_message?: string;
-  created_at: string;
+  name: string;
 }
 
-const mockComplaints: Complaint[] = [
-  {
-    id: 1,
-    title: "Contribution not reflected in my account",
-    description:
-      "I made a contribution of ₦10,000 on the 1st of July but it hasn't reflected on my dashboard yet.",
-    category: "contribution",
-    priority: "high",
-    status: "in_progress",
-    created_at: "2026-07-02",
-  },
-  {
-    id: 2,
-    title: "Payout delayed for Lagos Savers group",
-    description: "My expected payout for cycle 3 is overdue by two weeks.",
-    category: "payout",
-    priority: "urgent",
-    status: "resolved",
-    response_message:
-      "Your payout has been processed and should reflect in your wallet within 24 hours. Apologies for the delay.",
-    created_at: "2026-06-20",
-  },
-  {
-    id: 3,
-    title: "Unable to access group details",
-    description:
-      "The Victoria Island Circle group page keeps showing an error.",
-    category: "technical",
-    priority: "normal",
-    status: "open",
-    created_at: "2026-06-10",
-  },
+interface Complaint {
+  id: string;
+  title: string;
+  description: string;
+  status: ComplaintStatus;
+  category: ComplaintRef;
+  priority: ComplaintRef;
+  adminNote?: string | null;
+  response?: string | null;
+  createdAt: string;
+}
+
+type ComplaintsResponse = ApiResponseV2<Complaint[]> & {
+  data: { complaints: Complaint[] };
+};
+
+// Reference lists — align ids with the backend category/priority tables.
+const CATEGORIES = [
+  { id: 1, label: "Contribution" },
+  { id: 2, label: "Payout" },
+  { id: 3, label: "Group" },
+  { id: 4, label: "Manager" },
+  { id: 5, label: "Technical" },
+  { id: 6, label: "Other" },
+];
+
+const PRIORITIES = [
+  { id: 1, label: "Low" },
+  { id: 2, label: "Normal" },
+  { id: 3, label: "High" },
+  { id: 4, label: "Urgent" },
+];
+
+const STATUSES: ComplaintStatus[] = [
+  "pending",
+  "open",
+  "in_progress",
+  "resolved",
+  "escalated",
+  "closed",
 ];
 
 const statusBadge: Record<ComplaintStatus, string> = {
+  pending: "badge-warning",
   open: "badge-warning",
   in_progress: "badge-info",
   resolved: "badge-success",
@@ -73,24 +83,74 @@ const statusBadge: Record<ComplaintStatus, string> = {
   closed: "badge-neutral",
 };
 
-const priorityBadge: Record<Priority, string> = {
-  low: "badge-neutral",
-  normal: "badge-ghost",
-  high: "badge-warning",
-  urgent: "badge-error",
+const priorityBadge: Record<number, string> = {
+  1: "badge-neutral",
+  2: "badge-ghost",
+  3: "badge-warning",
+  4: "badge-error",
 };
+
+const PAGE_SIZE = 10;
 
 const defaultForm = {
   title: "",
   description: "",
-  category: "other" as Category,
-  priority: "normal" as Priority,
+  categoryId: "6",
+  priorityId: "2",
 };
 
 function ContributorComplaints() {
-  const [search, setSearch] = useState("");
-  const [form, setForm] = useState(defaultForm);
+  const queryClient = useQueryClient();
   const modalRef = useRef<HTMLDialogElement>(null);
+  const [form, setForm] = useState(defaultForm);
+  const [page, setPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+
+  const params: Record<string, string | number> = {
+    page,
+    limit: PAGE_SIZE,
+  };
+  if (statusFilter !== "all") params.status = statusFilter;
+  if (categoryFilter !== "all") params.categoryId = Number(categoryFilter);
+  if (priorityFilter !== "all") params.priorityId = Number(priorityFilter);
+
+  const complaintsQuery = useQuery({
+    queryKey: [
+      "contributor",
+      "complaints",
+      page,
+      statusFilter,
+      categoryFilter,
+      priorityFilter,
+    ],
+    queryFn: () =>
+      apiClient
+        .get<ComplaintsResponse>("complaints", { params })
+        .then((r) => r.data.data),
+  });
+
+  const complaints = complaintsQuery.data?.complaints ?? [];
+  const pagination = complaintsQuery.data?.pagination;
+  const hasMore = pagination?.hasMore ?? complaints.length === PAGE_SIZE;
+
+  const createMutation = useMutation({
+    mutationFn: (body: object) =>
+      toast
+        .promise(apiClient.post("complaints", body), {
+          loading: "Submitting complaint...",
+          success: "Complaint submitted",
+          error: extract_message,
+        })
+        .unwrap(),
+    onSuccess: () => {
+      closeModal();
+      queryClient.invalidateQueries({
+        queryKey: ["contributor", "complaints"],
+      });
+    },
+  });
 
   const openModal = () => modalRef.current?.showModal();
   const closeModal = () => {
@@ -98,14 +158,17 @@ function ContributorComplaints() {
     setForm(defaultForm);
   };
 
+  const resetToFirstPage = () => setPage(1);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    closeModal();
+    createMutation.mutate({
+      title: form.title,
+      description: form.description,
+      categoryId: Number(form.categoryId),
+      priorityId: Number(form.priorityId),
+    });
   };
-
-  const filtered = mockComplaints.filter((c) =>
-    c.title.toLowerCase().includes(search.toLowerCase()),
-  );
 
   return (
     <div className="space-y-6">
@@ -120,24 +183,63 @@ function ContributorComplaints() {
         }
       />
 
-      {/* Search */}
+      {/* Filters */}
       <div className="card bg-base-100 border border-base-200 shadow-sm">
-        <div className="card-body p-4">
-          <label className="input flex items-center gap-2">
-            <Search className="w-4 h-4 text-base-content shrink-0" />
-            <input
-              type="text"
-              placeholder="Search complaints..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="grow"
-            />
-          </label>
+        <div className="card-body p-4 flex-col sm:flex-row gap-3">
+          <select
+            className="select select-sm w-full sm:w-44"
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              resetToFirstPage();
+            }}
+          >
+            <option value="all">All Status</option>
+            {STATUSES.map((s) => (
+              <option key={s} value={s} className="capitalize">
+                {s.replace("_", " ")}
+              </option>
+            ))}
+          </select>
+          <select
+            className="select select-sm w-full sm:w-44"
+            value={categoryFilter}
+            onChange={(e) => {
+              setCategoryFilter(e.target.value);
+              resetToFirstPage();
+            }}
+          >
+            <option value="all">All Categories</option>
+            {CATEGORIES.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+          <select
+            className="select select-sm w-full sm:w-44"
+            value={priorityFilter}
+            onChange={(e) => {
+              setPriorityFilter(e.target.value);
+              resetToFirstPage();
+            }}
+          >
+            <option value="all">All Priorities</option>
+            {PRIORITIES.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
       {/* List */}
-      {filtered.length === 0 ? (
+      {complaintsQuery.isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <span className="loading loading-spinner loading-lg" />
+        </div>
+      ) : complaints.length === 0 ? (
         <EmptyState
           icon={AlertCircle}
           title="No complaints"
@@ -145,7 +247,7 @@ function ContributorComplaints() {
         />
       ) : (
         <div className="space-y-4">
-          {filtered.map((c) => (
+          {complaints.map((c) => (
             <div
               key={c.id}
               className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow"
@@ -163,12 +265,12 @@ function ContributorComplaints() {
                       </h3>
                       <div className="flex items-center gap-2 shrink-0">
                         <span
-                          className={`badge badge-sm ${priorityBadge[c.priority]} capitalize`}
+                          className={`badge badge-sm ${priorityBadge[c.priority?.id] ?? "badge-ghost"} capitalize`}
                         >
-                          {c.priority}
+                          {c.priority?.name}
                         </span>
                         <span
-                          className={`badge badge-sm ${statusBadge[c.status]} capitalize`}
+                          className={`badge badge-sm ${statusBadge[c.status] ?? "badge-ghost"} capitalize`}
                         >
                           {c.status.replace("_", " ")}
                         </span>
@@ -178,15 +280,15 @@ function ContributorComplaints() {
                       {c.description}
                     </p>
                     <div className="flex items-center gap-2 mt-2 text-sm text-base-content">
-                      <span className="capitalize">{c.category}</span>
+                      <span className="capitalize">{c.category?.name}</span>
                       <span>·</span>
-                      <span>{new Date(c.created_at).toLocaleDateString()}</span>
+                      <span>{new Date(c.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Admin response */}
-                {c.response_message && (
+                {(c.response ?? c.adminNote) && (
                   <div className="flex items-start gap-3 p-4 rounded-xl bg-success/5 border border-success">
                     <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
                     <div>
@@ -194,7 +296,7 @@ function ContributorComplaints() {
                         Admin Response
                       </p>
                       <p className="text-base text-base-content">
-                        {c.response_message}
+                        {c.response ?? c.adminNote}
                       </p>
                     </div>
                   </div>
@@ -202,6 +304,29 @@ function ContributorComplaints() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {complaints.length > 0 && (page > 1 || hasMore) && (
+        <div className="flex items-center justify-between">
+          <button
+            className="btn btn-ghost btn-sm"
+            disabled={page === 1}
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Previous
+          </button>
+          <span className="text-sm text-base-content">Page {page}</span>
+          <button
+            className="btn btn-ghost btn-sm"
+            disabled={!hasMore}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Next
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       )}
 
@@ -246,17 +371,16 @@ function ContributorComplaints() {
                 <legend className="fieldset-legend">Category</legend>
                 <select
                   className="select w-full"
-                  value={form.category}
+                  value={form.categoryId}
                   onChange={(e) =>
-                    setForm({ ...form, category: e.target.value as Category })
+                    setForm({ ...form, categoryId: e.target.value })
                   }
                 >
-                  <option value="contribution">Contribution</option>
-                  <option value="payout">Payout</option>
-                  <option value="group">Group</option>
-                  <option value="manager">Manager</option>
-                  <option value="technical">Technical</option>
-                  <option value="other">Other</option>
+                  {CATEGORIES.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.label}
+                    </option>
+                  ))}
                 </select>
               </fieldset>
 
@@ -264,15 +388,16 @@ function ContributorComplaints() {
                 <legend className="fieldset-legend">Priority</legend>
                 <select
                   className="select w-full"
-                  value={form.priority}
+                  value={form.priorityId}
                   onChange={(e) =>
-                    setForm({ ...form, priority: e.target.value as Priority })
+                    setForm({ ...form, priorityId: e.target.value })
                   }
                 >
-                  <option value="low">Low</option>
-                  <option value="normal">Normal</option>
-                  <option value="high">High</option>
-                  <option value="urgent">Urgent</option>
+                  {PRIORITIES.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label}
+                    </option>
+                  ))}
                 </select>
               </fieldset>
             </div>
@@ -285,8 +410,16 @@ function ContributorComplaints() {
               >
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary gap-2">
-                <Send className="w-4 h-4" />
+              <button
+                type="submit"
+                className="btn btn-primary gap-2"
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
                 Submit
               </button>
             </div>
