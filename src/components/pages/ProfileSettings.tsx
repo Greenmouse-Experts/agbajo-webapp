@@ -1,5 +1,6 @@
 import apiClient from "#/api/simpleApi";
 import SimpleInput from "#/components/modals/inputs/SimpleInput";
+import PasswordChange from "#/components/pages/PasswordChange";
 import { set_user_value, useAuth, type AUTHRECORD } from "#/store/authStore";
 import { useMutation } from "@tanstack/react-query";
 import { User, Phone, Mail } from "lucide-react";
@@ -108,6 +109,8 @@ export default function ProfileSettings() {
           </form>
         </FormProvider>
       </div>
+
+      <PasswordChange />
     </div>
   );
 }
