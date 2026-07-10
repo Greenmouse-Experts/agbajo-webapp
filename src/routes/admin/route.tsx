@@ -112,10 +112,7 @@ function AdminLayout() {
                 </li>
                 <div className="divider my-1" />
                 <li>
-                  <button
-                    onClick={logout}
-                    className="text-error hover:bg-error"
-                  >
+                  <button onClick={logout} className="btn btn-error">
                     <LogOut className="w-4 h-4" />
                     Sign out
                   </button>
