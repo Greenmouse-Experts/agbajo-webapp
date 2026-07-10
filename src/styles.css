@@ -60,3 +60,7 @@ body {
 @utility stat-card {
   @apply bg-base-100 rounded-box shadow-sm p-5 flex flex-col gap-1 border border-base-200;
 }
+
+@utility fade {
+  @apply border-current/20 ring-current/20;
+}

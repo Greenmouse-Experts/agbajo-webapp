@@ -61,7 +61,7 @@ function ContributorDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={DollarSign}
-          iconClass="bg-secondary text-secondary"
+          iconClass="bg-secondary text-secondary-content"
           value={formatCurrency(240000)}
           label="Total Contributions"
           trend={
@@ -72,7 +72,7 @@ function ContributorDashboard() {
         />
         <StatCard
           icon={Wallet}
-          iconClass="bg-success text-success"
+          iconClass="bg-success text-success-content"
           value={formatCurrency(85000)}
           label="Wallet Balance"
           link={{
@@ -83,7 +83,7 @@ function ContributorDashboard() {
         />
         <StatCard
           icon={Folder}
-          iconClass="bg-warning text-warning"
+          iconClass="bg-warning text-warning-content"
           value={3}
           label="Active Groups"
           link={{
@@ -94,7 +94,7 @@ function ContributorDashboard() {
         />
         <StatCard
           icon={Clock}
-          iconClass="bg-error text-error"
+          iconClass="bg-error text-error-content"
           value={2}
           label="Pending Payouts"
           link={{
@@ -222,9 +222,9 @@ function ContributorDashboard() {
                 }`}
               >
                 {item.status === "completed" ? (
-                  <ArrowDownRight className="w-4 h-4 text-success" />
+                  <ArrowDownRight className="w-4 h-4 text-success-content" />
                 ) : (
-                  <Clock className="w-4 h-4 text-warning" />
+                  <Clock className="w-4 h-4 text-warning-content" />
                 )}
               </div>
               <div className="flex-1 min-w-0">

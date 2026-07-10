@@ -1,17 +1,23 @@
-import { useRef, useState } from "react";
+import { forwardRef, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Users,
   DollarSign,
   Calendar,
   AlertCircle,
   Plus,
+  UserPlus,
+  X,
+  Check,
 } from "lucide-react";
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
 import CustomTable, { type columnType } from "#/components/tables/CustomTable";
+import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
+import { toast } from "sonner";
+import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/admin/groups/")({
   component: AdminGroups,
@@ -46,8 +52,7 @@ const formatCurrency = (amount = 0) =>
     minimumFractionDigits: 0,
   }).format(amount);
 
-const managerName = (m: GroupManager) =>
-  `${m.firstName} ${m.lastName}`.trim();
+const managerName = (m: GroupManager) => `${m.firstName} ${m.lastName}`.trim();
 
 const columns: columnType<Group>[] = [
   { key: "groupName", label: "Group Name" },
@@ -59,7 +64,9 @@ const columns: columnType<Group>[] = [
         <span className="text-base-content/40">—</span>
       ) : (
         <div>
-          <div className="text-sm text-base-content">{managerName(managers[0])}</div>
+          <div className="text-sm text-base-content">
+            {managerName(managers[0])}
+          </div>
           {managers.length > 1 && (
             <div className="text-xs text-base-content/60">
               +{managers.length - 1} more
@@ -112,10 +119,105 @@ const columns: columnType<Group>[] = [
   },
 ];
 
+interface AssignModalProps {
+  group: Group | null;
+  onChanged: () => void;
+}
+
+const AssignManagerModal = forwardRef<ModalHandle, AssignModalProps>(
+  ({ group, onChanged }, ref) => {
+    const [search, setSearch] = useState("");
+
+    const managersQuery = useQuery<ApiResponseV2<GroupManager[]>>({
+      queryKey: ["cluster-managers", "assignable", search],
+      queryFn: async () => {
+        const resp = await apiClient.get("users/cluster-managers", {
+          params: search ? { search } : {},
+        });
+        return resp.data;
+      },
+      enabled: !!group,
+    });
+
+    const assignMutation = useMutation({
+      mutationFn: (userId: string) =>
+        apiClient.post(`groups/${group?.id}/assign-manager/${userId}`),
+      onSuccess: () => {
+        toast.success("Manager assigned");
+        onChanged();
+      },
+      onError: (err) => toast.error(extract_message(err)),
+    });
+
+    const assignedIds = new Set((group?.managers ?? []).map((m) => m.id));
+    const users = (managersQuery.data?.data?.users ?? []) as GroupManager[];
+
+    return (
+      <Modal ref={ref} title="Assign Manager">
+        <div className="space-y-4">
+          <SearchBar value={search} onChange={setSearch} />
+
+          {managersQuery.isLoading ? (
+            <div className="flex justify-center py-8">
+              <span className="loading loading-spinner loading-md" />
+            </div>
+          ) : users.length === 0 ? (
+            <div className="text-center py-8 text-base-content/60">
+              No cluster managers found
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+              {users.map((m) => {
+                const isAssigned = assignedIds.has(m.id);
+                return (
+                  <div
+                    key={m.id}
+                    className="flex items-center gap-3 p-3 rounded-lg border border-base-200 hover:bg-base-200/50"
+                  >
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
+                      {m.firstName?.[0]?.toUpperCase() ?? "M"}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-base-content truncate">
+                        {managerName(m)}
+                      </p>
+                      <p className="text-xs text-base-content/60 truncate">
+                        {m.email}
+                      </p>
+                    </div>
+                    {isAssigned ? (
+                      <span className="badge badge-success gap-1 shrink-0">
+                        <Check className="w-3 h-3" />
+                        Assigned
+                      </span>
+                    ) : (
+                      <button
+                        className="btn btn-primary btn-sm shrink-0"
+                        disabled={assignMutation.isPending}
+                        onClick={() => assignMutation.mutate(m.id)}
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        Assign
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </Modal>
+    );
+  },
+);
+AssignManagerModal.displayName = "AssignManagerModal";
+
 function AdminGroups() {
+  const queryClient = useQueryClient();
   const detailsModalRef = useRef<HTMLDialogElement>(null);
+  const assignModalRef = useRef<ModalHandle>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selected, setSelected] = useState<Group | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
     queryKey: ["admin", "groups"],
@@ -125,8 +227,24 @@ function AdminGroups() {
     },
   });
 
+  const groups = (groupsQuery.data?.data?.groups ?? []) as Group[];
+  const selected = groups.find((g) => g.id === selectedId) ?? null;
+
+  const invalidateGroups = () =>
+    queryClient.invalidateQueries({ queryKey: ["admin", "groups"] });
+
+  const unassignMutation = useMutation({
+    mutationFn: ({ groupId, userId }: { groupId: string; userId: string }) =>
+      apiClient.delete(`groups/${groupId}/unassign-manager/${userId}`),
+    onSuccess: () => {
+      toast.success("Manager removed");
+      invalidateGroups();
+    },
+    onError: (err) => toast.error(extract_message(err)),
+  });
+
   const openDetails = (group: Group) => {
-    setSelected(group);
+    setSelectedId(group.id);
     detailsModalRef.current?.showModal();
   };
 
@@ -151,9 +269,9 @@ function AdminGroups() {
 
       <PageLoader query={groupsQuery}>
         {(data) => {
-          const groups = data.data.groups as Group[];
+          const all = data.data.groups as Group[];
           const q = searchQuery.toLowerCase();
-          const filtered = groups.filter(
+          const filtered = all.filter(
             (g) =>
               g.groupName.toLowerCase().includes(q) ||
               g.type.toLowerCase().includes(q) ||
@@ -240,21 +358,24 @@ function AdminGroups() {
               </div>
 
               <div className="card bg-base-200 p-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-3">
                   <h4 className="text-sm font-medium text-base-content">
-                    Type
-                  </h4>
-                  <span className="badge badge-outline capitalize">
-                    {selected.type}
-                  </span>
-                </div>
-              </div>
-
-              {selected.managers.length > 0 && (
-                <div className="card bg-base-200 p-4">
-                  <h4 className="text-sm font-medium text-base-content mb-3">
                     Assigned Managers
                   </h4>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => assignModalRef.current?.open()}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Assign
+                  </button>
+                </div>
+
+                {selected.managers.length === 0 ? (
+                  <p className="text-sm text-base-content/60">
+                    No managers assigned yet
+                  </p>
+                ) : (
                   <div className="space-y-3">
                     {selected.managers.map((m) => (
                       <div
@@ -264,19 +385,31 @@ function AdminGroups() {
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
                           {m.firstName[0]?.toUpperCase() ?? "M"}
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-base-content">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-base-content truncate">
                             {managerName(m)}
                           </p>
-                          <p className="text-xs text-base-content/60">
+                          <p className="text-xs text-base-content/60 truncate">
                             {m.email}
                           </p>
                         </div>
+                        <button
+                          className="btn btn-ghost btn-sm btn-square text-error shrink-0"
+                          disabled={unassignMutation.isPending}
+                          onClick={() =>
+                            unassignMutation.mutate({
+                              groupId: selected.id,
+                              userId: m.id,
+                            })
+                          }
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
             <div className="modal-action">
@@ -290,6 +423,12 @@ function AdminGroups() {
           <button>close</button>
         </form>
       </dialog>
+
+      <AssignManagerModal
+        ref={assignModalRef}
+        group={selected}
+        onChanged={invalidateGroups}
+      />
     </div>
   );
 }
