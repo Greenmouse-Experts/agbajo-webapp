@@ -6,9 +6,7 @@ import {
   ArrowUpRight,
   DollarSign,
   Folder,
-  TrendingUp,
   UserCheck,
-  Users,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -22,6 +20,7 @@ import {
   BarChart,
   Bar,
 } from "recharts";
+import AdminStats from "./-components/AdminStats";
 
 export const Route = createFileRoute("/admin/")({
   component: RouteComponent,
@@ -101,104 +100,7 @@ function RouteComponent() {
         </div>
         <div className="badge badge-primary">Live Data</div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="stat-card group hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div className="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-secondary" />
-            </div>
-            <span className="flex items-center text-success text-base font-medium">
-              <ArrowUpRight className="w-4 h-4" />
-              12%
-            </span>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-bold text-base-content">
-              {stats?.totalUsers || 0}
-            </h3>
-            <p className="text-sm text-base-content/60">Total Users</p>
-          </div>
-          <Link
-            to="/admin/contributors"
-            className="text-sm text-secondary hover:underline mt-2 inline-block font-medium"
-          >
-            View all users
-          </Link>
-        </div>
-
-        <div className="stat-card group hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-              <Folder className="w-6 h-6 text-primary" />
-            </div>
-            <span className="flex items-center text-success text-base font-medium">
-              <ArrowUpRight className="w-4 h-4" />
-              8%
-            </span>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-bold text-base-content">
-              {stats?.totalGroups || 0}
-            </h3>
-            <p className="text-sm text-base-content/60">Active Groups</p>
-          </div>
-          <Link
-            to="/admin/groups"
-            className="text-sm text-primary hover:underline mt-2 inline-block font-medium"
-          >
-            View all groups
-          </Link>
-        </div>
-
-        <div className="stat-card group hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-accent" />
-            </div>
-            <span className="flex items-center text-success text-base font-medium">
-              <TrendingUp className="w-4 h-4" />
-              23%
-            </span>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-bold text-base-content">
-              {formatCurrency(stats?.totalContributions || 0)}
-            </h3>
-            <p className="text-sm text-base-content/60">Total Contributions</p>
-          </div>
-          <Link
-            to="/admin/contributions"
-            className="text-sm text-accent hover:underline mt-2 inline-block font-medium"
-          >
-            View contributions
-          </Link>
-        </div>
-
-        <div className="stat-card group hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between">
-            <div className="w-12 h-12 bg-error/10 rounded-xl flex items-center justify-center">
-              <AlertTriangle className="w-6 h-6 text-error" />
-            </div>
-            <span className="flex items-center text-error text-base font-medium">
-              {stats?.defaultersCount || 0}
-            </span>
-          </div>
-          <div className="mt-4">
-            <h3 className="text-2xl font-bold text-base-content">
-              {stats?.pendingVerifications || 0}
-            </h3>
-            <p className="text-sm text-base-content/60">Pending Verifications</p>
-          </div>
-          <Link
-            to="/admin/cluster-managers"
-            className="text-sm text-error hover:underline mt-2 inline-block font-medium"
-          >
-            Review KYC
-          </Link>
-        </div>
-      </div>
-
+      <AdminStats />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card bg-base-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
@@ -217,13 +119,31 @@ function RouteComponent() {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={contributionsData}>
                 <defs>
-                  <linearGradient id="colorContributions" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="oklch(52% 0.154 150.069)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="oklch(52% 0.154 150.069)" stopOpacity={0} />
+                  <linearGradient
+                    id="colorContributions"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor="oklch(52% 0.154 150.069)"
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor="oklch(52% 0.154 150.069)"
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="oklch(86% 0 0)" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} stroke="oklch(66% 0 0)" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 12 }}
+                  stroke="oklch(66% 0 0)"
+                />
                 <YAxis
                   tick={{ fontSize: 12 }}
                   stroke="oklch(66% 0 0)"
@@ -231,7 +151,10 @@ function RouteComponent() {
                 />
                 <Tooltip
                   formatter={(v) => formatCurrency(Number(v))}
-                  contentStyle={{ borderRadius: "8px", border: "1px solid oklch(86% 0 0)" }}
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "1px solid oklch(86% 0 0)",
+                  }}
                 />
                 <Area
                   type="monotone"
@@ -276,9 +199,16 @@ function RouteComponent() {
                 />
                 <Tooltip
                   formatter={(v) => formatCurrency(Number(v))}
-                  contentStyle={{ borderRadius: "8px", border: "1px solid oklch(86% 0 0)" }}
+                  contentStyle={{
+                    borderRadius: "8px",
+                    border: "1px solid oklch(86% 0 0)",
+                  }}
                 />
-                <Bar dataKey="contributions" fill="oklch(52% 0.154 150.069)" radius={[0, 4, 4, 0]} />
+                <Bar
+                  dataKey="contributions"
+                  fill="oklch(52% 0.154 150.069)"
+                  radius={[0, 4, 4, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -288,7 +218,9 @@ function RouteComponent() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card bg-base-100 shadow-sm">
           <div className="p-6 border-b border-base-200">
-            <h3 className="text-lg font-semibold text-base-content">Recent Activity</h3>
+            <h3 className="text-lg font-semibold text-base-content">
+              Recent Activity
+            </h3>
           </div>
           <div className="divide-y divide-base-200">
             {recentActivity.length === 0 ? (
@@ -297,10 +229,15 @@ function RouteComponent() {
               </div>
             ) : (
               recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center gap-4 p-4 hover:bg-base-200/40">
+                <div
+                  key={activity.id}
+                  className="flex items-center gap-4 p-4 hover:bg-base-200/40"
+                >
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                      activity.type === "contribution" ? "bg-success/10" : "bg-secondary/10"
+                      activity.type === "contribution"
+                        ? "bg-success/10"
+                        : "bg-secondary/10"
                     }`}
                   >
                     {activity.type === "contribution" ? (
@@ -313,12 +250,16 @@ function RouteComponent() {
                     <p className="text-sm font-medium text-base-content truncate">
                       {activity.title}
                     </p>
-                    <p className="text-xs text-base-content/50">{activity.description}</p>
+                    <p className="text-xs text-base-content/50">
+                      {activity.description}
+                    </p>
                   </div>
                   <div className="text-right shrink-0">
                     <p
                       className={`text-sm font-medium ${
-                        activity.type === "contribution" ? "text-success" : "text-secondary"
+                        activity.type === "contribution"
+                          ? "text-success"
+                          : "text-secondary"
                       }`}
                     >
                       {activity.amount ? formatCurrency(activity.amount) : "-"}
@@ -335,7 +276,9 @@ function RouteComponent() {
 
         <div className="card bg-base-100 shadow-sm">
           <div className="p-6 border-b border-base-200">
-            <h3 className="text-lg font-semibold text-base-content">Quick Actions</h3>
+            <h3 className="text-lg font-semibold text-base-content">
+              Quick Actions
+            </h3>
           </div>
           <div className="space-y-3 p-4">
             <Link
@@ -346,7 +289,9 @@ function RouteComponent() {
                 <UserCheck className="w-5 h-5 text-secondary" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">Review KYC</p>
+                <p className="text-sm font-medium text-base-content">
+                  Review KYC
+                </p>
                 <p className="text-xs text-base-content/50">
                   {stats?.pendingVerifications || 0} pending
                 </p>
@@ -361,8 +306,12 @@ function RouteComponent() {
                 <Folder className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">Create Group</p>
-                <p className="text-xs text-base-content/50">Setup new Ajo group</p>
+                <p className="text-sm font-medium text-base-content">
+                  Create Group
+                </p>
+                <p className="text-xs text-base-content/50">
+                  Setup new Ajo group
+                </p>
               </div>
             </Link>
 
@@ -374,8 +323,12 @@ function RouteComponent() {
                 <DollarSign className="w-5 h-5 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">Manual Payout</p>
-                <p className="text-xs text-base-content/50">Process emergency payout</p>
+                <p className="text-sm font-medium text-base-content">
+                  Manual Payout
+                </p>
+                <p className="text-xs text-base-content/50">
+                  Process emergency payout
+                </p>
               </div>
             </Link>
 
@@ -387,8 +340,12 @@ function RouteComponent() {
                 <AlertTriangle className="w-5 h-5 text-error" />
               </div>
               <div>
-                <p className="text-sm font-medium text-base-content">Handle Complaints</p>
-                <p className="text-xs text-base-content/50">Resolve escalated issues</p>
+                <p className="text-sm font-medium text-base-content">
+                  Handle Complaints
+                </p>
+                <p className="text-xs text-base-content/50">
+                  Resolve escalated issues
+                </p>
               </div>
             </Link>
           </div>
