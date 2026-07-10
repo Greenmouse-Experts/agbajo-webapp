@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import apiClient from "#/api/simpleApi";
 import SimpleSelect from "#/components/modals/inputs/SimpleSelect";
+import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
 
 export const Route = createFileRoute("/home/auth/signup")({
   component: SignupPage,
@@ -185,24 +186,13 @@ function SignupPage() {
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Password</legend>
                   <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
+                    <SimpleInput
+                      type={"password"}
                       className={`input w-full pr-10 ${errors.password ? "input-error" : ""}`}
                       placeholder="Create a password"
                       autoComplete="new-password"
                       {...register("password")}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-base-content hover:text-base-content"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
                   </div>
                   {errors.password && (
                     <p className="fieldset-label text-error flex items-center gap-1 mt-1">
@@ -214,7 +204,7 @@ function SignupPage() {
 
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Confirm Password</legend>
-                  <input
+                  <SimpleInput
                     type="password"
                     className={`input w-full ${errors.confirmPassword ? "input-error" : ""}`}
                     placeholder="Confirm your password"

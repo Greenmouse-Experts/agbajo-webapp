@@ -152,10 +152,7 @@ function ClusterManagerLayout() {
                   alt="Agbajo"
                   className="w-full h-full object-cover"
                 />
-              </div>
-              <span className="font-bold text-base text-base-content">
-                Agbajo
-              </span>
+              </div>{" "}
             </div>
             <label
               htmlFor="cluster-manager-drawer"
