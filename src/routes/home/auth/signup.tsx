@@ -165,7 +165,11 @@ function SignupPage() {
                       onChange={(v) => field.onChange(v)}
                       render={(item: any, idx) => (
                         <option key={idx} value={String(item.id)}>
-                          {item.name}
+                          {item.name == "user"
+                            ? "CONTRIBUTOR"
+                            : String(item.name)
+                                .toLocaleUpperCase()
+                                .replace("_", " ")}
                         </option>
                       )}
                     />
