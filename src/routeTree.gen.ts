@@ -17,6 +17,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ContributorIndexRouteImport } from './routes/contributor/index'
 import { Route as ClusterManagerIndexRouteImport } from './routes/cluster-manager/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as ContributorSettingsRouteImport } from './routes/contributor/settings'
+import { Route as ClusterManagerSettingsRouteImport } from './routes/cluster-manager/settings'
 import { Route as ContributorWalletIndexRouteImport } from './routes/contributor/wallet.index'
 import { Route as ContributorPayoutsIndexRouteImport } from './routes/contributor/payouts.index'
 import { Route as ContributorKycIndexRouteImport } from './routes/contributor/kyc.index'
@@ -82,6 +84,16 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRouteRoute,
+} as any)
+const ContributorSettingsRoute = ContributorSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ContributorRouteRoute,
+} as any)
+const ClusterManagerSettingsRoute = ClusterManagerSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ClusterManagerRouteRoute,
 } as any)
 const ContributorWalletIndexRoute = ContributorWalletIndexRouteImport.update({
   id: '/wallet/',
@@ -225,6 +237,8 @@ export interface FileRoutesByFullPath {
   '/cluster-manager': typeof ClusterManagerRouteRouteWithChildren
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
+  '/cluster-manager/settings': typeof ClusterManagerSettingsRoute
+  '/contributor/settings': typeof ContributorSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/cluster-manager/': typeof ClusterManagerIndexRoute
   '/contributor/': typeof ContributorIndexRoute
@@ -257,6 +271,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/verify-email': typeof VerifyEmailRoute
+  '/cluster-manager/settings': typeof ClusterManagerSettingsRoute
+  '/contributor/settings': typeof ContributorSettingsRoute
   '/admin': typeof AdminIndexRoute
   '/cluster-manager': typeof ClusterManagerIndexRoute
   '/contributor': typeof ContributorIndexRoute
@@ -293,6 +309,8 @@ export interface FileRoutesById {
   '/cluster-manager': typeof ClusterManagerRouteRouteWithChildren
   '/contributor': typeof ContributorRouteRouteWithChildren
   '/verify-email': typeof VerifyEmailRoute
+  '/cluster-manager/settings': typeof ClusterManagerSettingsRoute
+  '/contributor/settings': typeof ContributorSettingsRoute
   '/admin/': typeof AdminIndexRoute
   '/cluster-manager/': typeof ClusterManagerIndexRoute
   '/contributor/': typeof ContributorIndexRoute
@@ -330,6 +348,8 @@ export interface FileRouteTypes {
     | '/cluster-manager'
     | '/contributor'
     | '/verify-email'
+    | '/cluster-manager/settings'
+    | '/contributor/settings'
     | '/admin/'
     | '/cluster-manager/'
     | '/contributor/'
@@ -362,6 +382,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/verify-email'
+    | '/cluster-manager/settings'
+    | '/contributor/settings'
     | '/admin'
     | '/cluster-manager'
     | '/contributor'
@@ -397,6 +419,8 @@ export interface FileRouteTypes {
     | '/cluster-manager'
     | '/contributor'
     | '/verify-email'
+    | '/cluster-manager/settings'
+    | '/contributor/settings'
     | '/admin/'
     | '/cluster-manager/'
     | '/contributor/'
@@ -497,6 +521,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
+    }
+    '/contributor/settings': {
+      id: '/contributor/settings'
+      path: '/settings'
+      fullPath: '/contributor/settings'
+      preLoaderRoute: typeof ContributorSettingsRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/cluster-manager/settings': {
+      id: '/cluster-manager/settings'
+      path: '/settings'
+      fullPath: '/cluster-manager/settings'
+      preLoaderRoute: typeof ClusterManagerSettingsRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
     }
     '/contributor/wallet/': {
       id: '/contributor/wallet/'
@@ -705,6 +743,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 )
 
 interface ClusterManagerRouteRouteChildren {
+  ClusterManagerSettingsRoute: typeof ClusterManagerSettingsRoute
   ClusterManagerIndexRoute: typeof ClusterManagerIndexRoute
   ClusterManagerContributionsIndexRoute: typeof ClusterManagerContributionsIndexRoute
   ClusterManagerGroupsIndexRoute: typeof ClusterManagerGroupsIndexRoute
@@ -715,6 +754,7 @@ interface ClusterManagerRouteRouteChildren {
 }
 
 const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
+  ClusterManagerSettingsRoute: ClusterManagerSettingsRoute,
   ClusterManagerIndexRoute: ClusterManagerIndexRoute,
   ClusterManagerContributionsIndexRoute: ClusterManagerContributionsIndexRoute,
   ClusterManagerGroupsIndexRoute: ClusterManagerGroupsIndexRoute,
@@ -728,6 +768,7 @@ const ClusterManagerRouteRouteWithChildren =
   ClusterManagerRouteRoute._addFileChildren(ClusterManagerRouteRouteChildren)
 
 interface ContributorRouteRouteChildren {
+  ContributorSettingsRoute: typeof ContributorSettingsRoute
   ContributorIndexRoute: typeof ContributorIndexRoute
   ContributorComplaintsIndexRoute: typeof ContributorComplaintsIndexRoute
   ContributorContributionsIndexRoute: typeof ContributorContributionsIndexRoute
@@ -738,6 +779,7 @@ interface ContributorRouteRouteChildren {
 }
 
 const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
+  ContributorSettingsRoute: ContributorSettingsRoute,
   ContributorIndexRoute: ContributorIndexRoute,
   ContributorComplaintsIndexRoute: ContributorComplaintsIndexRoute,
   ContributorContributionsIndexRoute: ContributorContributionsIndexRoute,
