@@ -1,9 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import ProfileSettings from "#/components/pages/ProfileSettings.tsx";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/contributor/settings')({
+export const Route = createFileRoute("/contributor/settings")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return <div>Hello "/contributor/settings"!</div>
+  return (
+    <>
+      <ProfileSettings />
+    </>
+  );
 }

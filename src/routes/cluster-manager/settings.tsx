@@ -1,3 +1,4 @@
+import ProfileSettings from "#/components/pages/ProfileSettings.tsx";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/cluster-manager/settings")({
@@ -5,5 +6,9 @@ export const Route = createFileRoute("/cluster-manager/settings")({
 });
 
 function RouteComponent() {
-  return <div>Hello "/cluster-manager/settings"!</div>;
+  return (
+    <>
+      <ProfileSettings />
+    </>
+  );
 }
