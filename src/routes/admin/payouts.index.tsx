@@ -2,7 +2,6 @@ import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Search,
   Download,
   AlertCircle,
   CheckCircle,
@@ -11,6 +10,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import SearchBar from "#/components/Searchbar";
 
 export const Route = createFileRoute("/admin/payouts/")({
   component: AdminPayouts,
@@ -168,15 +168,9 @@ function AdminPayouts() {
 
       <div className="card bg-base-100 shadow p-4">
         <div className="flex flex-col sm:flex-row gap-4">
-          <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content" />
-            <input
-              type="text"
-              placeholder="Search recipient or group..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </label>
+          <div className="flex-1">
+            <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          </div>
           <select
             className="select w-full sm:w-48"
             value={statusFilter}

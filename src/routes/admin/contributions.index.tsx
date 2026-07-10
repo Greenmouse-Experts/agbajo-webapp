@@ -2,7 +2,6 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Search,
   Download,
   AlertCircle,
   CheckCircle,
@@ -10,6 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import SearchBar from "#/components/Searchbar";
 
 export const Route = createFileRoute("/admin/contributions/")({
   component: AdminContributions,
@@ -142,15 +142,7 @@ function AdminContributions() {
 
       <div className="card bg-base-100 shadow p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <label className="input">
-            <Search className="w-5 h-5 text-base-content" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </label>
+          <SearchBar value={searchQuery} onChange={setSearchQuery} />
           <select
             className="select"
             value={statusFilter}
