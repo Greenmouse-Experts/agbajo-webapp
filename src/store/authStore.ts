@@ -5,11 +5,12 @@ import apiClient from "#/api/simpleApi";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 
+type roles = "user" | "admin" | "cluster-manager";
 export interface USER {
   id: string | number;
   email: string;
   name: string;
-  roles: "user" | "admin"[];
+  roles: roles[];
   phoneNumber?: string;
   [key: string]: unknown;
 }
