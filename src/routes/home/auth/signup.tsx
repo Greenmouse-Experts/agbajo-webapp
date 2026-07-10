@@ -6,6 +6,8 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import apiClient from "#/api/simpleApi";
 import SimpleSelect from "#/components/modals/inputs/SimpleSelect";
 import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
@@ -19,7 +21,12 @@ const schema = z
     firstName: z.string().min(2, "First name must be at least 2 characters"),
     lastName: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Enter a valid email address"),
-    phoneNumber: z.string().optional(),
+    phoneNumber: z
+      .string()
+      .min(1, "Phone number is required")
+      .refine((v) => isValidPhoneNumber(v), {
+        message: "Enter a valid phone number (e.g. +234 801 234 5678)",
+      }),
     roleId: z.string().min(1, "Select a role"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
@@ -42,6 +49,7 @@ function SignupPage() {
     register,
     handleSubmit,
     control,
+    setError,
     formState: { errors },
   } = methods;
 
@@ -56,8 +64,18 @@ function SignupPage() {
       navigate({ to: "/home/auth/login" });
     },
     onError: (err: any) => {
-      const msg = err?.response?.data?.message ?? "Something went wrong.";
-      toast.error(msg);
+      const res = err?.response?.data;
+      const fieldErrors = res?.errors as
+        | { field: string; message: string }[]
+        | undefined;
+
+      if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+        fieldErrors.forEach(({ field, message }) => {
+          setError(field as keyof FormValues, { type: "server", message });
+        });
+      }
+
+      toast.error(res?.message ?? "Something went wrong.");
     },
   });
 
@@ -145,12 +163,28 @@ function SignupPage() {
 
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">Phone Number</legend>
-                  <input
-                    type="tel"
-                    className="input w-full"
-                    placeholder="+234 800 000 0000"
-                    {...register("phoneNumber")}
+                  <Controller
+                    control={control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <PhoneInput
+                        international
+                        defaultCountry="NG"
+                        countryCallingCodeEditable={false}
+                        placeholder="801 234 5678"
+                        value={field.value}
+                        onChange={(v) => field.onChange(v ?? "")}
+                        onBlur={field.onBlur}
+                        className={`input w-full items-center gap-2 ${errors.phoneNumber ? "input-error" : ""}`}
+                      />
+                    )}
                   />
+                  {errors.phoneNumber && (
+                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {errors.phoneNumber.message}
+                    </p>
+                  )}
                 </fieldset>
 
                 <Controller

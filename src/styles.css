@@ -64,3 +64,11 @@ body {
 @utility fade {
   @apply border-current/20 ring-current/20;
 }
+
+/* react-phone-number-input — blend with daisyUI input */
+.PhoneInputInput {
+  @apply border-0 bg-transparent outline-none;
+}
+.PhoneInputCountrySelect {
+  @apply text-base-content;
+}
