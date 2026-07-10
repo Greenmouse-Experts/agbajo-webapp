@@ -7,15 +7,14 @@ import {
   UserX,
   Eye,
   Mail,
-  Phone,
-  Star,
   Calendar,
+  Star,
   CheckCircle,
   XCircle,
   Clock,
   AlertCircle,
 } from "lucide-react";
-import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 
 export const Route = createFileRoute("/admin/cluster-managers/")({
   component: AdminClusterManagers,
@@ -25,8 +24,11 @@ type VerificationStatus = "pending" | "verified" | "rejected";
 
 interface Manager {
   id: string;
-  created_at: string;
-  verification_status: VerificationStatus;
+  firstName: string;
+  lastName: string;
+  email: string;
+  createdAt: string;
+  verification_status?: VerificationStatus;
   rating?: number;
   total_groups_managed?: number;
   total_contributions_handled?: number;
@@ -35,12 +37,11 @@ interface Manager {
   face_image_url?: string;
   selfie_image_url?: string;
   address?: string;
-  profile?: {
-    full_name: string;
-    email: string;
-    phone_number?: string;
-  };
 }
+
+const fullName = (m: Manager) => `${m.firstName} ${m.lastName}`.trim();
+const getStatus = (m: Manager): VerificationStatus =>
+  m.verification_status ?? "pending";
 
 const defaultInviteForm = { email: "", fullName: "", phoneNumber: "" };
 
@@ -67,7 +68,7 @@ const Avatar = ({
   size?: "sm" | "lg";
 }) => (
   <div
-    className={`rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold shrink-0 ${size === "lg" ? "w-16 h-16 text-xl" : "w-12 h-12"}`}
+    className={`rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content font-semibold shrink-0 ${size === "lg" ? "w-16 h-16 text-xl" : "w-12 h-12"}`}
   >
     {(name?.[0] ?? "M").toUpperCase()}
   </div>
@@ -82,12 +83,12 @@ function AdminClusterManagers() {
   const [selected, setSelected] = useState<Manager | null>(null);
   const [inviteForm, setInviteForm] = useState(defaultInviteForm);
 
-  const { data: managers = [], isLoading } = useQuery({
+  const { data: managers = [], isLoading } = useQuery<Manager[]>({
     queryKey: ["admin", "cluster-managers"],
     queryFn: () =>
       apiClient
-        .get<ApiResponse<Manager[]>>("admin/cluster-managers")
-        .then((r) => r.data.data),
+        .get<ApiResponseV2<Manager[]>>("users/cluster-managers")
+        .then((r) => r.data.data.data),
   });
 
   const kycMutation = useMutation({
@@ -97,9 +98,7 @@ function AdminClusterManagers() {
       }),
     onSuccess: () => {
       detailsModalRef.current?.close();
-      queryClient.invalidateQueries({
-        queryKey: ["admin", "cluster-managers"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["admin", "cluster-managers"] });
     },
   });
 
@@ -115,10 +114,10 @@ function AdminClusterManagers() {
   const filtered = managers.filter((m) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch =
-      m.profile?.full_name?.toLowerCase().includes(q) ||
-      m.profile?.email?.toLowerCase().includes(q);
+      fullName(m).toLowerCase().includes(q) ||
+      m.email.toLowerCase().includes(q);
     const matchesStatus =
-      statusFilter === "all" || m.verification_status === statusFilter;
+      statusFilter === "all" || getStatus(m) === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -139,7 +138,7 @@ function AdminClusterManagers() {
           <h1 className="text-2xl font-bold text-base-content">
             Cluster Managers
           </h1>
-          <p className="text-base-content mt-1">
+          <p className="text-base-content/60 mt-1">
             Manage and verify cluster managers
           </p>
         </div>
@@ -152,10 +151,10 @@ function AdminClusterManagers() {
         </button>
       </div>
 
-      <div className="card bg-base-100 shadow p-4">
+      <div className="card bg-base-100 shadow-sm p-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <label className="input flex-1">
-            <Search className="w-5 h-5 text-base-content" />
+            <Search className="w-5 h-5 text-base-content/40" />
             <input
               type="text"
               placeholder="Search by name or email..."
@@ -181,14 +180,14 @@ function AdminClusterManagers() {
           <span className="loading loading-spinner loading-lg" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="card bg-base-100 shadow p-12 text-center">
+        <div className="card bg-base-100 shadow-sm p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-base-content" />
+            <AlertCircle className="w-8 h-8 text-base-content/40" />
           </div>
           <h3 className="text-lg font-medium text-base-content mb-1">
             No cluster managers found
           </h3>
-          <p className="text-base-content">
+          <p className="text-base-content/60">
             Try adjusting your search or filter criteria
           </p>
         </div>
@@ -197,70 +196,61 @@ function AdminClusterManagers() {
           {filtered.map((manager) => (
             <div
               key={manager.id}
-              className="card bg-base-100 shadow p-6 hover:shadow-md transition-shadow"
+              className="card bg-base-100 shadow-sm p-6 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <Avatar name={manager.profile?.full_name} />
+                  <Avatar name={manager.firstName} />
                   <div>
                     <h3 className="font-semibold text-base-content">
-                      {manager.profile?.full_name ?? "—"}
+                      {fullName(manager)}
                     </h3>
-                    <p className="text-base text-base-content">
-                      {manager.profile?.email}
+                    <p className="text-sm text-base-content/60">
+                      {manager.email}
                     </p>
                   </div>
                 </div>
-                <StatusIcon status={manager.verification_status} />
+                <StatusIcon status={getStatus(manager)} />
               </div>
 
               <div className="mt-4 space-y-2">
-                <div className="flex items-center gap-2 text-base text-base-content">
-                  <Phone className="w-4 h-4" />
-                  {manager.profile?.phone_number ?? "No phone"}
-                </div>
-                <div className="flex items-center gap-2 text-base text-base-content">
+                <div className="flex items-center gap-2 text-sm text-base-content/60">
                   <Calendar className="w-4 h-4" />
-                  Joined {new Date(manager.created_at).toLocaleDateString()}
+                  Joined {new Date(manager.createdAt).toLocaleDateString()}
                 </div>
-                <div className="flex items-center gap-2 text-base text-base-content">
-                  <Star className="w-4 h-4 text-amber-500" />
-                  Rating: {manager.rating?.toFixed(1) ?? "0.0"}
+                <div className="flex items-center gap-2 text-sm text-base-content/60">
+                  <Star className="w-4 h-4 text-warning" />
+                  Rating: {manager.rating?.toFixed(1) ?? "—"}
                 </div>
               </div>
 
               <div className="mt-4 pt-4 border-t border-base-200">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4 text-base">
+                  <div className="flex items-center gap-4 text-sm">
                     <div>
-                      <p className="text-base-content">Groups</p>
-                      <p className="font-semibold">
+                      <p className="text-base-content/60">Groups</p>
+                      <p className="font-semibold text-base-content">
                         {manager.total_groups_managed ?? 0}
                       </p>
                     </div>
                     <div>
-                      <p className="text-base-content">Handled</p>
-                      <p className="font-semibold">
-                        ₦
-                        {manager.total_contributions_handled?.toLocaleString() ??
-                          "0"}
+                      <p className="text-base-content/60">Handled</p>
+                      <p className="font-semibold text-base-content">
+                        ₦{manager.total_contributions_handled?.toLocaleString() ?? "0"}
                       </p>
                     </div>
                   </div>
-                  <StatusBadge status={manager.verification_status} />
+                  <StatusBadge status={getStatus(manager)} />
                 </div>
               </div>
 
-              {manager.verification_status === "pending" ? (
+              {getStatus(manager) === "pending" ? (
                 <div className="mt-4 flex gap-2">
                   <button
                     className="btn btn-success btn-sm flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({
-                        id: manager.id,
-                        status: "verified",
-                      })
+                      kycMutation.mutate({ id: manager.id, status: "verified" })
                     }
                   >
                     <UserCheck className="w-4 h-4" />
@@ -270,10 +260,7 @@ function AdminClusterManagers() {
                     className="btn btn-error btn-sm flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({
-                        id: manager.id,
-                        status: "rejected",
-                      })
+                      kycMutation.mutate({ id: manager.id, status: "rejected" })
                     }
                   >
                     <UserX className="w-4 h-4" />
@@ -308,51 +295,51 @@ function AdminClusterManagers() {
 
             <div className="space-y-6 mt-6">
               <div className="flex items-center gap-4">
-                <Avatar name={selected.profile?.full_name} size="lg" />
+                <Avatar name={selected.firstName} size="lg" />
                 <div>
-                  <h4 className="text-lg font-semibold">
-                    {selected.profile?.full_name ?? "—"}
+                  <h4 className="text-lg font-semibold text-base-content">
+                    {fullName(selected)}
                   </h4>
-                  <p className="text-base-content">{selected.profile?.email}</p>
+                  <p className="text-base-content/60">{selected.email}</p>
                   <div className="mt-1">
-                    <StatusBadge status={selected.verification_status} />
+                    <StatusBadge status={getStatus(selected)} />
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="card bg-base-200 p-4">
-                  <h4 className="text-base font-medium text-base-content mb-2">
+                  <h4 className="text-sm font-medium text-base-content mb-2">
                     Contact Information
                   </h4>
-                  <div className="space-y-2 text-base">
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-base-content" />
-                      {selected.profile?.phone_number ?? "Not provided"}
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2 text-base-content/60">
+                      <Mail className="w-4 h-4" />
+                      {selected.email}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-base-content" />
-                      {selected.profile?.email}
+                    <div className="flex items-center gap-2 text-base-content/60">
+                      <Calendar className="w-4 h-4" />
+                      {new Date(selected.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
 
                 <div className="card bg-base-200 p-4">
-                  <h4 className="text-base font-medium text-base-content mb-2">
+                  <h4 className="text-sm font-medium text-base-content mb-2">
                     Performance
                   </h4>
-                  <div className="space-y-2 text-base">
+                  <div className="space-y-2 text-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-base-content">Groups Managed</span>
-                      <span className="font-medium">
+                      <span className="text-base-content/60">Groups Managed</span>
+                      <span className="font-medium text-base-content">
                         {selected.total_groups_managed ?? 0}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-base-content">Rating</span>
+                      <span className="text-base-content/60">Rating</span>
                       <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                        <span className="font-medium">
+                        <Star className="w-4 h-4 text-warning fill-warning" />
+                        <span className="font-medium text-base-content">
                           {selected.rating?.toFixed(1) ?? "—"}
                         </span>
                       </div>
@@ -362,10 +349,10 @@ function AdminClusterManagers() {
               </div>
 
               <div className="card bg-base-200 p-4">
-                <h4 className="text-base font-medium text-base-content mb-3">
+                <h4 className="text-sm font-medium text-base-content mb-3">
                   KYC Documents
                 </h4>
-                <div className="grid grid-cols-2 gap-3 text-base">
+                <div className="grid grid-cols-2 gap-3 text-sm">
                   {[
                     {
                       label: "NIN",
@@ -396,18 +383,18 @@ function AdminClusterManagers() {
                       key={label}
                       className="flex items-center justify-between p-2 rounded-lg bg-base-100"
                     >
-                      <span className="text-base-content">{label}</span>
+                      <span className="text-base-content/60">{label}</span>
                       <span
-                        className={`font-medium ${value ? "text-success" : "text-base-content"}`}
+                        className={`font-medium ${value ? "text-success" : "text-base-content/40"}`}
                       >
                         {text(value)}
                       </span>
                     </div>
                   ))}
                   <div className="flex items-center justify-between p-2 rounded-lg bg-base-100 col-span-2">
-                    <span className="text-base-content">Address</span>
+                    <span className="text-base-content/60">Address</span>
                     <span
-                      className={`font-medium ${selected.address ? "text-success" : "text-base-content"}`}
+                      className={`font-medium ${selected.address ? "text-success" : "text-base-content/40"}`}
                     >
                       {selected.address ?? "Not provided"}
                     </span>
@@ -415,16 +402,13 @@ function AdminClusterManagers() {
                 </div>
               </div>
 
-              {selected.verification_status === "pending" && (
+              {getStatus(selected) === "pending" && (
                 <div className="flex gap-3">
                   <button
                     className="btn btn-success flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({
-                        id: selected.id,
-                        status: "verified",
-                      })
+                      kycMutation.mutate({ id: selected.id, status: "verified" })
                     }
                   >
                     <UserCheck className="w-4 h-4" />
@@ -434,10 +418,7 @@ function AdminClusterManagers() {
                     className="btn btn-error flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({
-                        id: selected.id,
-                        status: "rejected",
-                      })
+                      kycMutation.mutate({ id: selected.id, status: "rejected" })
                     }
                   >
                     <UserX className="w-4 h-4" />
@@ -463,7 +444,7 @@ function AdminClusterManagers() {
       <dialog ref={inviteModalRef} className="modal">
         <div className="modal-box">
           <h3 className="text-xl font-semibold">Invite Cluster Manager</h3>
-          <p className="text-base text-base-content mt-1">
+          <p className="text-sm text-base-content/60 mt-1">
             Send an invitation to onboard a new manager
           </p>
 
