@@ -652,6 +652,7 @@ function AdminGroups() {
                   type="date"
                   className="input w-full"
                   value={createForm.startDate}
+                  min={new Date(Date.now() + 86400000).toISOString().split("T")[0]}
                   onChange={(e) =>
                     setCreateForm({ ...createForm, startDate: e.target.value })
                   }
