@@ -16,6 +16,7 @@ import {
   MessageSquare,
   BarChart2,
   Settings,
+  CreditCard,
   LogOut,
   Menu,
   Bell,
@@ -45,6 +46,7 @@ const navItems: NavItem[] = [
   { to: "/admin/complaints", label: "Complaints", icon: MessageSquare },
   { to: "/admin/reports", label: "Reports", icon: BarChart2 },
   { to: "/admin/policies", label: "Policies", icon: Settings },
+  { to: "/admin/plans", label: "Plans", icon: CreditCard },
 ];
 
 export const Route = createFileRoute("/admin")({
