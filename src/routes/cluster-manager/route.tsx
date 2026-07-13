@@ -111,7 +111,7 @@ function ClusterManagerLayout() {
                     <p className="font-medium text-base-content">
                       {displayName}
                     </p>
-                    <p className="text-sm text-base-content truncate max-w-full">
+                    <p className="text-sm text-base-content truncate max-w-full wrap-break-word">
                       {String((user as AUTHRECORD | null)?.user?.email ?? "")}
                     </p>
                   </div>
@@ -129,7 +129,7 @@ function ClusterManagerLayout() {
         </nav>
 
         <main className="flex-1 p-6 bg-base-200/50">
-          <div className="max-w-7xl mx-auto">
+          <div className="">
             <Outlet />
           </div>
         </main>
