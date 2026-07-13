@@ -3,7 +3,6 @@ import { useAtom } from "jotai/react";
 import { getDefaultStore } from "jotai/vanilla";
 import apiClient from "#/api/simpleApi";
 import { toast } from "sonner";
-import { extract_message } from "#/helpers/apihelpers";
 
 type roles = "user" | "admin" | "cluster-manager";
 export interface USER {
@@ -94,14 +93,21 @@ const auth_logout = async () => {
 //   return resp.data;
 // };
 export const logout = () => {
-  toast.promise(auth_logout, {
-    loading: "loading",
+  const doLogout = () => {
+    clear_user();
+    window.location.href = "/home/auth/login";
+  };
+
+  toast.promise(auth_logout().catch(() => {}), {
+    loading: "Logging out...",
     success: () => {
-      clear_user();
-      window.location.href = "/home/auth/login";
-      return "success";
+      doLogout();
+      return "Logged out";
     },
-    error: extract_message,
+    error: () => {
+      doLogout();
+      return "Logged out";
+    },
   });
 };
 
