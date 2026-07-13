@@ -33,6 +33,7 @@ import { Route as ClusterManagerGroupsIndexRouteImport } from './routes/cluster-
 import { Route as ClusterManagerContributionsIndexRouteImport } from './routes/cluster-manager/contributions.index'
 import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports.index'
 import { Route as AdminPoliciesIndexRouteImport } from './routes/admin/policies.index'
+import { Route as AdminPlansIndexRouteImport } from './routes/admin/plans.index'
 import { Route as AdminPayoutsIndexRouteImport } from './routes/admin/payouts.index'
 import { Route as AdminGroupsIndexRouteImport } from './routes/admin/groups.index'
 import { Route as AdminContributorsIndexRouteImport } from './routes/admin/contributors.index'
@@ -44,6 +45,7 @@ import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 import { Route as HomeAuthAdminRouteImport } from './routes/home/auth/admin'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
 import { Route as AuthResetPasswordConfirmRouteImport } from './routes/auth/reset-password/confirm'
+import { Route as AdminPlansIdIndexRouteImport } from './routes/admin/plans/$id.index'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: '/verify-email',
@@ -172,6 +174,11 @@ const AdminPoliciesIndexRoute = AdminPoliciesIndexRouteImport.update({
   path: '/policies/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminPlansIndexRoute = AdminPlansIndexRouteImport.update({
+  id: '/plans/',
+  path: '/plans/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminPayoutsIndexRoute = AdminPayoutsIndexRouteImport.update({
   id: '/payouts/',
   path: '/payouts/',
@@ -230,6 +237,11 @@ const AuthResetPasswordConfirmRoute =
     path: '/auth/reset-password/confirm',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminPlansIdIndexRoute = AdminPlansIdIndexRouteImport.update({
+  id: '/plans/$id/',
+  path: '/plans/$id/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -253,6 +265,7 @@ export interface FileRoutesByFullPath {
   '/admin/contributors/': typeof AdminContributorsIndexRoute
   '/admin/groups/': typeof AdminGroupsIndexRoute
   '/admin/payouts/': typeof AdminPayoutsIndexRoute
+  '/admin/plans/': typeof AdminPlansIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
   '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
@@ -267,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/contributor/kyc/': typeof ContributorKycIndexRoute
   '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
+  '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -287,6 +301,7 @@ export interface FileRoutesByTo {
   '/admin/contributors': typeof AdminContributorsIndexRoute
   '/admin/groups': typeof AdminGroupsIndexRoute
   '/admin/payouts': typeof AdminPayoutsIndexRoute
+  '/admin/plans': typeof AdminPlansIndexRoute
   '/admin/policies': typeof AdminPoliciesIndexRoute
   '/admin/reports': typeof AdminReportsIndexRoute
   '/cluster-manager/contributions': typeof ClusterManagerContributionsIndexRoute
@@ -301,6 +316,7 @@ export interface FileRoutesByTo {
   '/contributor/kyc': typeof ContributorKycIndexRoute
   '/contributor/payouts': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet': typeof ContributorWalletIndexRoute
+  '/admin/plans/$id': typeof AdminPlansIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -325,6 +341,7 @@ export interface FileRoutesById {
   '/admin/contributors/': typeof AdminContributorsIndexRoute
   '/admin/groups/': typeof AdminGroupsIndexRoute
   '/admin/payouts/': typeof AdminPayoutsIndexRoute
+  '/admin/plans/': typeof AdminPlansIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
   '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
@@ -339,6 +356,7 @@ export interface FileRoutesById {
   '/contributor/kyc/': typeof ContributorKycIndexRoute
   '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
+  '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -364,6 +382,7 @@ export interface FileRouteTypes {
     | '/admin/contributors/'
     | '/admin/groups/'
     | '/admin/payouts/'
+    | '/admin/plans/'
     | '/admin/policies/'
     | '/admin/reports/'
     | '/cluster-manager/contributions/'
@@ -378,6 +397,7 @@ export interface FileRouteTypes {
     | '/contributor/kyc/'
     | '/contributor/payouts/'
     | '/contributor/wallet/'
+    | '/admin/plans/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -398,6 +418,7 @@ export interface FileRouteTypes {
     | '/admin/contributors'
     | '/admin/groups'
     | '/admin/payouts'
+    | '/admin/plans'
     | '/admin/policies'
     | '/admin/reports'
     | '/cluster-manager/contributions'
@@ -412,6 +433,7 @@ export interface FileRouteTypes {
     | '/contributor/kyc'
     | '/contributor/payouts'
     | '/contributor/wallet'
+    | '/admin/plans/$id'
   id:
     | '__root__'
     | '/'
@@ -435,6 +457,7 @@ export interface FileRouteTypes {
     | '/admin/contributors/'
     | '/admin/groups/'
     | '/admin/payouts/'
+    | '/admin/plans/'
     | '/admin/policies/'
     | '/admin/reports/'
     | '/cluster-manager/contributions/'
@@ -449,6 +472,7 @@ export interface FileRouteTypes {
     | '/contributor/kyc/'
     | '/contributor/payouts/'
     | '/contributor/wallet/'
+    | '/admin/plans/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -634,6 +658,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPoliciesIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/plans/': {
+      id: '/admin/plans/'
+      path: '/plans'
+      fullPath: '/admin/plans/'
+      preLoaderRoute: typeof AdminPlansIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/payouts/': {
       id: '/admin/payouts/'
       path: '/payouts'
@@ -711,6 +742,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/plans/$id/': {
+      id: '/admin/plans/$id/'
+      path: '/plans/$id'
+      fullPath: '/admin/plans/$id/'
+      preLoaderRoute: typeof AdminPlansIdIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
@@ -722,8 +760,10 @@ interface AdminRouteRouteChildren {
   AdminContributorsIndexRoute: typeof AdminContributorsIndexRoute
   AdminGroupsIndexRoute: typeof AdminGroupsIndexRoute
   AdminPayoutsIndexRoute: typeof AdminPayoutsIndexRoute
+  AdminPlansIndexRoute: typeof AdminPlansIndexRoute
   AdminPoliciesIndexRoute: typeof AdminPoliciesIndexRoute
   AdminReportsIndexRoute: typeof AdminReportsIndexRoute
+  AdminPlansIdIndexRoute: typeof AdminPlansIdIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
@@ -734,8 +774,10 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminContributorsIndexRoute: AdminContributorsIndexRoute,
   AdminGroupsIndexRoute: AdminGroupsIndexRoute,
   AdminPayoutsIndexRoute: AdminPayoutsIndexRoute,
+  AdminPlansIndexRoute: AdminPlansIndexRoute,
   AdminPoliciesIndexRoute: AdminPoliciesIndexRoute,
   AdminReportsIndexRoute: AdminReportsIndexRoute,
+  AdminPlansIdIndexRoute: AdminPlansIdIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
