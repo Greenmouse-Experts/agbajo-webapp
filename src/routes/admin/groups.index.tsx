@@ -28,6 +28,7 @@ type GroupType = "private" | "public";
 
 const defaultForm = {
   groupName: "",
+  planId: "",
   contributionAmount: "",
   frequency: "weekly" as ContributionFrequency,
   frequencyAmount: "1",
@@ -36,6 +37,14 @@ const defaultForm = {
   type: "private" as GroupType,
   clusterManagerId: "",
 };
+
+interface Plan {
+  id: string;
+  name: string;
+  contributionAmount: string;
+  frequency: string;
+  frequencyAmount: number;
+}
 
 interface GroupManager {
   id: string;
@@ -255,8 +264,19 @@ function AdminGroups() {
     },
   });
 
+  const plansQuery = useQuery({
+    queryKey: ["admin", "plans"],
+    queryFn: async () => {
+      const resp = await apiClient.get<{ status: string; data: Plan[] }>(
+        "/plans/all",
+      );
+      return resp.data.data;
+    },
+  });
+
   const managerOptions = (managersListQuery.data?.data?.users ??
     []) as GroupManager[];
+  const planOptions = plansQuery.data ?? [];
 
   const groups = (groupsQuery.data?.data?.groups ?? []) as Group[];
   const selected = groups.find((g) => g.id === selectedId) ?? null;
@@ -284,6 +304,7 @@ function AdminGroups() {
     e.preventDefault();
     createMutation.mutate({
       groupName: createForm.groupName,
+      planId: createForm.planId,
       contributionAmount: parseFloat(createForm.contributionAmount),
       frequency: createForm.frequency,
       frequencyAmount: parseInt(createForm.frequencyAmount),
@@ -513,6 +534,25 @@ function AdminGroups() {
                 }
                 required
               />
+            </fieldset>
+
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Plan</legend>
+              <select
+                className="select w-full"
+                value={createForm.planId}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, planId: e.target.value })
+                }
+                required
+              >
+                <option value="">Select a plan</option>
+                {planOptions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} — {p.frequency} × {p.frequencyAmount}
+                  </option>
+                ))}
+              </select>
             </fieldset>
 
             <div className="grid grid-cols-2 gap-4">
