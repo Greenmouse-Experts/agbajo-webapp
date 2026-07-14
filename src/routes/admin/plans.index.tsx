@@ -108,11 +108,12 @@ const columns: columnType<Plan>[] = [
 
 interface PlanFormModalProps {
   plan?: Plan | null;
+  formId: string;
   onSuccess: () => void;
 }
 
 const PlanFormModal = forwardRef<ModalHandle, PlanFormModalProps>(
-  ({ plan, onSuccess }, ref) => {
+  ({ plan, formId, onSuccess }, ref) => {
     const isEdit = !!plan;
 
     const methods = useForm<PlanFormValues>({
@@ -168,7 +169,7 @@ const PlanFormModal = forwardRef<ModalHandle, PlanFormModalProps>(
               Cancel
             </button>
             <button
-              form="plan-form"
+              form={formId}
               type="submit"
               className="btn btn-primary"
               disabled={mutation.isPending}
@@ -182,7 +183,7 @@ const PlanFormModal = forwardRef<ModalHandle, PlanFormModalProps>(
         }
       >
         <FormProvider {...methods}>
-          <form id="plan-form" onSubmit={onSubmit} className="space-y-4">
+          <form id={formId} onSubmit={onSubmit} className="space-y-4">
             <SimpleInput
               label="Plan Name"
               placeholder="e.g. Weekly Nano Plan"
@@ -395,6 +396,7 @@ function RouteComponent() {
 
       <PlanFormModal
         ref={createModalRef}
+        formId="plan-form-create"
         plan={null}
         onSuccess={() => {
           createModalRef.current?.close();
@@ -404,6 +406,7 @@ function RouteComponent() {
 
       <PlanFormModal
         ref={editModalRef}
+        formId="plan-form-edit"
         plan={selectedPlan}
         onSuccess={() => {
           editModalRef.current?.close();
