@@ -10,14 +10,19 @@ import {
   UserPlus,
   X,
   Check,
+  Pencil,
+  Trash2,
+  Eye,
 } from "lucide-react";
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
 import CustomTable, { type columnType } from "#/components/tables/CustomTable";
+import type { Actions } from "#/components/tables/pop-up";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
+import { useAuth } from "#/store/authStore.ts";
 
 export const Route = createFileRoute("/cluster-manager/groups/")({
   component: AdminGroups,
@@ -241,27 +246,107 @@ const AssignManagerModal = forwardRef<ModalHandle, AssignModalProps>(
 );
 AssignManagerModal.displayName = "AssignManagerModal";
 
+interface InviteModalProps {
+  group: Group | null;
+}
+
+const InviteUserModal = forwardRef<ModalHandle, InviteModalProps>(
+  ({ group }, ref) => {
+    const [search, setSearch] = useState("");
+
+    const usersQuery = useQuery({
+      queryKey: ["contributors", "invitable", search],
+      queryFn: async () => {
+        const resp = await apiClient.get("users", {
+          params: search ? { search } : {},
+        });
+        return resp.data;
+      },
+      enabled: !!group,
+    });
+
+    const inviteMutation = useMutation({
+      mutationFn: (userId: string) =>
+        toast
+          .promise(apiClient.post(`groups/${group?.id}/invite/${userId}`), {
+            loading: "Sending invite...",
+            success: "Invite sent",
+            error: extract_message,
+          })
+          .unwrap(),
+    });
+
+    const users = (usersQuery.data?.data?.users ?? []) as GroupManager[];
+
+    return (
+      <Modal ref={ref} title="Invite Members">
+        <div className="space-y-4">
+          <SearchBar value={search} onChange={setSearch} />
+
+          {usersQuery.isLoading ? (
+            <div className="flex justify-center py-8">
+              <span className="loading loading-spinner loading-md" />
+            </div>
+          ) : users.length === 0 ? (
+            <div className="text-center py-8 text-base-content/60">
+              No users found
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+              {users.map((u) => (
+                <div
+                  key={u.id}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-base-200 hover:bg-base-200/50"
+                >
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
+                    {u.firstName?.[0]?.toUpperCase() ?? "U"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-base-content truncate">
+                      {managerName(u)}
+                    </p>
+                    <p className="text-xs text-base-content/60 truncate">
+                      {u.email}
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-primary btn-sm shrink-0"
+                    disabled={inviteMutation.isPending}
+                    onClick={() => inviteMutation.mutate(u.id)}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Invite
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
+    );
+  },
+);
+InviteUserModal.displayName = "InviteUserModal";
+
 function AdminGroups() {
+  const [auth] = useAuth();
+  const manager = auth?.user;
   const queryClient = useQueryClient();
   const detailsModalRef = useRef<HTMLDialogElement>(null);
   const assignModalRef = useRef<ModalHandle>(null);
+  const inviteModalRef = useRef<ModalHandle>(null);
   const createModalRef = useRef<HTMLDialogElement>(null);
+  const editModalRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [createForm, setCreateForm] = useState(defaultForm);
+  const [editGroup, setEditGroup] = useState<Group | null>(null);
+  const [editForm, setEditForm] = useState(defaultForm);
 
   const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
     queryKey: ["admin", "groups"],
     queryFn: async () => {
       const resp = await apiClient.get("groups");
-      return resp.data;
-    },
-  });
-
-  const managersListQuery = useQuery<ApiResponseV2<GroupManager[]>>({
-    queryKey: ["admin", "cluster-managers", "all"],
-    queryFn: async () => {
-      const resp = await apiClient.get("users/cluster-managers");
       return resp.data;
     },
   });
@@ -276,8 +361,6 @@ function AdminGroups() {
     },
   });
 
-  const managerOptions = (managersListQuery.data?.data?.users ??
-    []) as GroupManager[];
   const planOptions = plansQuery.data ?? [];
 
   const groups = (groupsQuery.data?.data?.groups ?? []) as Group[];
@@ -312,7 +395,7 @@ function AdminGroups() {
       frequencyAmount: parseInt(createForm.frequencyAmount),
       maxMembers: parseInt(createForm.maxMembers),
       startDate: new Date(createForm.startDate).toISOString(),
-      clusterManagerId: createForm.clusterManagerId,
+      clusterManagerId: manager?.id,
       type: createForm.type,
     });
   };
@@ -333,10 +416,103 @@ function AdminGroups() {
         .unwrap(),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      toast
+        .promise(apiClient.delete(`groups/${id}`), {
+          loading: "Deleting group...",
+          success: "Group deleted",
+          error: extract_message,
+        })
+        .unwrap(),
+    onSuccess: invalidateGroups,
+  });
+
+  const editMutation = useMutation({
+    mutationFn: ({ id, body }: { id: string; body: object }) =>
+      toast
+        .promise(apiClient.patch(`groups/${id}`, body), {
+          loading: "Updating group...",
+          success: "Group updated",
+          error: extract_message,
+        })
+        .unwrap(),
+    onSuccess: () => {
+      editModalRef.current?.close();
+      invalidateGroups();
+    },
+  });
+
   const openDetails = (group: Group) => {
     setSelectedId(group.id);
     detailsModalRef.current?.showModal();
   };
+
+  const openEdit = (group: Group) => {
+    setEditGroup(group);
+    setEditForm({
+      groupName: group.groupName,
+      planId: "",
+      contributionAmount: String(group.contributionAmount),
+      frequency: group.frequency as ContributionFrequency,
+      frequencyAmount: String(group.frequencyAmount),
+      maxMembers: String(group.maxMembers),
+      startDate: group.startDate.split("T")[0],
+      type: group.type as GroupType,
+      clusterManagerId: "",
+    });
+    editModalRef.current?.showModal();
+  };
+
+  const handleEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editGroup) return;
+    editMutation.mutate({
+      id: editGroup.id,
+      body: {
+        groupName: editForm.groupName,
+        contributionAmount: parseFloat(editForm.contributionAmount),
+        frequency: editForm.frequency,
+        frequencyAmount: parseInt(editForm.frequencyAmount),
+        maxMembers: parseInt(editForm.maxMembers),
+        startDate: new Date(editForm.startDate).toISOString(),
+        type: editForm.type,
+      },
+    });
+  };
+
+  const groupActions: Actions<Group>[] = [
+    {
+      key: "view",
+      label: "View",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Eye className="w-3 h-3" /> View
+        </span>
+      ),
+      action: openDetails,
+    },
+    {
+      key: "edit",
+      label: "Edit",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Pencil className="w-3 h-3" /> Edit
+        </span>
+      ),
+      action: openEdit,
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      render: () => (
+        <span className="flex items-center gap-2 text-error">
+          <Trash2 className="w-3 h-3" /> Delete
+        </span>
+      ),
+      action: (g) => deleteMutation.mutate(g.id),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -391,7 +567,7 @@ function AdminGroups() {
             <CustomTable
               data={filtered}
               columns={columns}
-              onRowClick={openDetails}
+              actions={groupActions}
             />
           );
         }}
@@ -506,6 +682,13 @@ function AdminGroups() {
             </div>
 
             <div className="modal-action">
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => inviteModalRef.current?.open()}
+              >
+                <UserPlus className="w-4 h-4" />
+                Invite Members
+              </button>
               <form method="dialog">
                 <button className="btn btn-ghost">Close</button>
               </form>
@@ -667,7 +850,7 @@ function AdminGroups() {
               </fieldset>
             </div>
 
-            <fieldset className="fieldset">
+            {/*<fieldset className="fieldset">
               <legend className="fieldset-legend">
                 Assign Cluster Manager
               </legend>
@@ -689,7 +872,7 @@ function AdminGroups() {
                   </option>
                 ))}
               </select>
-            </fieldset>
+            </fieldset>*/}
 
             <div className="modal-action">
               <button
@@ -717,11 +900,163 @@ function AdminGroups() {
         </form>
       </dialog>
 
+      {/* Edit Group Modal */}
+      <dialog ref={editModalRef} className="modal">
+        <div className="modal-box max-w-lg">
+          <h3 className="text-xl font-semibold">Edit Group</h3>
+          <p className="text-sm text-base-content/60 mt-1">
+            Update group details
+          </p>
+
+          <form onSubmit={handleEdit} className="space-y-4 mt-6">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Group Name</legend>
+              <input
+                type="text"
+                className="input w-full"
+                value={editForm.groupName}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, groupName: e.target.value })
+                }
+                required
+              />
+            </fieldset>
+
+            <div className="grid grid-cols-2 gap-4">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Contribution Amount</legend>
+                <label className="input w-full">
+                  <span className="text-base-content">₦</span>
+                  <input
+                    type="number"
+                    value={editForm.contributionAmount}
+                    onChange={(e) =>
+                      setEditForm({
+                        ...editForm,
+                        contributionAmount: e.target.value,
+                      })
+                    }
+                    required
+                  />
+                </label>
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Max Members</legend>
+                <input
+                  type="number"
+                  className="input w-full"
+                  value={editForm.maxMembers}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, maxMembers: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Frequency</legend>
+                <select
+                  className="select w-full"
+                  value={editForm.frequency}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      frequency: e.target.value as ContributionFrequency,
+                    })
+                  }
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Every (interval)</legend>
+                <input
+                  type="number"
+                  min={1}
+                  className="input w-full"
+                  value={editForm.frequencyAmount}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      frequencyAmount: e.target.value,
+                    })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Type</legend>
+                <select
+                  className="select w-full"
+                  value={editForm.type}
+                  onChange={(e) =>
+                    setEditForm({
+                      ...editForm,
+                      type: e.target.value as GroupType,
+                    })
+                  }
+                >
+                  <option value="private">Private</option>
+                  <option value="public">Public</option>
+                </select>
+              </fieldset>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Start Date</legend>
+                <input
+                  type="date"
+                  className="input w-full"
+                  value={editForm.startDate}
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, startDate: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
+
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => editModalRef.current?.close()}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={editMutation.isPending}
+              >
+                {editMutation.isPending && (
+                  <span className="loading loading-spinner loading-sm" />
+                )}
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+
       <AssignManagerModal
         ref={assignModalRef}
         group={selected}
         onChanged={invalidateGroups}
       />
+
+      <InviteUserModal ref={inviteModalRef} group={selected} />
     </div>
   );
 }
