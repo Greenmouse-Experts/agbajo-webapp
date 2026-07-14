@@ -13,6 +13,7 @@ import {
   Wallet,
   Shield,
   AlertTriangle,
+  Mail,
   LogOut,
   Menu,
   Bell,
@@ -45,6 +46,7 @@ const navItems: NavItem[] = [
   { to: "/cluster-manager/payouts", label: "Payouts", icon: Wallet },
   { to: "/cluster-manager/kyc", label: "KYC", icon: Shield },
   { to: "/cluster-manager/issues", label: "Issues", icon: AlertTriangle },
+  { to: "/cluster-manager/invitations", label: "Invitations", icon: Mail },
 ];
 
 export const Route = createFileRoute("/cluster-manager")({
