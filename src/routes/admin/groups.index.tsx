@@ -13,6 +13,7 @@ import {
   Pencil,
   Trash2,
   Eye,
+  UsersRound,
 } from "lucide-react";
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
@@ -245,6 +246,76 @@ const AssignManagerModal = forwardRef<ModalHandle, AssignModalProps>(
 );
 AssignManagerModal.displayName = "AssignManagerModal";
 
+interface MembersModalProps {
+  group: Group | null;
+}
+
+interface GroupMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+const GroupMembersModal = forwardRef<ModalHandle, MembersModalProps>(
+  ({ group }, ref) => {
+    const [search, setSearch] = useState("");
+
+    const membersQuery = useQuery({
+      queryKey: ["group", "members", group?.id, search],
+      queryFn: async () => {
+        const resp = await apiClient.get(`groups/${group?.id}/members`, {
+          params: search ? { search } : {},
+        });
+        return resp.data;
+      },
+      enabled: !!group,
+    });
+
+    const members = (membersQuery.data?.data?.members ?? []) as GroupMember[];
+
+    return (
+      <Modal ref={ref} title={`Members — ${group?.groupName ?? ""}`}>
+        <div className="space-y-4">
+          <SearchBar value={search} onChange={setSearch} />
+
+          {membersQuery.isLoading ? (
+            <div className="flex justify-center py-8">
+              <span className="loading loading-spinner loading-md" />
+            </div>
+          ) : members.length === 0 ? (
+            <div className="text-center py-8 text-base-content/60">
+              No members found
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+              {members.map((m) => (
+                <div
+                  key={m.id}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-base-200"
+                >
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
+                    {m.firstName?.[0]?.toUpperCase() ?? "U"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-base-content truncate">
+                      {m.firstName} {m.lastName}
+                    </p>
+                    <p className="text-xs text-base-content/60 truncate">
+                      {m.email}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
+    );
+  },
+);
+GroupMembersModal.displayName = "GroupMembersModal";
+
 interface InviteModalProps {
   group: Group | null;
 }
@@ -332,6 +403,7 @@ function AdminGroups() {
   const detailsModalRef = useRef<HTMLDialogElement>(null);
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
+  const membersModalRef = useRef<ModalHandle>(null);
   const createModalRef = useRef<HTMLDialogElement>(null);
   const editModalRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -498,6 +570,19 @@ function AdminGroups() {
         </span>
       ),
       action: openDetails,
+    },
+    {
+      key: "members",
+      label: "Members",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <UsersRound className="w-3 h-3" /> Members
+        </span>
+      ),
+      action: (g) => {
+        setSelectedId(g.id);
+        membersModalRef.current?.open();
+      },
     },
     {
       key: "edit",
@@ -1064,6 +1149,7 @@ function AdminGroups() {
       />
 
       <InviteUserModal ref={inviteModalRef} group={selected} />
+      <GroupMembersModal ref={membersModalRef} group={selected} />
     </div>
   );
 }
