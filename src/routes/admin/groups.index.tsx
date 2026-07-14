@@ -256,7 +256,7 @@ const InviteUserModal = forwardRef<ModalHandle, InviteModalProps>(
     const usersQuery = useQuery({
       queryKey: ["contributors", "invitable", search],
       queryFn: async () => {
-        const resp = await apiClient.get("users/cluster-managers", {
+        const resp = await apiClient.get("/users", {
           params: search ? { search } : {},
         });
         return resp.data;
