@@ -22,6 +22,7 @@ import { Route as ClusterManagerSettingsRouteImport } from './routes/cluster-man
 import { Route as ContributorWalletIndexRouteImport } from './routes/contributor/wallet.index'
 import { Route as ContributorPayoutsIndexRouteImport } from './routes/contributor/payouts.index'
 import { Route as ContributorKycIndexRouteImport } from './routes/contributor/kyc.index'
+import { Route as ContributorInvitationsIndexRouteImport } from './routes/contributor/invitations.index'
 import { Route as ContributorGroupsIndexRouteImport } from './routes/contributor/groups.index'
 import { Route as ContributorContributionsIndexRouteImport } from './routes/contributor/contributions.index'
 import { Route as ContributorComplaintsIndexRouteImport } from './routes/contributor/complaints.index'
@@ -114,6 +115,12 @@ const ContributorKycIndexRoute = ContributorKycIndexRouteImport.update({
   path: '/kyc/',
   getParentRoute: () => ContributorRouteRoute,
 } as any)
+const ContributorInvitationsIndexRoute =
+  ContributorInvitationsIndexRouteImport.update({
+    id: '/invitations/',
+    path: '/invitations/',
+    getParentRoute: () => ContributorRouteRoute,
+  } as any)
 const ContributorGroupsIndexRoute = ContributorGroupsIndexRouteImport.update({
   id: '/groups/',
   path: '/groups/',
@@ -292,6 +299,7 @@ export interface FileRoutesByFullPath {
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
+  '/contributor/invitations/': typeof ContributorInvitationsIndexRoute
   '/contributor/kyc/': typeof ContributorKycIndexRoute
   '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
@@ -330,6 +338,7 @@ export interface FileRoutesByTo {
   '/contributor/complaints': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions': typeof ContributorContributionsIndexRoute
   '/contributor/groups': typeof ContributorGroupsIndexRoute
+  '/contributor/invitations': typeof ContributorInvitationsIndexRoute
   '/contributor/kyc': typeof ContributorKycIndexRoute
   '/contributor/payouts': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet': typeof ContributorWalletIndexRoute
@@ -372,6 +381,7 @@ export interface FileRoutesById {
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
+  '/contributor/invitations/': typeof ContributorInvitationsIndexRoute
   '/contributor/kyc/': typeof ContributorKycIndexRoute
   '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
@@ -415,6 +425,7 @@ export interface FileRouteTypes {
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
+    | '/contributor/invitations/'
     | '/contributor/kyc/'
     | '/contributor/payouts/'
     | '/contributor/wallet/'
@@ -453,6 +464,7 @@ export interface FileRouteTypes {
     | '/contributor/complaints'
     | '/contributor/contributions'
     | '/contributor/groups'
+    | '/contributor/invitations'
     | '/contributor/kyc'
     | '/contributor/payouts'
     | '/contributor/wallet'
@@ -494,6 +506,7 @@ export interface FileRouteTypes {
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
+    | '/contributor/invitations/'
     | '/contributor/kyc/'
     | '/contributor/payouts/'
     | '/contributor/wallet/'
@@ -604,6 +617,13 @@ declare module '@tanstack/react-router' {
       path: '/kyc'
       fullPath: '/contributor/kyc/'
       preLoaderRoute: typeof ContributorKycIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
+    '/contributor/invitations/': {
+      id: '/contributor/invitations/'
+      path: '/invitations'
+      fullPath: '/contributor/invitations/'
+      preLoaderRoute: typeof ContributorInvitationsIndexRouteImport
       parentRoute: typeof ContributorRouteRoute
     }
     '/contributor/groups/': {
@@ -858,6 +878,7 @@ interface ContributorRouteRouteChildren {
   ContributorComplaintsIndexRoute: typeof ContributorComplaintsIndexRoute
   ContributorContributionsIndexRoute: typeof ContributorContributionsIndexRoute
   ContributorGroupsIndexRoute: typeof ContributorGroupsIndexRoute
+  ContributorInvitationsIndexRoute: typeof ContributorInvitationsIndexRoute
   ContributorKycIndexRoute: typeof ContributorKycIndexRoute
   ContributorPayoutsIndexRoute: typeof ContributorPayoutsIndexRoute
   ContributorWalletIndexRoute: typeof ContributorWalletIndexRoute
@@ -869,6 +890,7 @@ const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
   ContributorComplaintsIndexRoute: ContributorComplaintsIndexRoute,
   ContributorContributionsIndexRoute: ContributorContributionsIndexRoute,
   ContributorGroupsIndexRoute: ContributorGroupsIndexRoute,
+  ContributorInvitationsIndexRoute: ContributorInvitationsIndexRoute,
   ContributorKycIndexRoute: ContributorKycIndexRoute,
   ContributorPayoutsIndexRoute: ContributorPayoutsIndexRoute,
   ContributorWalletIndexRoute: ContributorWalletIndexRoute,
