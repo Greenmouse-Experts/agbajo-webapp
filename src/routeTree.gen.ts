@@ -29,12 +29,14 @@ import { Route as ClusterManagerPayoutsIndexRouteImport } from './routes/cluster
 import { Route as ClusterManagerMembersIndexRouteImport } from './routes/cluster-manager/members.index'
 import { Route as ClusterManagerKycIndexRouteImport } from './routes/cluster-manager/kyc.index'
 import { Route as ClusterManagerIssuesIndexRouteImport } from './routes/cluster-manager/issues.index'
+import { Route as ClusterManagerInvitationsIndexRouteImport } from './routes/cluster-manager/invitations.index'
 import { Route as ClusterManagerGroupsIndexRouteImport } from './routes/cluster-manager/groups.index'
 import { Route as ClusterManagerContributionsIndexRouteImport } from './routes/cluster-manager/contributions.index'
 import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports.index'
 import { Route as AdminPoliciesIndexRouteImport } from './routes/admin/policies.index'
 import { Route as AdminPlansIndexRouteImport } from './routes/admin/plans.index'
 import { Route as AdminPayoutsIndexRouteImport } from './routes/admin/payouts.index'
+import { Route as AdminInvitationsIndexRouteImport } from './routes/admin/invitations.index'
 import { Route as AdminGroupsIndexRouteImport } from './routes/admin/groups.index'
 import { Route as AdminContributorsIndexRouteImport } from './routes/admin/contributors.index'
 import { Route as AdminContributionsIndexRouteImport } from './routes/admin/contributions.index'
@@ -152,6 +154,12 @@ const ClusterManagerIssuesIndexRoute =
     path: '/issues/',
     getParentRoute: () => ClusterManagerRouteRoute,
   } as any)
+const ClusterManagerInvitationsIndexRoute =
+  ClusterManagerInvitationsIndexRouteImport.update({
+    id: '/invitations/',
+    path: '/invitations/',
+    getParentRoute: () => ClusterManagerRouteRoute,
+  } as any)
 const ClusterManagerGroupsIndexRoute =
   ClusterManagerGroupsIndexRouteImport.update({
     id: '/groups/',
@@ -182,6 +190,11 @@ const AdminPlansIndexRoute = AdminPlansIndexRouteImport.update({
 const AdminPayoutsIndexRoute = AdminPayoutsIndexRouteImport.update({
   id: '/payouts/',
   path: '/payouts/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminInvitationsIndexRoute = AdminInvitationsIndexRouteImport.update({
+  id: '/invitations/',
+  path: '/invitations/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 const AdminGroupsIndexRoute = AdminGroupsIndexRouteImport.update({
@@ -264,12 +277,14 @@ export interface FileRoutesByFullPath {
   '/admin/contributions/': typeof AdminContributionsIndexRoute
   '/admin/contributors/': typeof AdminContributorsIndexRoute
   '/admin/groups/': typeof AdminGroupsIndexRoute
+  '/admin/invitations/': typeof AdminInvitationsIndexRoute
   '/admin/payouts/': typeof AdminPayoutsIndexRoute
   '/admin/plans/': typeof AdminPlansIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
   '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
   '/cluster-manager/groups/': typeof ClusterManagerGroupsIndexRoute
+  '/cluster-manager/invitations/': typeof ClusterManagerInvitationsIndexRoute
   '/cluster-manager/issues/': typeof ClusterManagerIssuesIndexRoute
   '/cluster-manager/kyc/': typeof ClusterManagerKycIndexRoute
   '/cluster-manager/members/': typeof ClusterManagerMembersIndexRoute
@@ -300,12 +315,14 @@ export interface FileRoutesByTo {
   '/admin/contributions': typeof AdminContributionsIndexRoute
   '/admin/contributors': typeof AdminContributorsIndexRoute
   '/admin/groups': typeof AdminGroupsIndexRoute
+  '/admin/invitations': typeof AdminInvitationsIndexRoute
   '/admin/payouts': typeof AdminPayoutsIndexRoute
   '/admin/plans': typeof AdminPlansIndexRoute
   '/admin/policies': typeof AdminPoliciesIndexRoute
   '/admin/reports': typeof AdminReportsIndexRoute
   '/cluster-manager/contributions': typeof ClusterManagerContributionsIndexRoute
   '/cluster-manager/groups': typeof ClusterManagerGroupsIndexRoute
+  '/cluster-manager/invitations': typeof ClusterManagerInvitationsIndexRoute
   '/cluster-manager/issues': typeof ClusterManagerIssuesIndexRoute
   '/cluster-manager/kyc': typeof ClusterManagerKycIndexRoute
   '/cluster-manager/members': typeof ClusterManagerMembersIndexRoute
@@ -340,12 +357,14 @@ export interface FileRoutesById {
   '/admin/contributions/': typeof AdminContributionsIndexRoute
   '/admin/contributors/': typeof AdminContributorsIndexRoute
   '/admin/groups/': typeof AdminGroupsIndexRoute
+  '/admin/invitations/': typeof AdminInvitationsIndexRoute
   '/admin/payouts/': typeof AdminPayoutsIndexRoute
   '/admin/plans/': typeof AdminPlansIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
   '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
   '/cluster-manager/groups/': typeof ClusterManagerGroupsIndexRoute
+  '/cluster-manager/invitations/': typeof ClusterManagerInvitationsIndexRoute
   '/cluster-manager/issues/': typeof ClusterManagerIssuesIndexRoute
   '/cluster-manager/kyc/': typeof ClusterManagerKycIndexRoute
   '/cluster-manager/members/': typeof ClusterManagerMembersIndexRoute
@@ -381,12 +400,14 @@ export interface FileRouteTypes {
     | '/admin/contributions/'
     | '/admin/contributors/'
     | '/admin/groups/'
+    | '/admin/invitations/'
     | '/admin/payouts/'
     | '/admin/plans/'
     | '/admin/policies/'
     | '/admin/reports/'
     | '/cluster-manager/contributions/'
     | '/cluster-manager/groups/'
+    | '/cluster-manager/invitations/'
     | '/cluster-manager/issues/'
     | '/cluster-manager/kyc/'
     | '/cluster-manager/members/'
@@ -417,12 +438,14 @@ export interface FileRouteTypes {
     | '/admin/contributions'
     | '/admin/contributors'
     | '/admin/groups'
+    | '/admin/invitations'
     | '/admin/payouts'
     | '/admin/plans'
     | '/admin/policies'
     | '/admin/reports'
     | '/cluster-manager/contributions'
     | '/cluster-manager/groups'
+    | '/cluster-manager/invitations'
     | '/cluster-manager/issues'
     | '/cluster-manager/kyc'
     | '/cluster-manager/members'
@@ -456,12 +479,14 @@ export interface FileRouteTypes {
     | '/admin/contributions/'
     | '/admin/contributors/'
     | '/admin/groups/'
+    | '/admin/invitations/'
     | '/admin/payouts/'
     | '/admin/plans/'
     | '/admin/policies/'
     | '/admin/reports/'
     | '/cluster-manager/contributions/'
     | '/cluster-manager/groups/'
+    | '/cluster-manager/invitations/'
     | '/cluster-manager/issues/'
     | '/cluster-manager/kyc/'
     | '/cluster-manager/members/'
@@ -630,6 +655,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClusterManagerIssuesIndexRouteImport
       parentRoute: typeof ClusterManagerRouteRoute
     }
+    '/cluster-manager/invitations/': {
+      id: '/cluster-manager/invitations/'
+      path: '/invitations'
+      fullPath: '/cluster-manager/invitations/'
+      preLoaderRoute: typeof ClusterManagerInvitationsIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
     '/cluster-manager/groups/': {
       id: '/cluster-manager/groups/'
       path: '/groups'
@@ -670,6 +702,13 @@ declare module '@tanstack/react-router' {
       path: '/payouts'
       fullPath: '/admin/payouts/'
       preLoaderRoute: typeof AdminPayoutsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/invitations/': {
+      id: '/admin/invitations/'
+      path: '/invitations'
+      fullPath: '/admin/invitations/'
+      preLoaderRoute: typeof AdminInvitationsIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
     '/admin/groups/': {
@@ -759,6 +798,7 @@ interface AdminRouteRouteChildren {
   AdminContributionsIndexRoute: typeof AdminContributionsIndexRoute
   AdminContributorsIndexRoute: typeof AdminContributorsIndexRoute
   AdminGroupsIndexRoute: typeof AdminGroupsIndexRoute
+  AdminInvitationsIndexRoute: typeof AdminInvitationsIndexRoute
   AdminPayoutsIndexRoute: typeof AdminPayoutsIndexRoute
   AdminPlansIndexRoute: typeof AdminPlansIndexRoute
   AdminPoliciesIndexRoute: typeof AdminPoliciesIndexRoute
@@ -773,6 +813,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminContributionsIndexRoute: AdminContributionsIndexRoute,
   AdminContributorsIndexRoute: AdminContributorsIndexRoute,
   AdminGroupsIndexRoute: AdminGroupsIndexRoute,
+  AdminInvitationsIndexRoute: AdminInvitationsIndexRoute,
   AdminPayoutsIndexRoute: AdminPayoutsIndexRoute,
   AdminPlansIndexRoute: AdminPlansIndexRoute,
   AdminPoliciesIndexRoute: AdminPoliciesIndexRoute,
@@ -789,6 +830,7 @@ interface ClusterManagerRouteRouteChildren {
   ClusterManagerIndexRoute: typeof ClusterManagerIndexRoute
   ClusterManagerContributionsIndexRoute: typeof ClusterManagerContributionsIndexRoute
   ClusterManagerGroupsIndexRoute: typeof ClusterManagerGroupsIndexRoute
+  ClusterManagerInvitationsIndexRoute: typeof ClusterManagerInvitationsIndexRoute
   ClusterManagerIssuesIndexRoute: typeof ClusterManagerIssuesIndexRoute
   ClusterManagerKycIndexRoute: typeof ClusterManagerKycIndexRoute
   ClusterManagerMembersIndexRoute: typeof ClusterManagerMembersIndexRoute
@@ -800,6 +842,7 @@ const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
   ClusterManagerIndexRoute: ClusterManagerIndexRoute,
   ClusterManagerContributionsIndexRoute: ClusterManagerContributionsIndexRoute,
   ClusterManagerGroupsIndexRoute: ClusterManagerGroupsIndexRoute,
+  ClusterManagerInvitationsIndexRoute: ClusterManagerInvitationsIndexRoute,
   ClusterManagerIssuesIndexRoute: ClusterManagerIssuesIndexRoute,
   ClusterManagerKycIndexRoute: ClusterManagerKycIndexRoute,
   ClusterManagerMembersIndexRoute: ClusterManagerMembersIndexRoute,
