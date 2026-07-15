@@ -283,8 +283,7 @@ function AdminGroups() {
           <Eye className="w-3 h-3" /> Preview
         </span>
       ),
-      action: (g, nav) =>
-        nav({ to: "/admin/groups/$d", params: { d: g.id } }),
+      action: (g, nav) => nav({ to: "/admin/groups/$d", params: { d: g.id } }),
     },
     {
       key: "members",
@@ -294,8 +293,7 @@ function AdminGroups() {
           <UsersRound className="w-3 h-3" /> Members
         </span>
       ),
-      action: (g, nav) =>
-        nav({ to: "/admin/groups/$d", params: { d: g.id } }),
+      action: (g, nav) => nav({ to: "/admin/groups/$d", params: { d: g.id } }),
     },
     {
       key: "edit",
@@ -586,6 +584,35 @@ function AdminGroups() {
               />
             </fieldset>
 
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Plan</legend>
+              <select
+                className="select w-full"
+                value={editForm?.planId}
+                onChange={(e) => {
+                  const planId = e.target.value;
+                  const plan = planOptions.find((p) => p.id === planId);
+                  setEditForm({
+                    ...editForm,
+                    planId,
+                    ...(plan && {
+                      contributionAmount: String(plan.contributionAmount),
+                      frequency: plan.frequency as ContributionFrequency,
+                      frequencyAmount: String(plan.frequencyAmount),
+                    }),
+                  });
+                }}
+                required
+              >
+                <option value="">Select a plan</option>
+                {planOptions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} — {p.frequency} × {p.frequencyAmount}
+                  </option>
+                ))}
+              </select>
+            </fieldset>
+
             <div className="grid grid-cols-3 gap-4">
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Contribution Amount</legend>
@@ -691,7 +718,6 @@ function AdminGroups() {
           <button>close</button>
         </form>
       </dialog>
-
     </div>
   );
 }
