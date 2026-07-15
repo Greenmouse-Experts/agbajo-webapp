@@ -1,29 +1,46 @@
 import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import {
-  Users,
-  DollarSign,
-  Calendar,
-  Star,
-  AlertCircle,
-  Plus,
-  Search,
-  LogIn,
-} from "lucide-react";
+import { Users, Search, LogIn } from "lucide-react";
 import { PageHeader } from "./-components/PageHeader";
-import { EmptyState } from "./-components/EmptyState";
-import { formatCurrency } from "#/helpers/currency";
-import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import apiClient, {
+  type ApiResponse,
+  type ApiResponseV2,
+} from "#/api/simpleApi";
 import { extract_message } from "#/helpers/apihelpers";
+import { formatCurrency } from "#/helpers/currency";
 import { toast } from "sonner";
+import PageLoader from "#/components/layout/PageLoader";
+import CustomTable, {
+  type columnType,
+} from "#/components/tables/CustomTable";
 
 export const Route = createFileRoute("/contributor/groups/")({
   component: ContributorGroups,
 });
 
-type MemberStatus = "active" | "pending" | "suspended" | "removed";
 type ContributionFrequency = "daily" | "weekly" | "monthly";
+type MemberStatus = "active" | "pending" | "suspended" | "removed";
+
+interface GroupManager {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+interface Group {
+  id: string;
+  groupName: string;
+  contributionAmount: number;
+  frequency: ContributionFrequency;
+  frequencyAmount: number;
+  maxMembers: number;
+  startDate: string;
+  type: string;
+  createdAt: string;
+  managers: GroupManager[];
+}
 
 interface MyGroup {
   id: string;
@@ -36,29 +53,72 @@ interface MyGroup {
   member_status: MemberStatus;
 }
 
-interface PublicGroup {
-  id: string;
-  group_name: string;
-  contribution_amount: number;
-  frequency: ContributionFrequency;
-  max_members: number;
-  member_count: number;
-  manager?: string;
-}
+const managerName = (m: GroupManager) => `${m.firstName} ${m.lastName}`.trim();
 
-const statusBadge: Record<MemberStatus, string> = {
-  active: "badge-success",
-  pending: "badge-warning",
-  suspended: "badge-error",
-  removed: "badge-neutral",
-};
+const columns: columnType<Group>[] = [
+  { key: "groupName", label: "Group Name" },
+  {
+    key: "managers",
+    label: "Manager",
+    render: (managers: GroupManager[]) =>
+      managers.length === 0 ? (
+        <span className="text-base-content/40">—</span>
+      ) : (
+        <div>
+          <div className="text-sm text-base-content">
+            {managerName(managers[0])}
+          </div>
+          {managers.length > 1 && (
+            <div className="text-xs text-base-content/60">
+              +{managers.length - 1} more
+            </div>
+          )}
+        </div>
+      ),
+  },
+  {
+    key: "maxMembers",
+    label: "Members",
+    render: (value: number) => (
+      <div className="flex items-center gap-1 text-base-content/60">
+        <Users className="w-4 h-4" />
+        {value}
+      </div>
+    ),
+  },
+  {
+    key: "contributionAmount",
+    label: "Amount",
+    render: (value: number) => (
+      <span className="font-medium text-base-content">
+        {formatCurrency(value)}
+      </span>
+    ),
+  },
+  {
+    key: "frequency",
+    label: "Frequency",
+    render: (value: string) => (
+      <span className="capitalize text-base-content/60">{value}</span>
+    ),
+  },
+  {
+    key: "type",
+    label: "Type",
+    render: (value: string) => (
+      <span className="badge badge-outline capitalize">{value}</span>
+    ),
+  },
+];
 
 function ContributorGroups() {
-  const discoverModalRef = useRef<HTMLDialogElement>(null);
   const [search, setSearch] = useState("");
+  const [cursor, setCursor] = useState<string | null>(null);
   const [requestedIds, setRequestedIds] = useState<Set<string>>(new Set());
+  const joinModalRef = useRef<HTMLDialogElement>(null);
+  const [joiningGroup, setJoiningGroup] = useState<Group | null>(null);
 
-  const { data: myGroups = [], isLoading } = useQuery({
+  const { data: myGroups = [] } = useQuery({
     queryKey: ["contributor", "groups"],
     queryFn: () =>
       apiClient
@@ -66,15 +126,20 @@ function ContributorGroups() {
         .then((r) => r.data.data),
   });
 
-  const { data: publicGroups = [], isLoading: discoverLoading } = useQuery({
-    queryKey: ["groups", "public", search],
-    queryFn: () =>
-      apiClient
-        .get<ApiResponse<PublicGroup[]>>("groups", {
-          params: { type: "public", search: search || undefined },
-        })
-        .then((r) => r.data.data),
-    enabled: true,
+  const myGroupIds = new Set(myGroups.map((g) => g.id));
+
+  const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
+    queryKey: ["groups", "public", search, cursor],
+    queryFn: async () => {
+      const resp = await apiClient.get("groups/public", {
+        params: {
+          search: search || undefined,
+          limit: 10,
+          cursor: cursor || undefined,
+        },
+      });
+      return resp.data;
+    },
   });
 
   const requestJoinMutation = useMutation({
@@ -88,197 +153,126 @@ function ContributorGroups() {
         .unwrap(),
     onSuccess: (_, groupId) => {
       setRequestedIds((prev) => new Set(prev).add(groupId));
+      joinModalRef.current?.close();
     },
   });
 
-  const myGroupIds = new Set(myGroups.map((g) => g.id));
+  const openJoinModal = (group: Group) => {
+    setJoiningGroup(group);
+    joinModalRef.current?.showModal();
+  };
+
+  const tableColumns: columnType<Group>[] = [
+    ...columns,
+    {
+      key: "action",
+      label: "",
+      render: (_: any, item: Group) => {
+        const alreadyMember = myGroupIds.has(item.id);
+        const requested = requestedIds.has(item.id);
+        if (alreadyMember)
+          return <span className="badge badge-success">Member</span>;
+        if (requested)
+          return <span className="badge badge-warning">Requested</span>;
+        return (
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              openJoinModal(item);
+            }}
+          >
+            <LogIn className="w-4 h-4" />
+            Join
+          </button>
+        );
+      },
+    },
+  ];
+
+  const pagination = groupsQuery.data?.data?.pagination;
+  const groups = (groupsQuery.data?.data?.data ?? []) as Group[];
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="My Groups"
-        subtitle="Groups you are participating in"
-        action={
-          <button
-            className="btn btn-primary"
-            onClick={() => discoverModalRef.current?.showModal()}
-          >
-            <Plus className="w-4 h-4" />
-            Join a Group
-          </button>
-        }
+        title="Public Groups"
+        subtitle="Browse and join available savings groups"
       />
 
-      {isLoading ? (
-        <div className="flex items-center justify-center h-64">
-          <span className="loading loading-spinner loading-lg" />
-        </div>
-      ) : myGroups.length === 0 ? (
-        <EmptyState
-          icon={AlertCircle}
-          title="No groups yet"
-          description="Join a group or wait to be added by your cluster manager."
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {myGroups.map((group) => (
-            <div
-              key={group.id}
-              className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="card-body gap-4">
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
-                    <span className="text-primary-content font-bold text-xl">
-                      {group.group_name.charAt(0)}
-                    </span>
-                  </div>
-                  <span
-                    className={`badge ${statusBadge[group.member_status]} capitalize`}
+      <div className="card bg-base-100 shadow-sm p-4">
+        <label className="input w-full max-w-sm">
+          <Search className="w-4 h-4 text-base-content/50" />
+          <input
+            type="text"
+            placeholder="Search groups..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCursor(null);
+            }}
+          />
+        </label>
+      </div>
+
+      <PageLoader query={groupsQuery}>
+        {() => (
+          <div className="space-y-3">
+            <CustomTable data={groups} columns={tableColumns} />
+            {pagination && (
+              <div className="flex items-center justify-between px-1">
+                <span className="text-sm text-base-content/60">
+                  {pagination.total} group{pagination.total !== 1 ? "s" : ""}
+                </span>
+                <div className="join">
+                  <button
+                    className="join-item btn btn-sm"
+                    disabled={!cursor}
+                    onClick={() => setCursor(null)}
                   >
-                    {group.member_status}
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold text-base-content">
-                    {group.group_name}
-                  </h3>
-                  <p className="text-base text-base-content mt-0.5">
-                    Managed by {group.manager}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-base-200 p-3">
-                    <div className="flex items-center gap-1.5 text-base-content mb-1">
-                      <DollarSign className="w-3.5 h-3.5" />
-                      <span className="text-sm">Amount</span>
-                    </div>
-                    <p className="font-semibold text-base-content text-base">
-                      {formatCurrency(group.contribution_amount)}
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-base-200 p-3">
-                    <div className="flex items-center gap-1.5 text-base-content mb-1">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span className="text-sm">Frequency</span>
-                    </div>
-                    <p className="font-semibold text-base-content text-base capitalize">
-                      {group.frequency}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-3 border-t border-base-200">
-                  <div className="flex items-center gap-1.5 text-base-content">
-                    <Users className="w-4 h-4" />
-                    <span className="text-base">{group.max_members} members</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Star className="w-4 h-4 text-warning fill-warning" />
-                    <span className="text-base font-medium text-base-content">
-                      Cycle {group.current_cycle}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <dialog ref={discoverModalRef} className="modal">
-        <div className="modal-box max-w-lg">
-          <h3 className="text-xl font-semibold text-base-content">
-            Discover Groups
-          </h3>
-          <p className="text-base text-base-content mt-1">
-            Browse public groups and request to join
-          </p>
-
-          <label className="input w-full mt-4">
-            <Search className="w-4 h-4 text-base-content" />
-            <input
-              type="text"
-              placeholder="Search groups..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-
-          <div className="mt-4 space-y-3 max-h-[50vh] overflow-y-auto">
-            {discoverLoading ? (
-              <div className="flex justify-center py-8">
-                <span className="loading loading-spinner loading-md" />
-              </div>
-            ) : publicGroups.length === 0 ? (
-              <div className="text-center py-8 text-base-content/60">
-                No public groups found
-              </div>
-            ) : (
-              publicGroups.map((group) => {
-                const alreadyMember = myGroupIds.has(group.id);
-                const requested = requestedIds.has(group.id);
-                return (
-                  <div
-                    key={group.id}
-                    className="flex items-center gap-3 p-4 rounded-xl border border-base-200 hover:bg-base-200/50"
+                    «
+                  </button>
+                  <button
+                    className="join-item btn btn-sm"
+                    disabled={!pagination.hasMore}
+                    onClick={() => setCursor(pagination.nextCursor)}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0">
-                      <span className="text-primary-content font-bold">
-                        {group.group_name.charAt(0)}
-                      </span>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-base-content truncate">
-                        {group.group_name}
-                      </p>
-                      <div className="flex items-center gap-3 mt-0.5 text-xs text-base-content/70">
-                        <span className="flex items-center gap-1">
-                          <DollarSign className="w-3 h-3" />
-                          {formatCurrency(group.contribution_amount)}
-                        </span>
-                        <span className="flex items-center gap-1 capitalize">
-                          <Calendar className="w-3 h-3" />
-                          {group.frequency}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          {group.member_count}/{group.max_members}
-                        </span>
-                      </div>
-                    </div>
-
-                    {alreadyMember ? (
-                      <span className="badge badge-success shrink-0">
-                        Member
-                      </span>
-                    ) : requested ? (
-                      <span className="badge badge-warning shrink-0">
-                        Requested
-                      </span>
-                    ) : (
-                      <button
-                        className="btn btn-primary btn-sm shrink-0"
-                        disabled={requestJoinMutation.isPending}
-                        onClick={() => requestJoinMutation.mutate(group.id)}
-                      >
-                        <LogIn className="w-4 h-4" />
-                        Join
-                      </button>
-                    )}
-                  </div>
-                );
-              })
+                    »
+                  </button>
+                </div>
+              </div>
             )}
           </div>
+        )}
+      </PageLoader>
 
+      <dialog ref={joinModalRef} className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-semibold text-base-content">
+            Join Group
+          </h3>
+          {joiningGroup && (
+            <p className="mt-2 text-base-content/70">
+              Send a join request to{" "}
+              <span className="font-medium text-base-content">
+                {joiningGroup.groupName}
+              </span>
+              ?
+            </p>
+          )}
           <div className="modal-action">
             <form method="dialog">
-              <button className="btn btn-ghost">Close</button>
+              <button className="btn btn-ghost">Cancel</button>
             </form>
+            <button
+              className="btn btn-primary"
+              disabled={requestJoinMutation.isPending}
+              onClick={() =>
+                joiningGroup && requestJoinMutation.mutate(joiningGroup.id)
+              }
+            >
+              Send Request
+            </button>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">

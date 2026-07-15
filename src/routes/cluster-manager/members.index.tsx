@@ -62,17 +62,17 @@ function ClusterManagerMembers() {
     queryKey: ["cluster-manager", "members"],
     queryFn: () =>
       apiClient
-        .get<ApiResponse<Member[]>>("cluster-manager/members")
+        .get<ApiResponse<Member[]>>("/groups/member-requests")
         .then((r) => r.data.data),
   });
 
-  const { data: groups = [] } = useQuery({
-    queryKey: ["cluster-manager", "groups-list"],
-    queryFn: () =>
-      apiClient
-        .get<ApiResponse<Group[]>>("cluster-manager/groups")
-        .then((r) => r.data.data),
-  });
+  // const { data: groups = [] } = useQuery({
+  //   queryKey: ["cluster-manager", "groups-list"],
+  //   queryFn: () =>
+  //     apiClient
+  //       .get<ApiResponse<Group[]>>("cluster-manager/groups")
+  //       .then((r) => r.data.data),
+  // });
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: MemberStatus }) =>
@@ -280,11 +280,11 @@ function ClusterManagerMembers() {
                 required
               >
                 <option value="">Choose a group</option>
-                {groups.map((g) => (
+                {/*{groups.map((g) => (
                   <option key={g.id} value={g.id}>
                     {g.group_name}
                   </option>
-                ))}
+                ))}*/}
               </select>
             </fieldset>
 
