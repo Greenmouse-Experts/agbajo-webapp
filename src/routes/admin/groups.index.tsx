@@ -216,7 +216,7 @@ function AdminGroups() {
     setEditGroup(group);
     setEditForm({
       groupName: group.groupName,
-      planId: "",
+      planId: group.planId,
       contributionAmount: String(group.contributionAmount),
       frequency: group.frequency as ContributionFrequency,
       frequencyAmount: String(group.frequencyAmount),
