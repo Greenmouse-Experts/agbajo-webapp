@@ -562,6 +562,18 @@ function AdminGroups() {
           <Eye className="w-3 h-3" /> View
         </span>
       ),
+      action: (g) => {
+        navigation.navigate(`/cluster-manager/groups/${g.id}`);
+      },
+    },
+    {
+      key: "Preview",
+      label: "Preview",
+      render: () => (
+        <span className="flex items-center gap-2">
+          <Eye className="w-3 h-3" /> Preview
+        </span>
+      ),
       action: openDetails,
     },
     {

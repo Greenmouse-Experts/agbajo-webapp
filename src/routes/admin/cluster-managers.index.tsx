@@ -25,6 +25,11 @@ export const Route = createFileRoute("/admin/cluster-managers/")({
 
 type VerificationStatus = "pending" | "verified" | "rejected";
 
+interface Role {
+  id: number;
+  name: string;
+}
+
 interface Manager {
   id: string;
   firstName: string;
@@ -51,6 +56,7 @@ const defaultInviteForm = {
   lastName: "",
   email: "",
   phoneNumber: "",
+  roleId: "",
 };
 
 const StatusBadge = ({ status }: { status: VerificationStatus }) => {
@@ -91,6 +97,18 @@ function AdminClusterManagers() {
   const [selected, setSelected] = useState<Manager | null>(null);
   const [inviteForm, setInviteForm] = useState(defaultInviteForm);
 
+  const rolesQuery = useQuery<{ data: Role[] }>({
+    queryKey: ["auth", "roles"],
+    queryFn: async () => {
+      const resp = await apiClient.get("auth/roles");
+      return resp.data;
+    },
+  });
+
+  const roles: Role[] = Array.isArray(rolesQuery.data?.data)
+    ? rolesQuery.data.data
+    : [];
+
   const managersQuery = useQuery<ApiResponseV2<Manager[]>>({
     queryKey: ["admin", "cluster-managers"],
     queryFn: async () => {
@@ -121,7 +139,7 @@ function AdminClusterManagers() {
             firstName: body.firstName,
             lastName: body.lastName,
             phoneNumber: body.phoneNumber,
-            roleId: 3,
+            roleId: Number(body.roleId),
           }),
           {
             loading: "Sending invitation...",
@@ -545,6 +563,28 @@ function AdminClusterManagers() {
                 }
                 required
               />
+            </fieldset>
+
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Role</legend>
+              <select
+                className="select w-full"
+                value={inviteForm.roleId}
+                onChange={(e) =>
+                  setInviteForm({ ...inviteForm, roleId: e.target.value })
+                }
+                required
+                disabled={rolesQuery.isLoading}
+              >
+                <option value="" disabled>
+                  {rolesQuery.isLoading ? "Loading roles..." : "Select a role"}
+                </option>
+                {roles.map((r) => (
+                  <option key={r.id} value={String(r.id)}>
+                    {r.name}
+                  </option>
+                ))}
+              </select>
             </fieldset>
 
             <div className="modal-action">

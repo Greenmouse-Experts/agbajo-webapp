@@ -18,7 +18,7 @@ import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 
-export const Route = createFileRoute("/admin/groups/$d/")({
+export const Route = createFileRoute("/cluster-manager/groups/$d/")({
   component: GroupDetailPage,
 });
 

@@ -48,6 +48,7 @@ import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 import { Route as HomeAuthAdminRouteImport } from './routes/home/auth/admin'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
 import { Route as AuthResetPasswordConfirmRouteImport } from './routes/auth/reset-password/confirm'
+import { Route as ClusterManagerGroupsDIndexRouteImport } from './routes/cluster-manager/groups.$d.index'
 import { Route as AdminPlansIdIndexRouteImport } from './routes/admin/plans/$id.index'
 import { Route as AdminGroupsDIndexRouteImport } from './routes/admin/groups.$d.index'
 
@@ -258,6 +259,12 @@ const AuthResetPasswordConfirmRoute =
     path: '/auth/reset-password/confirm',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ClusterManagerGroupsDIndexRoute =
+  ClusterManagerGroupsDIndexRouteImport.update({
+    id: '/groups/$d/',
+    path: '/groups/$d/',
+    getParentRoute: () => ClusterManagerRouteRoute,
+  } as any)
 const AdminPlansIdIndexRoute = AdminPlansIdIndexRouteImport.update({
   id: '/plans/$id/',
   path: '/plans/$id/',
@@ -311,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
+  '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -351,6 +359,7 @@ export interface FileRoutesByTo {
   '/contributor/wallet': typeof ContributorWalletIndexRoute
   '/admin/groups/$d': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id': typeof AdminPlansIdIndexRoute
+  '/cluster-manager/groups/$d': typeof ClusterManagerGroupsDIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -395,6 +404,7 @@ export interface FileRoutesById {
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
+  '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -440,6 +450,7 @@ export interface FileRouteTypes {
     | '/contributor/wallet/'
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
+    | '/cluster-manager/groups/$d/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -480,6 +491,7 @@ export interface FileRouteTypes {
     | '/contributor/wallet'
     | '/admin/groups/$d'
     | '/admin/plans/$id'
+    | '/cluster-manager/groups/$d'
   id:
     | '__root__'
     | '/'
@@ -523,6 +535,7 @@ export interface FileRouteTypes {
     | '/contributor/wallet/'
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
+    | '/cluster-manager/groups/$d/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -813,6 +826,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cluster-manager/groups/$d/': {
+      id: '/cluster-manager/groups/$d/'
+      path: '/groups/$d'
+      fullPath: '/cluster-manager/groups/$d/'
+      preLoaderRoute: typeof ClusterManagerGroupsDIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
     '/admin/plans/$id/': {
       id: '/admin/plans/$id/'
       path: '/plans/$id'
@@ -876,6 +896,7 @@ interface ClusterManagerRouteRouteChildren {
   ClusterManagerKycIndexRoute: typeof ClusterManagerKycIndexRoute
   ClusterManagerMembersIndexRoute: typeof ClusterManagerMembersIndexRoute
   ClusterManagerPayoutsIndexRoute: typeof ClusterManagerPayoutsIndexRoute
+  ClusterManagerGroupsDIndexRoute: typeof ClusterManagerGroupsDIndexRoute
 }
 
 const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
@@ -888,6 +909,7 @@ const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
   ClusterManagerKycIndexRoute: ClusterManagerKycIndexRoute,
   ClusterManagerMembersIndexRoute: ClusterManagerMembersIndexRoute,
   ClusterManagerPayoutsIndexRoute: ClusterManagerPayoutsIndexRoute,
+  ClusterManagerGroupsDIndexRoute: ClusterManagerGroupsDIndexRoute,
 }
 
 const ClusterManagerRouteRouteWithChildren =
