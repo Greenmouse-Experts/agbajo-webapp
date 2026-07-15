@@ -71,6 +71,7 @@ interface Group {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
+  planId: string;
   managers: GroupManager[];
 }
 

@@ -17,6 +17,7 @@ import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 import type { Actions } from "#/components/tables/pop-up";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
+import type { Group, GroupManager, Plan } from "#/types/groups.js";
 
 export const Route = createFileRoute("/admin/groups/")({
   component: AdminGroups,
@@ -36,36 +37,6 @@ const defaultForm = {
   type: "private" as GroupType,
   clusterManagerId: "",
 };
-
-interface Plan {
-  id: string;
-  name: string;
-  contributionAmount: string;
-  frequency: string;
-  frequencyAmount: number;
-}
-
-interface GroupManager {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-interface Group {
-  id: string;
-  groupName: string;
-  contributionAmount: number;
-  frequency: string;
-  frequencyAmount: number;
-  maxMembers: number;
-  startDate: string;
-  type: string;
-  createdBy: string;
-  createdAt: string;
-  updatedAt: string;
-  managers: GroupManager[];
-}
 
 const formatCurrency = (amount = 0) =>
   new Intl.NumberFormat("en-NG", {
