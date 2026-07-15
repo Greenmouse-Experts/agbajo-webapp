@@ -61,9 +61,7 @@ function ClusterManagerMembers() {
   const { data: members = [], isLoading } = useQuery({
     queryKey: ["cluster-manager", "members"],
     queryFn: () =>
-      apiClient
-        .get<ApiResponse<Member[]>>("/groups/member-requests")
-        .then((r) => r.data.data),
+      apiClient.get<ApiResponse<Member[]>>("/members").then((r) => r.data.data),
   });
 
   // const { data: groups = [] } = useQuery({

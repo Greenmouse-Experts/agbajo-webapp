@@ -17,6 +17,7 @@ import SearchBar from "#/components/Searchbar";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
+import { useAuth, type AUTHRECORD } from "#/store/authStore";
 
 export const Route = createFileRoute("/cluster-manager/groups/$d/")({
   component: GroupDetailPage,
@@ -39,6 +40,7 @@ interface GroupDetail {
   startDate: string;
   type: string;
   createdAt: string;
+  createdBy: string;
   managers: GroupManager[];
 }
 
@@ -255,6 +257,9 @@ InviteUserModal.displayName = "InviteUserModal";
 function GroupDetailPage() {
   const { d } = Route.useParams();
   const queryClient = useQueryClient();
+  const [rawUser] = useAuth();
+  const authUser = rawUser as AUTHRECORD | null;
+  const authId = String(authUser?.user?.id ?? "");
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
   const [memberSearch, setMemberSearch] = useState("");
@@ -298,11 +303,12 @@ function GroupDetailPage() {
 
   const group = groupQuery.data?.data as GroupDetail | undefined;
   const members = (membersQuery.data?.data?.members ?? []) as GroupMember[];
+  const isOwner = !!group && group.createdBy === authId;
 
   return (
     <div className="space-y-6">
       <Link
-        to="/admin/groups"
+        to="/cluster-manager/groups"
         className="inline-flex items-center gap-1.5 text-sm text-base-content/60 hover:text-base-content transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -332,13 +338,15 @@ function GroupDetailPage() {
                       Created {formatDate(group.createdAt)}
                     </p>
                   </div>
-                  <button
-                    className="btn btn-primary shrink-0"
-                    onClick={() => inviteModalRef.current?.open()}
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    Invite Members
-                  </button>
+                  {isOwner && (
+                    <button
+                      className="btn btn-primary shrink-0"
+                      onClick={() => inviteModalRef.current?.open()}
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      Invite Members
+                    </button>
+                  )}
                 </div>
 
                 <div className="divider my-4" />
@@ -390,13 +398,15 @@ function GroupDetailPage() {
                       {group.managers.length}
                     </span>
                   </div>
-                  <button
-                    className="btn btn-outline btn-sm"
-                    onClick={() => assignModalRef.current?.open()}
-                  >
-                    <UserPlus className="w-4 h-4" />
-                    Assign
-                  </button>
+                  {isOwner && (
+                    <button
+                      className="btn btn-outline btn-sm"
+                      onClick={() => assignModalRef.current?.open()}
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      Assign
+                    </button>
+                  )}
                 </div>
 
                 {group.managers.length === 0 ? (
@@ -420,14 +430,16 @@ function GroupDetailPage() {
                             {m.email}
                           </p>
                         </div>
-                        <button
-                          className="btn btn-ghost btn-sm btn-square text-error shrink-0"
-                          disabled={unassignMutation.isPending}
-                          onClick={() => unassignMutation.mutate(m.id)}
-                          title="Unassign"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        {isOwner && (
+                          <button
+                            className="btn btn-ghost btn-sm btn-square text-error shrink-0"
+                            disabled={unassignMutation.isPending}
+                            onClick={() => unassignMutation.mutate(m.id)}
+                            title="Unassign"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>

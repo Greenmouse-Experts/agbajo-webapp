@@ -11,9 +11,7 @@ import { extract_message } from "#/helpers/apihelpers";
 import { formatCurrency } from "#/helpers/currency";
 import { toast } from "sonner";
 import PageLoader from "#/components/layout/PageLoader";
-import CustomTable, {
-  type columnType,
-} from "#/components/tables/CustomTable";
+import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 
 export const Route = createFileRoute("/contributor/groups/")({
   component: ContributorGroups,
@@ -121,12 +119,8 @@ function ContributorGroups() {
   const { data: myGroups = [] } = useQuery({
     queryKey: ["contributor", "groups"],
     queryFn: () =>
-      apiClient
-        .get<ApiResponse<MyGroup[]>>("contributor/groups")
-        .then((r) => r.data.data),
+      apiClient.get<ApiResponse<MyGroup[]>>("/groups").then((r) => r.data.data),
   });
-
-  const myGroupIds = new Set(myGroups.map((g) => g.id));
 
   const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
     queryKey: ["groups", "public", search, cursor],
@@ -215,7 +209,7 @@ function ContributorGroups() {
         </label>
       </div>
 
-      <PageLoader query={groupsQuery}>
+      {/*<PageLoader query={groupsQuery}>
         {() => (
           <div className="space-y-3">
             <CustomTable data={groups} columns={tableColumns} />
@@ -244,7 +238,7 @@ function ContributorGroups() {
             )}
           </div>
         )}
-      </PageLoader>
+      </PageLoader>*/}
 
       <dialog ref={joinModalRef} className="modal">
         <div className="modal-box">

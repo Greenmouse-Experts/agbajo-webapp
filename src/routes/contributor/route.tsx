@@ -41,7 +41,7 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
     exact: true,
   },
-  { to: "/contributor/groups", label: "My Groups", icon: Folder },
+  { to: "/contributor/groups", label: "Groups", icon: Folder },
   {
     to: "/contributor/contributions",
     label: "Contributions",

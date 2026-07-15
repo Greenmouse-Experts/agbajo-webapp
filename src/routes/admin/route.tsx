@@ -21,6 +21,7 @@ import {
   Menu,
   Bell,
   X,
+  Mail,
 } from "lucide-react";
 import {
   get_user_value,
@@ -47,6 +48,7 @@ const navItems: NavItem[] = [
   { to: "/admin/reports", label: "Reports", icon: BarChart2 },
   { to: "/admin/policies", label: "Policies", icon: Settings },
   { to: "/admin/plans", label: "Plans", icon: CreditCard },
+  { to: "/admin/invitations", label: "Invitations", icon: Mail },
 ];
 
 export const Route = createFileRoute("/admin")({
