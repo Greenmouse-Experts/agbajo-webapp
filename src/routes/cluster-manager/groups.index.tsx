@@ -813,9 +813,19 @@ function AdminGroups() {
               <select
                 className="select w-full"
                 value={createForm.planId}
-                onChange={(e) =>
-                  setCreateForm({ ...createForm, planId: e.target.value })
-                }
+                onChange={(e) => {
+                  const planId = e.target.value;
+                  const plan = planOptions.find((p) => p.id === planId);
+                  setCreateForm({
+                    ...createForm,
+                    planId,
+                    ...(plan && {
+                      contributionAmount: String(plan.contributionAmount),
+                      frequency: plan.frequency as ContributionFrequency,
+                      frequencyAmount: String(plan.frequencyAmount),
+                    }),
+                  });
+                }}
                 required
               >
                 <option value="">Select a plan</option>
@@ -827,78 +837,54 @@ function AdminGroups() {
               </select>
             </fieldset>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Contribution Amount</legend>
-                <label className="input w-full">
+                <label className="input w-full bg-base-200/50">
                   <span className="text-base-content">₦</span>
                   <input
-                    type="number"
-                    placeholder="5000"
-                    value={createForm.contributionAmount}
-                    onChange={(e) =>
-                      setCreateForm({
-                        ...createForm,
-                        contributionAmount: e.target.value,
-                      })
-                    }
-                    required
+                    type="text"
+                    value={createForm.contributionAmount || "—"}
+                    readOnly
+                    className="cursor-default"
                   />
                 </label>
               </fieldset>
 
               <fieldset className="fieldset">
-                <legend className="fieldset-legend">Max Members</legend>
-                <input
-                  type="number"
-                  className="input w-full"
-                  placeholder="10"
-                  value={createForm.maxMembers}
-                  onChange={(e) =>
-                    setCreateForm({ ...createForm, maxMembers: e.target.value })
-                  }
-                  required
-                />
-              </fieldset>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <fieldset className="fieldset">
                 <legend className="fieldset-legend">Frequency</legend>
-                <select
-                  className="select w-full"
-                  value={createForm.frequency}
-                  onChange={(e) =>
-                    setCreateForm({
-                      ...createForm,
-                      frequency: e.target.value as ContributionFrequency,
-                    })
-                  }
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                </select>
+                <input
+                  type="text"
+                  className="input w-full bg-base-200/50 capitalize cursor-default"
+                  value={createForm.frequency || "—"}
+                  readOnly
+                />
               </fieldset>
 
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Every (interval)</legend>
                 <input
-                  type="number"
-                  min={1}
-                  className="input w-full"
-                  placeholder="1"
-                  value={createForm.frequencyAmount}
-                  onChange={(e) =>
-                    setCreateForm({
-                      ...createForm,
-                      frequencyAmount: e.target.value,
-                    })
-                  }
-                  required
+                  type="text"
+                  className="input w-full bg-base-200/50 cursor-default"
+                  value={createForm.frequencyAmount || "—"}
+                  readOnly
                 />
               </fieldset>
             </div>
+
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Max Members</legend>
+              <input
+                type="number"
+                className="input w-full"
+                placeholder="10"
+                value={createForm.maxMembers}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, maxMembers: e.target.value })
+                }
+                required
+              />
+            </fieldset>
 
             <div className="grid grid-cols-2 gap-4">
               <fieldset className="fieldset">
@@ -1007,75 +993,53 @@ function AdminGroups() {
               />
             </fieldset>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Contribution Amount</legend>
-                <label className="input w-full">
+                <label className="input w-full bg-base-200/50">
                   <span className="text-base-content">₦</span>
                   <input
-                    type="number"
+                    type="text"
                     value={editForm.contributionAmount}
-                    onChange={(e) =>
-                      setEditForm({
-                        ...editForm,
-                        contributionAmount: e.target.value,
-                      })
-                    }
-                    required
+                    readOnly
+                    className="cursor-default"
                   />
                 </label>
               </fieldset>
 
               <fieldset className="fieldset">
-                <legend className="fieldset-legend">Max Members</legend>
-                <input
-                  type="number"
-                  className="input w-full"
-                  value={editForm.maxMembers}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, maxMembers: e.target.value })
-                  }
-                  required
-                />
-              </fieldset>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <fieldset className="fieldset">
                 <legend className="fieldset-legend">Frequency</legend>
-                <select
-                  className="select w-full"
+                <input
+                  type="text"
+                  className="input w-full bg-base-200/50 capitalize cursor-default"
                   value={editForm.frequency}
-                  onChange={(e) =>
-                    setEditForm({
-                      ...editForm,
-                      frequency: e.target.value as ContributionFrequency,
-                    })
-                  }
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Weekly</option>
-                  <option value="monthly">Monthly</option>
-                </select>
+                  readOnly
+                />
               </fieldset>
 
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Every (interval)</legend>
                 <input
-                  type="number"
-                  min={1}
-                  className="input w-full"
+                  type="text"
+                  className="input w-full bg-base-200/50 cursor-default"
                   value={editForm.frequencyAmount}
-                  onChange={(e) =>
-                    setEditForm({
-                      ...editForm,
-                      frequencyAmount: e.target.value,
-                    })
-                  }
-                  required
+                  readOnly
                 />
               </fieldset>
             </div>
+
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Max Members</legend>
+              <input
+                type="number"
+                className="input w-full"
+                value={editForm.maxMembers}
+                onChange={(e) =>
+                  setEditForm({ ...editForm, maxMembers: e.target.value })
+                }
+                required
+              />
+            </fieldset>
 
             <div className="grid grid-cols-2 gap-4">
               <fieldset className="fieldset">
