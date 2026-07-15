@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Eye,
   UserCheck,
@@ -10,7 +10,7 @@ import {
   Star,
   AlertCircle,
 } from "lucide-react";
-import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import apiClient from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
 
 export const Route = createFileRoute("/admin/contributors/")({
@@ -21,19 +21,26 @@ type VerificationStatus = "pending" | "verified" | "rejected";
 
 interface Contributor {
   id: string;
-  created_at: string;
-  verification_status: VerificationStatus;
-  total_contributions: number;
+  createdAt: string;
+  verificationStatus: VerificationStatus;
+  totalContributions: number;
   rating?: number;
-  missed_payments: number;
-  late_payments: number;
-  nin_number?: string;
-  bvn_number?: string;
+  missedPayments: number;
+  latePayments: number;
+  ninNumber?: string;
+  bvnNumber?: string;
   profile?: {
-    full_name: string;
+    fullName: string;
     email: string;
-    phone_number?: string;
+    phoneNumber?: string;
   };
+}
+
+interface UsersPage {
+  users: Contributor[];
+  nextCursor: string | null;
+  hasMore: boolean;
+  total: number;
 }
 
 const formatCurrency = (amount = 0) =>
@@ -66,12 +73,23 @@ function AdminContributors() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selected, setSelected] = useState<Contributor | null>(null);
 
-  const { data: contributors = [], isLoading } = useQuery({
-    queryKey: ["admin", "contributors"],
-    queryFn: () =>
-      apiClient
-        .get<ApiResponse<Contributor[]>>("admin/contributors")
-        .then((r) => r.data.data),
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery<UsersPage>({
+    queryKey: ["admin", "contributors", searchQuery],
+    queryFn: async ({ pageParam }) => {
+      const params: Record<string, string | number> = { limit: 10 };
+      if (searchQuery) params.search = searchQuery;
+      if (pageParam) params.cursor = pageParam as string;
+      const resp = await apiClient.get("/users", { params });
+      return resp.data.data as UsersPage;
+    },
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    initialPageParam: "",
   });
 
   const kycMutation = useMutation({
@@ -85,14 +103,11 @@ function AdminContributors() {
     },
   });
 
-  const filtered = contributors.filter((c) => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch =
-      c.profile?.full_name?.toLowerCase().includes(q) ||
-      c.profile?.email?.toLowerCase().includes(q);
-    const matchesStatus =
-      statusFilter === "all" || c.verification_status === statusFilter;
-    return matchesSearch && matchesStatus;
+  const allUsers = data?.pages.flatMap((p) => p.users) ?? [];
+
+  const filtered = allUsers.filter((c) => {
+    if (statusFilter === "all") return true;
+    return c.verificationStatus === statusFilter;
   });
 
   const openModal = (contributor: Contributor) => {
@@ -144,65 +159,82 @@ function AdminContributors() {
           </p>
         </div>
       ) : (
-        <div className="card bg-base-100 shadow overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Contributions</th>
-                <th>Rating</th>
-                <th>Status</th>
-                <th>Joined</th>
-                <th className="w-12"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((c) => (
-                <tr key={c.id} className="hover">
-                  <td>
-                    <div className="flex items-center gap-3">
-                      <Avatar name={c.profile?.full_name} />
-                      <span className="font-medium">
-                        {c.profile?.full_name ?? "—"}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="text-base-content">
-                    {c.profile?.email ?? "—"}
-                  </td>
-                  <td className="text-base-content">
-                    {c.profile?.phone_number ?? "—"}
-                  </td>
-                  <td className="font-medium">
-                    {formatCurrency(c.total_contributions)}
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                      {c.rating?.toFixed(1) ?? "—"}
-                    </div>
-                  </td>
-                  <td>
-                    <StatusBadge status={c.verification_status} />
-                  </td>
-                  <td className="text-base text-base-content">
-                    {new Date(c.created_at).toLocaleDateString()}
-                  </td>
-                  <td>
-                    <button
-                      onClick={() => openModal(c)}
-                      className="btn btn-ghost btn-sm btn-square"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                  </td>
+        <>
+          <div className="card bg-base-100 shadow overflow-x-auto">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Contributions</th>
+                  <th>Rating</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th className="w-12"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map((c) => (
+                  <tr key={c.id} className="hover">
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <Avatar name={c.profile?.fullName} />
+                        <span className="font-medium">
+                          {c.profile?.fullName ?? "—"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="text-base-content">
+                      {c.profile?.email ?? "—"}
+                    </td>
+                    <td className="text-base-content">
+                      {c.profile?.phoneNumber ?? "—"}
+                    </td>
+                    <td className="font-medium">
+                      {formatCurrency(c.totalContributions)}
+                    </td>
+                    <td>
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                        {c.rating?.toFixed(1) ?? "—"}
+                      </div>
+                    </td>
+                    <td>
+                      <StatusBadge status={c.verificationStatus} />
+                    </td>
+                    <td className="text-base text-base-content">
+                      {new Date(c.createdAt).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => openModal(c)}
+                        className="btn btn-ghost btn-sm btn-square"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {hasNextPage && (
+            <div className="flex justify-center">
+              <button
+                className="btn btn-outline"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+              >
+                {isFetchingNextPage && (
+                  <span className="loading loading-spinner loading-sm" />
+                )}
+                Load More
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       <dialog ref={modalRef} className="modal">
@@ -212,14 +244,14 @@ function AdminContributors() {
 
             <div className="space-y-6 mt-6">
               <div className="flex items-center gap-4">
-                <Avatar name={selected.profile?.full_name} size="lg" />
+                <Avatar name={selected.profile?.fullName} size="lg" />
                 <div>
                   <h4 className="text-lg font-semibold">
-                    {selected.profile?.full_name ?? "—"}
+                    {selected.profile?.fullName ?? "—"}
                   </h4>
                   <p className="text-base-content">{selected.profile?.email}</p>
                   <div className="mt-1">
-                    <StatusBadge status={selected.verification_status} />
+                    <StatusBadge status={selected.verificationStatus} />
                   </div>
                 </div>
               </div>
@@ -232,7 +264,7 @@ function AdminContributors() {
                   <div className="space-y-2 text-base">
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-base-content" />
-                      {selected.profile?.phone_number ?? "Not provided"}
+                      {selected.profile?.phoneNumber ?? "Not provided"}
                     </div>
                     <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4 text-base-content" />
@@ -251,7 +283,7 @@ function AdminContributors() {
                         Total Contributions
                       </span>
                       <span className="font-medium">
-                        {formatCurrency(selected.total_contributions)}
+                        {formatCurrency(selected.totalContributions)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -274,11 +306,11 @@ function AdminContributors() {
                 <div className="grid grid-cols-2 gap-3 text-base">
                   <div className="p-2 rounded-lg bg-base-100">
                     <p className="text-base-content">Missed Payments</p>
-                    <p className="font-medium">{selected.missed_payments}</p>
+                    <p className="font-medium">{selected.missedPayments}</p>
                   </div>
                   <div className="p-2 rounded-lg bg-base-100">
                     <p className="text-base-content">Late Payments</p>
-                    <p className="font-medium">{selected.late_payments}</p>
+                    <p className="font-medium">{selected.latePayments}</p>
                   </div>
                 </div>
               </div>
@@ -289,8 +321,8 @@ function AdminContributors() {
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-base">
                   {[
-                    { label: "NIN", value: selected.nin_number },
-                    { label: "BVN", value: selected.bvn_number },
+                    { label: "NIN", value: selected.ninNumber },
+                    { label: "BVN", value: selected.bvnNumber },
                   ].map(({ label, value }) => (
                     <div
                       key={label}
@@ -307,7 +339,7 @@ function AdminContributors() {
                 </div>
               </div>
 
-              {selected.verification_status === "pending" && (
+              {selected.verificationStatus === "pending" && (
                 <div className="flex gap-3">
                   <button
                     className="btn btn-success flex-1"
