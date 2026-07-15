@@ -16,6 +16,8 @@ import {
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
+import { toast } from "sonner";
+import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/admin/cluster-managers/")({
   component: AdminClusterManagers,
@@ -44,7 +46,12 @@ const fullName = (m: Manager) => `${m.firstName} ${m.lastName}`.trim();
 const getStatus = (m: Manager): VerificationStatus =>
   m.verification_status ?? "pending";
 
-const defaultInviteForm = { email: "", fullName: "", phoneNumber: "" };
+const defaultInviteForm = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phoneNumber: "",
+};
 
 const StatusBadge = ({ status }: { status: VerificationStatus }) => {
   if (status === "verified")
@@ -107,7 +114,22 @@ function AdminClusterManagers() {
 
   const inviteMutation = useMutation({
     mutationFn: (body: typeof defaultInviteForm) =>
-      apiClient.post("admin/cluster-managers/invite", body),
+      toast
+        .promise(
+          apiClient.post("auth/invitations", {
+            email: body.email,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            phoneNumber: body.phoneNumber,
+            roleId: 3,
+          }),
+          {
+            loading: "Sending invitation...",
+            success: "Invitation sent",
+            error: extract_message,
+          },
+        )
+        .unwrap(),
     onSuccess: () => {
       inviteModalRef.current?.close();
       setInviteForm(defaultInviteForm);
@@ -468,19 +490,34 @@ function AdminClusterManagers() {
           </p>
 
           <form onSubmit={handleInvite} className="space-y-4 mt-6">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Full Name</legend>
-              <input
-                type="text"
-                className="input w-full"
-                placeholder="John Doe"
-                value={inviteForm.fullName}
-                onChange={(e) =>
-                  setInviteForm({ ...inviteForm, fullName: e.target.value })
-                }
-                required
-              />
-            </fieldset>
+            <div className="grid grid-cols-2 gap-4">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">First Name</legend>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="John"
+                  value={inviteForm.firstName}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, firstName: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Last Name</legend>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="Doe"
+                  value={inviteForm.lastName}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, lastName: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
 
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Email Address</legend>
@@ -501,7 +538,7 @@ function AdminClusterManagers() {
               <input
                 type="tel"
                 className="input w-full"
-                placeholder="+234 800 000 0000"
+                placeholder="+2348012345678"
                 value={inviteForm.phoneNumber}
                 onChange={(e) =>
                   setInviteForm({ ...inviteForm, phoneNumber: e.target.value })

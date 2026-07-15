@@ -156,137 +156,81 @@ const AssignManagerModal = forwardRef<ModalHandle, AssignModalProps>(
 );
 AssignManagerModal.displayName = "AssignManagerModal";
 
-const ROLE_IDS: Record<string, number> = {
-  user: 2,
-  admin: 1,
-  "cluster-manager": 3,
-};
-
 interface InviteModalProps {
   groupId: string;
 }
 
-const defaultInviteForm = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phoneNumber: "",
-  role: "user" as string,
-};
-
 const InviteUserModal = forwardRef<ModalHandle, InviteModalProps>(
   ({ groupId }, ref) => {
-    const [form, setForm] = useState(defaultInviteForm);
+    const [search, setSearch] = useState("");
 
-    const inviteMutation = useMutation({
-      mutationFn: (body: typeof defaultInviteForm) =>
-        toast
-          .promise(
-            apiClient.post("auth/invitations", {
-              email: body.email,
-              firstName: body.firstName,
-              lastName: body.lastName,
-              phoneNumber: body.phoneNumber,
-              roleId: ROLE_IDS[body.role] ?? 2,
-              groupId,
-            }),
-            {
-              loading: "Sending invitation...",
-              success: "Invitation sent",
-              error: extract_message,
-            },
-          )
-          .unwrap(),
-      onSuccess: () => setForm(defaultInviteForm),
+    const usersQuery = useQuery({
+      queryKey: ["contributors", "invitable", search],
+      queryFn: async () => {
+        const resp = await apiClient.get("/users", {
+          params: search ? { search } : {},
+        });
+        return resp.data;
+      },
     });
 
-    const set = (key: keyof typeof defaultInviteForm) =>
-      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-        setForm((f) => ({ ...f, [key]: e.target.value }));
+    const inviteMutation = useMutation({
+      mutationFn: (userId: string) =>
+        toast
+          .promise(apiClient.post(`groups/${groupId}/invite/${userId}`), {
+            loading: "Sending invite...",
+            success: "Invite sent",
+            error: extract_message,
+          })
+          .unwrap(),
+    });
 
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      inviteMutation.mutate(form);
-    };
+    const users = (usersQuery.data?.data?.users ?? []) as GroupManager[];
 
     return (
-      <Modal ref={ref} title="Invite Member">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">First Name</legend>
-              <input
-                type="text"
-                className="input w-full"
-                placeholder="John"
-                value={form.firstName}
-                onChange={set("firstName")}
-                required
-              />
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Last Name</legend>
-              <input
-                type="text"
-                className="input w-full"
-                placeholder="Doe"
-                value={form.lastName}
-                onChange={set("lastName")}
-                required
-              />
-            </fieldset>
-          </div>
+      <Modal ref={ref} title="Invite Members">
+        <div className="space-y-4">
+          <SearchBar value={search} onChange={setSearch} />
 
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Email</legend>
-            <input
-              type="email"
-              className="input w-full"
-              placeholder="member@example.com"
-              value={form.email}
-              onChange={set("email")}
-              required
-            />
-          </fieldset>
-
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Phone Number</legend>
-            <input
-              type="tel"
-              className="input w-full"
-              placeholder="+2348012345678"
-              value={form.phoneNumber}
-              onChange={set("phoneNumber")}
-              required
-            />
-          </fieldset>
-
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Role</legend>
-            <select
-              className="select w-full"
-              value={form.role}
-              onChange={set("role")}
-            >
-              <option value="user">Contributor</option>
-              <option value="cluster-manager">Cluster Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-          </fieldset>
-
-          <div className="modal-action mt-2">
-            <button
-              type="submit"
-              className="btn btn-primary w-full"
-              disabled={inviteMutation.isPending}
-            >
-              {inviteMutation.isPending && (
-                <span className="loading loading-spinner loading-sm" />
-              )}
-              Send Invitation
-            </button>
-          </div>
-        </form>
+          {usersQuery.isLoading ? (
+            <div className="flex justify-center py-8">
+              <span className="loading loading-spinner loading-md" />
+            </div>
+          ) : users.length === 0 ? (
+            <div className="text-center py-8 text-base-content/60">
+              No users found
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[50vh] overflow-y-auto">
+              {users.map((u) => (
+                <div
+                  key={u.id}
+                  className="flex items-center gap-3 p-3 rounded-lg border border-base-200 hover:bg-base-200/50"
+                >
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content font-semibold shrink-0">
+                    {u.firstName?.[0]?.toUpperCase() ?? "U"}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-base-content truncate">
+                      {managerName(u)}
+                    </p>
+                    <p className="text-sm text-base-content/60 truncate">
+                      {u.email}
+                    </p>
+                  </div>
+                  <button
+                    className="btn btn-primary btn-sm shrink-0"
+                    disabled={inviteMutation.isPending}
+                    onClick={() => inviteMutation.mutate(u.id)}
+                  >
+                    <UserPlus className="w-4 h-4" />
+                    Invite
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </Modal>
     );
   },
