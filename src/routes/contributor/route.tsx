@@ -122,12 +122,12 @@ function ContributorLayout() {
                 tabIndex={0}
                 className="dropdown-content menu bg-base-100 rounded-box shadow-lg w-56 mt-2 z-50 p-2"
               >
-                <li className="menu-title">
-                  <div className="px-2 py-1">
+                <li className="menu-title w-full ">
+                  <div className="px-2 py-1 w-full">
                     <p className="font-medium text-base-content">
                       {displayName}
                     </p>
-                    <p className="text-sm text-base-content truncate max-w-full wrap-break-word">
+                    <p className="text-sm text-base-content truncate wrap-anywhere">
                       {String((user as AUTHRECORD | null)?.user?.email ?? "")}
                     </p>
                   </div>
