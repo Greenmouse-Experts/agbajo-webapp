@@ -118,14 +118,14 @@ const AssignManagerModal = forwardRef<ModalHandle, AssignModalProps>(
                     key={m.id}
                     className="flex items-center gap-3 p-3 rounded-lg border border-base-200 hover:bg-base-200/50"
                   >
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content  font-semibold shrink-0">
                       {m.firstName?.[0]?.toUpperCase() ?? "M"}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-base-content truncate">
+                      <p className=" font-medium text-base-content truncate">
                         {managerName(m)}
                       </p>
-                      <p className="text-xs text-base-content/60 truncate">
+                      <p className=" text-base-content/60 truncate">
                         {m.email}
                       </p>
                     </div>
@@ -207,16 +207,14 @@ const InviteUserModal = forwardRef<ModalHandle, InviteModalProps>(
                   key={u.id}
                   className="flex items-center gap-3 p-3 rounded-lg border border-base-200 hover:bg-base-200/50"
                 >
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content  font-semibold shrink-0">
                     {u.firstName?.[0]?.toUpperCase() ?? "U"}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-base-content truncate">
+                    <p className=" font-medium text-base-content truncate">
                       {managerName(u)}
                     </p>
-                    <p className="text-xs text-base-content/60 truncate">
-                      {u.email}
-                    </p>
+                    <p className=" text-base-content/60 truncate">{u.email}</p>
                   </div>
                   <button
                     className="btn btn-primary btn-sm shrink-0"
@@ -286,7 +284,7 @@ function GroupDetailPage() {
 
   return (
     <div className="space-y-6">
-      <Link to="/admin/groups" className="btn btn-ghost btn-sm gap-1 w-fit">
+      <Link to="/admin/groups" className="btn btn-ghost  gap-1 w-fit">
         <ArrowLeft className="w-4 h-4" />
         Groups
       </Link>
@@ -349,7 +347,7 @@ function GroupDetailPage() {
                   <div key={label} className="card bg-base-100 shadow-sm p-4">
                     <div className="flex items-center gap-2 text-base-content/60 mb-1">
                       {icon}
-                      <span className="text-sm">{label}</span>
+                      <span className="">{label}</span>
                     </div>
                     <p className="font-bold capitalize">{value}</p>
                   </div>
@@ -371,7 +369,7 @@ function GroupDetailPage() {
                 </div>
 
                 {group.managers.length === 0 ? (
-                  <p className="text-sm text-base-content/60">
+                  <p className=" text-base-content/60">
                     No managers assigned yet
                   </p>
                 ) : (
@@ -381,14 +379,14 @@ function GroupDetailPage() {
                         key={m.id}
                         className="flex items-center gap-3 p-3 rounded-lg bg-base-200/50"
                       >
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content  font-semibold shrink-0">
                           {m.firstName[0]?.toUpperCase() ?? "M"}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-base-content truncate">
+                          <p className=" font-medium text-base-content truncate">
                             {managerName(m)}
                           </p>
-                          <p className="text-xs text-base-content/60 truncate">
+                          <p className=" text-base-content/60 truncate">
                             {m.email}
                           </p>
                         </div>
@@ -425,14 +423,14 @@ function GroupDetailPage() {
                         key={m.id}
                         className="flex items-center gap-3 p-3 rounded-lg border border-base-200"
                       >
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content text-sm font-semibold shrink-0">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-content  font-semibold shrink-0">
                           {m.firstName?.[0]?.toUpperCase() ?? "U"}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-base-content truncate">
+                          <p className=" font-medium text-base-content truncate">
                             {m.firstName} {m.lastName}
                           </p>
-                          <p className="text-xs text-base-content/60 truncate">
+                          <p className=" text-base-content/60 truncate">
                             {m.email}
                           </p>
                         </div>
