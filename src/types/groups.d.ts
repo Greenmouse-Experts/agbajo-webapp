@@ -32,3 +32,17 @@ export interface Plan {
   frequency: string;
   frequencyAmount: number;
 }
+
+export type ContributionFrequency = "daily" | "weekly" | "monthly";
+export type MemberStatus = "active" | "pending" | "suspended" | "removed";
+
+export interface MyGroup {
+  id: string;
+  group_name: string;
+  manager: string;
+  contribution_amount: number;
+  frequency: ContributionFrequency;
+  max_members: number;
+  current_cycle: number;
+  member_status: MemberStatus;
+}

@@ -12,44 +12,11 @@ import { formatCurrency } from "#/helpers/currency";
 import { toast } from "sonner";
 import PageLoader from "#/components/layout/PageLoader";
 import CustomTable, { type columnType } from "#/components/tables/CustomTable";
+import type { Group, GroupManager, MyGroup } from "#/types/groups.js";
 
 export const Route = createFileRoute("/contributor/groups/")({
   component: ContributorGroups,
 });
-
-type ContributionFrequency = "daily" | "weekly" | "monthly";
-type MemberStatus = "active" | "pending" | "suspended" | "removed";
-
-interface GroupManager {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-interface Group {
-  id: string;
-  groupName: string;
-  contributionAmount: number;
-  frequency: ContributionFrequency;
-  frequencyAmount: number;
-  maxMembers: number;
-  startDate: string;
-  type: string;
-  createdAt: string;
-  managers: GroupManager[];
-}
-
-interface MyGroup {
-  id: string;
-  group_name: string;
-  manager: string;
-  contribution_amount: number;
-  frequency: ContributionFrequency;
-  max_members: number;
-  current_cycle: number;
-  member_status: MemberStatus;
-}
 
 const managerName = (m: GroupManager) => `${m.firstName} ${m.lastName}`.trim();
 
@@ -119,8 +86,12 @@ function ContributorGroups() {
   const { data: myGroups = [] } = useQuery({
     queryKey: ["contributor", "groups"],
     queryFn: () =>
-      apiClient.get<ApiResponse<MyGroup[]>>("/groups").then((r) => r.data.data),
+      apiClient
+        .get<ApiResponse<MyGroup[]>>("contributor/groups")
+        .then((r) => r.data.data),
   });
+
+  const myGroupIds = new Set(myGroups.map((g) => g.id));
 
   const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
     queryKey: ["groups", "public", search, cursor],
@@ -156,6 +127,9 @@ function ContributorGroups() {
     joinModalRef.current?.showModal();
   };
 
+  const pagination = groupsQuery.data?.data?.pagination;
+  const groups = (groupsQuery.data?.data?.data ?? []) as Group[];
+
   const tableColumns: columnType<Group>[] = [
     ...columns,
     {
@@ -184,9 +158,6 @@ function ContributorGroups() {
     },
   ];
 
-  const pagination = groupsQuery.data?.data?.pagination;
-  const groups = (groupsQuery.data?.data?.data ?? []) as Group[];
-
   return (
     <div className="space-y-6">
       <PageHeader
@@ -209,7 +180,7 @@ function ContributorGroups() {
         </label>
       </div>
 
-      {/*<PageLoader query={groupsQuery}>
+      <PageLoader query={groupsQuery}>
         {() => (
           <div className="space-y-3">
             <CustomTable data={groups} columns={tableColumns} />
@@ -238,7 +209,7 @@ function ContributorGroups() {
             )}
           </div>
         )}
-      </PageLoader>*/}
+      </PageLoader>
 
       <dialog ref={joinModalRef} className="modal">
         <div className="modal-box">
