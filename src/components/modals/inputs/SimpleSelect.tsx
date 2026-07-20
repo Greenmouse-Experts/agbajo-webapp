@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState, type PropsWithChildren } from "react";
+import { useState, type PropsWithChildren } from "react";
 import { useFormContext } from "react-hook-form";
 import type { ApiResponse } from "@/api/simpleApi";
 import apiClient from "@/api/simpleApi";
@@ -28,9 +28,10 @@ export default function SimpleSelect<
 
   const error = name && formState ? formState.errors?.[name] : undefined;
 
-  const [internalValue, setInternalValue] = useState<string | null>(
-    value ?? null,
-  );
+  // Controlled when a `value` prop is supplied; otherwise fall back to local state.
+  const isControlled = value !== undefined;
+  const [internalValue, setInternalValue] = useState<string | null>(null);
+  const currentValue = isControlled ? (value ?? null) : internalValue;
 
   const query = useQuery<ApiResponse<T[]>>({
     queryKey: ["select", route],
@@ -40,18 +41,10 @@ export default function SimpleSelect<
     },
   });
 
-  useEffect(() => {
-    if (value !== undefined && value !== internalValue) {
-      setInternalValue(value);
-    }
-  }, [value]);
-
-  useEffect(() => {
-    console.log(internalValue);
-    if (internalValue !== value && onChange) {
-      onChange(internalValue);
-    }
-  }, [internalValue, onChange, value]);
+  const handleChange = (next: string | null) => {
+    if (!isControlled) setInternalValue(next);
+    onChange?.(next);
+  };
 
   if (query.isLoading)
     return (
@@ -107,11 +100,10 @@ export default function SimpleSelect<
         </div>
       )}
       <select
-        value={internalValue === null ? "null" : internalValue}
-        onChange={(e) => {
-          const newValue = e.target.value === "null" ? null : e.target.value;
-          setInternalValue(newValue);
-        }}
+        value={currentValue === null ? "null" : currentValue}
+        onChange={(e) =>
+          handleChange(e.target.value === "null" ? null : e.target.value)
+        }
         className={`select select-md w-full select-bordered ${error ? "select-error" : ""}`}
         id={`select-${route}`}
         name={name || `select-${route}`}

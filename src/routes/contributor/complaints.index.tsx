@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import {
   MessageSquare,
   Send,
@@ -11,13 +11,16 @@ import {
 } from "lucide-react";
 import { PageHeader } from "./-components/PageHeader";
 import { EmptyState } from "./-components/EmptyState";
-import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
+import PageLoader from "#/components/layout/PageLoader.tsx";
+import Modal, { type ModalHandle } from "#/components/modals/DialogModal.tsx";
+import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
+import SimpleSelect from "#/components/modals/inputs/SimpleSelect.tsx";
+import apiClient from "#/api/simpleApi";
 import { extract_message } from "#/helpers/apihelpers";
 import { toast } from "sonner";
+import { useRef } from "react";
 
-export const Route = createFileRoute("/contributor/complaints/")({
-  component: ContributorComplaints,
-});
+// ── search schema ────────────────────────────────────────────────────────────
 
 type ComplaintStatus =
   | "pending"
@@ -26,6 +29,25 @@ type ComplaintStatus =
   | "resolved"
   | "escalated"
   | "closed";
+
+interface ComplaintsSearch {
+  page: number;
+  status: string;
+  categoryId: string;
+  priorityId: string;
+}
+
+export const Route = createFileRoute("/contributor/complaints/")({
+  component: ContributorComplaints,
+  validateSearch: (s: Record<string, unknown>): ComplaintsSearch => ({
+    page: Number(s.page ?? 1),
+    status: String(s.status ?? "all"),
+    categoryId: String(s.categoryId ?? "all"),
+    priorityId: String(s.priorityId ?? "all"),
+  }),
+});
+
+// ── types ────────────────────────────────────────────────────────────────────
 
 interface ComplaintRef {
   id: number;
@@ -44,26 +66,31 @@ interface Complaint {
   createdAt: string;
 }
 
-type ComplaintsResponse = ApiResponseV2<Complaint[]> & {
-  data: { complaints: Complaint[] };
-};
+interface ComplaintsPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
 
-// Reference lists — align ids with the backend category/priority tables.
-const CATEGORIES = [
-  { id: 1, label: "Contribution" },
-  { id: 2, label: "Payout" },
-  { id: 3, label: "Group" },
-  { id: 4, label: "Manager" },
-  { id: 5, label: "Technical" },
-  { id: 6, label: "Other" },
-];
+interface ComplaintsData {
+  complaints: Complaint[];
+  pagination: ComplaintsPagination;
+}
 
-const PRIORITIES = [
-  { id: 1, label: "Low" },
-  { id: 2, label: "Normal" },
-  { id: 3, label: "High" },
-  { id: 4, label: "Urgent" },
-];
+interface ComplaintsResponse {
+  status: string;
+  data: ComplaintsData;
+}
+
+interface NewComplaintForm {
+  title: string;
+  description: string;
+  categoryId: string;
+  priorityId: string;
+}
+
+// ── constants ────────────────────────────────────────────────────────────────
 
 const STATUSES: ComplaintStatus[] = [
   "pending",
@@ -92,48 +119,51 @@ const priorityBadge: Record<number, string> = {
 
 const PAGE_SIZE = 10;
 
-const defaultForm = {
-  title: "",
-  description: "",
-  categoryId: "6",
-  priorityId: "2",
-};
+// ── component ────────────────────────────────────────────────────────────────
 
 function ContributorComplaints() {
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { page, status, categoryId, priorityId } = Route.useSearch();
   const queryClient = useQueryClient();
-  const modalRef = useRef<HTMLDialogElement>(null);
-  const [form, setForm] = useState(defaultForm);
-  const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [priorityFilter, setPriorityFilter] = useState("all");
+  const modalRef = useRef<ModalHandle>(null);
 
-  const params: Record<string, string | number> = {
-    page,
-    limit: PAGE_SIZE,
-  };
-  if (statusFilter !== "all") params.status = statusFilter;
-  if (categoryFilter !== "all") params.categoryId = Number(categoryFilter);
-  if (priorityFilter !== "all") params.priorityId = Number(priorityFilter);
-
-  const complaintsQuery = useQuery({
-    queryKey: [
-      "contributor",
-      "complaints",
-      page,
-      statusFilter,
-      categoryFilter,
-      priorityFilter,
-    ],
-    queryFn: () =>
-      apiClient
-        .get<ComplaintsResponse>("complaints", { params })
-        .then((r) => r.data.data),
+  const methods = useForm<NewComplaintForm>({
+    defaultValues: { title: "", description: "", categoryId: null as any, priorityId: null as any },
   });
 
-  const complaints = complaintsQuery.data?.complaints ?? [];
-  const pagination = complaintsQuery.data?.pagination;
-  const hasMore = pagination?.hasMore ?? complaints.length === PAGE_SIZE;
+  const setSearch = (patch: Partial<ComplaintsSearch>) =>
+    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+
+  const resetPage = () => setSearch({ page: 1 });
+
+  // ── lookup queries (shared cache with SimpleSelect) ──────────────────────
+
+  const categoriesQuery = useQuery({
+    queryKey: ["select", "complaints/categories"],
+    queryFn: async () => (await apiClient.get("complaints/categories")).data,
+  });
+
+  const prioritiesQuery = useQuery({
+    queryKey: ["select", "complaints/priorities"],
+    queryFn: async () => (await apiClient.get("complaints/priorities")).data,
+  });
+
+  // ── query ────────────────────────────────────────────────────────────────
+
+  const params: Record<string, string | number> = { page, limit: PAGE_SIZE };
+  if (status !== "all") params.status = status;
+  if (categoryId !== "all") params.categoryId = Number(categoryId);
+  if (priorityId !== "all") params.priorityId = Number(priorityId);
+
+  const query = useQuery<ComplaintsResponse>({
+    queryKey: ["contributor", "complaints", page, status, categoryId, priorityId],
+    queryFn: async () => {
+      const resp = await apiClient.get("/complaints", { params });
+      return resp.data;
+    },
+  });
+
+  // ── mutation ─────────────────────────────────────────────────────────────
 
   const createMutation = useMutation({
     mutationFn: (body: object) =>
@@ -145,30 +175,20 @@ function ContributorComplaints() {
         })
         .unwrap(),
     onSuccess: () => {
-      closeModal();
-      queryClient.invalidateQueries({
-        queryKey: ["contributor", "complaints"],
-      });
+      modalRef.current?.close();
+      methods.reset();
+      queryClient.invalidateQueries({ queryKey: ["contributor", "complaints"] });
     },
   });
 
-  const openModal = () => modalRef.current?.showModal();
-  const closeModal = () => {
-    modalRef.current?.close();
-    setForm(defaultForm);
-  };
-
-  const resetToFirstPage = () => setPage(1);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = methods.handleSubmit((values) => {
     createMutation.mutate({
-      title: form.title,
-      description: form.description,
-      categoryId: Number(form.categoryId),
-      priorityId: Number(form.priorityId),
+      title: values.title,
+      description: values.description,
+      categoryId: Number(values.categoryId),
+      priorityId: Number(values.priorityId),
     });
-  };
+  });
 
   return (
     <div className="space-y-6">
@@ -176,7 +196,10 @@ function ContributorComplaints() {
         title="My Complaints"
         subtitle="Track and submit complaints"
         action={
-          <button onClick={openModal} className="btn btn-primary btn-sm gap-2">
+          <button
+            onClick={() => modalRef.current?.open()}
+            className="btn btn-primary btn-sm gap-2"
+          >
             <MessageSquare className="w-4 h-4" />
             New Complaint
           </button>
@@ -188,11 +211,8 @@ function ContributorComplaints() {
         <div className="card-body p-4 flex-col sm:flex-row gap-3">
           <select
             className="select select-sm w-full sm:w-44"
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              resetToFirstPage();
-            }}
+            value={status}
+            onChange={(e) => { setSearch({ status: e.target.value }); resetPage(); }}
           >
             <option value="all">All Status</option>
             {STATUSES.map((s) => (
@@ -201,234 +221,222 @@ function ContributorComplaints() {
               </option>
             ))}
           </select>
+
           <select
             className="select select-sm w-full sm:w-44"
-            value={categoryFilter}
-            onChange={(e) => {
-              setCategoryFilter(e.target.value);
-              resetToFirstPage();
-            }}
+            value={categoryId}
+            onChange={(e) => { setSearch({ categoryId: e.target.value }); resetPage(); }}
           >
             <option value="all">All Categories</option>
-            {CATEGORIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.label}
-              </option>
+            {(categoriesQuery.data?.data as any[] ?? []).map((c: any) => (
+              <option key={c.id} value={String(c.id)}>{c.name}</option>
             ))}
           </select>
+
           <select
             className="select select-sm w-full sm:w-44"
-            value={priorityFilter}
-            onChange={(e) => {
-              setPriorityFilter(e.target.value);
-              resetToFirstPage();
-            }}
+            value={priorityId}
+            onChange={(e) => { setSearch({ priorityId: e.target.value }); resetPage(); }}
           >
             <option value="all">All Priorities</option>
-            {PRIORITIES.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-              </option>
+            {(prioritiesQuery.data?.data as any[] ?? []).map((p: any) => (
+              <option key={p.id} value={String(p.id)}>{p.name}</option>
             ))}
           </select>
         </div>
       </div>
 
       {/* List */}
-      {complaintsQuery.isLoading ? (
-        <div className="flex items-center justify-center h-64">
-          <span className="loading loading-spinner loading-lg" />
-        </div>
-      ) : complaints.length === 0 ? (
-        <EmptyState
-          icon={AlertCircle}
-          title="No complaints"
-          description="Submit a complaint if you have any issues."
-        />
-      ) : (
-        <div className="space-y-4">
-          {complaints.map((c) => (
-            <div
-              key={c.id}
-              className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="card-body gap-4">
-                {/* Header row */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center shrink-0">
-                    <MessageSquare className="w-5 h-5 text-base-content" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-3 flex-wrap">
-                      <h3 className="font-semibold text-base-content">
-                        {c.title}
-                      </h3>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span
-                          className={`badge badge-sm ${priorityBadge[c.priority?.id] ?? "badge-ghost"} capitalize`}
-                        >
-                          {c.priority?.name}
-                        </span>
-                        <span
-                          className={`badge badge-sm ${statusBadge[c.status] ?? "badge-ghost"} capitalize`}
-                        >
-                          {c.status.replace("_", " ")}
-                        </span>
+      <PageLoader query={query}>
+        {({ data }) => {
+          const { complaints, pagination } = data;
+
+          if (complaints.length === 0) {
+            return (
+              <EmptyState
+                icon={AlertCircle}
+                title="No complaints"
+                description="Submit a complaint if you have any issues."
+              />
+            );
+          }
+
+          const hasMore = page < pagination.totalPages;
+
+          return (
+            <>
+              <div className="space-y-4">
+                {complaints.map((c) => (
+                  <div
+                    key={c.id}
+                    className="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="card-body gap-4">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center shrink-0">
+                          <MessageSquare className="w-5 h-5 text-base-content" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-3 flex-wrap">
+                            <h3 className="font-semibold text-base-content">{c.title}</h3>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span
+                                className={`badge badge-sm ${priorityBadge[c.priority?.id] ?? "badge-ghost"} capitalize`}
+                              >
+                                {c.priority?.name}
+                              </span>
+                              <span
+                                className={`badge badge-sm ${statusBadge[c.status] ?? "badge-ghost"} capitalize`}
+                              >
+                                {c.status.replace("_", " ")}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-base text-base-content mt-1 line-clamp-2">
+                            {c.description}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2 text-sm text-base-content">
+                            <span className="capitalize">{c.category?.name}</span>
+                            <span>·</span>
+                            <span>{new Date(c.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <p className="text-base text-base-content mt-1 line-clamp-2">
-                      {c.description}
-                    </p>
-                    <div className="flex items-center gap-2 mt-2 text-sm text-base-content">
-                      <span className="capitalize">{c.category?.name}</span>
-                      <span>·</span>
-                      <span>{new Date(c.createdAt).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Admin response */}
-                {(c.response ?? c.adminNote) && (
-                  <div className="flex items-start gap-3 p-4 rounded-xl bg-success/5 border border-success">
-                    <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium text-success mb-1">
-                        Admin Response
-                      </p>
-                      <p className="text-base text-base-content">
-                        {c.response ?? c.adminNote}
-                      </p>
+                      {(c.response ?? c.adminNote) && (
+                        <div className="flex items-start gap-3 p-4 rounded-xl bg-success/5 border border-success">
+                          <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-sm font-medium text-success mb-1">Admin Response</p>
+                            <p className="text-base text-base-content">{c.response ?? c.adminNote}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                )}
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
 
-      {/* Pagination */}
-      {complaints.length > 0 && (page > 1 || hasMore) && (
-        <div className="flex items-center justify-between">
-          <button
-            className="btn btn-ghost btn-sm"
-            disabled={page === 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Previous
-          </button>
-          <span className="text-sm text-base-content">Page {page}</span>
-          <button
-            className="btn btn-ghost btn-sm"
-            disabled={!hasMore}
-            onClick={() => setPage((p) => p + 1)}
-          >
-            Next
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+              {(page > 1 || hasMore) && (
+                <div className="flex items-center justify-between">
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    disabled={page === 1}
+                    onClick={() => setSearch({ page: page - 1 })}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    Previous
+                  </button>
+                  <span className="text-sm text-base-content">
+                    Page {page} of {pagination.totalPages}
+                  </span>
+                  <button
+                    className="btn btn-ghost btn-sm"
+                    disabled={!hasMore}
+                    onClick={() => setSearch({ page: page + 1 })}
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </>
+          );
+        }}
+      </PageLoader>
 
       {/* New complaint modal */}
-      <dialog ref={modalRef} className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box">
-          <h3 className="text-lg font-semibold text-base-content">
-            New Complaint
-          </h3>
-          <p className="text-base text-base-content mt-0.5">
-            Submit your issue for admin review
-          </p>
+      <Modal
+        ref={modalRef}
+        title="New Complaint"
+        actions={
+          <>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => { modalRef.current?.close(); methods.reset(); }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary gap-2"
+              onClick={handleSubmit}
+              disabled={createMutation.isPending}
+            >
+              {createMutation.isPending ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+              Submit
+            </button>
+          </>
+        }
+      >
+        <FormProvider {...methods}>
+          <div className="space-y-4">
+            <SimpleInput
+              label="Title"
+              placeholder="Brief description of your issue"
+              {...methods.register("title", { required: "Title is required" })}
+            />
 
-          <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Title</legend>
-              <input
-                type="text"
-                className="input w-full"
-                placeholder="Brief description of your issue"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                required
-              />
-            </fieldset>
-
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Description</legend>
+            <div className="w-full space-y-2">
+              <div className="fieldset-label font-semibold">
+                <span className="text-sm">Description</span>
+              </div>
               <textarea
-                className="textarea w-full h-24"
+                className="textarea textarea-bordered w-full h-24 text-sm"
                 placeholder="Detailed description of the issue..."
-                value={form.description}
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-                required
+                {...methods.register("description", { required: "Description is required" })}
               />
-            </fieldset>
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Category</legend>
-                <select
-                  className="select w-full"
-                  value={form.categoryId}
-                  onChange={(e) =>
-                    setForm({ ...form, categoryId: e.target.value })
-                  }
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </fieldset>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Priority</legend>
-                <select
-                  className="select w-full"
-                  value={form.priorityId}
-                  onChange={(e) =>
-                    setForm({ ...form, priorityId: e.target.value })
-                  }
-                >
-                  {PRIORITIES.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.label}
-                    </option>
-                  ))}
-                </select>
-              </fieldset>
-            </div>
-
-            <div className="modal-action">
-              <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={closeModal}
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="btn btn-primary gap-2"
-                disabled={createMutation.isPending}
-              >
-                {createMutation.isPending ? (
-                  <span className="loading loading-spinner loading-sm" />
-                ) : (
-                  <Send className="w-4 h-4" />
+              <Controller
+                name="categoryId"
+                control={methods.control}
+                rules={{ required: "Category is required" }}
+                render={({ field }) => (
+                  <SimpleSelect
+                    label="Category"
+                    name="categoryId"
+                    route="complaints/categories"
+                    value={field.value}
+                    onChange={(v) => field.onChange(v)}
+                    render={(item: any) => (
+                      <option key={item.id} value={String(item.id)}>
+                        {item.name}
+                      </option>
+                    )}
+                  />
                 )}
-                Submit
-              </button>
+              />
+
+              <Controller
+                name="priorityId"
+                control={methods.control}
+                rules={{ required: "Priority is required" }}
+                render={({ field }) => (
+                  <SimpleSelect
+                    label="Priority"
+                    name="priorityId"
+                    route="complaints/priorities"
+                    value={field.value}
+                    onChange={(v) => field.onChange(v)}
+                    render={(item: any) => (
+                      <option key={item.id} value={String(item.id)}>
+                        {item.name}
+                      </option>
+                    )}
+                  />
+                )}
+              />
             </div>
-          </form>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button onClick={closeModal}>close</button>
-        </form>
-      </dialog>
+          </div>
+        </FormProvider>
+      </Modal>
     </div>
   );
 }
