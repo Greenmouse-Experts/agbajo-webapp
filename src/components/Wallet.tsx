@@ -1,22 +1,24 @@
-import apiClient from "#/api/simpleApi.ts";
+import apiClient, { type ApiResponse } from "#/api/simpleApi.ts";
 import { formatCurrency } from "#/helpers/currency.ts";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal.tsx";
 import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
-import type {
-  WalletData,
-  NgnDepositResponse,
-  DepositForm,
-} from "#/types/wallet.ts";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import type { WalletData, NgnDepositResponse, DepositForm } from "#/types/wallet.ts";
+import { extract_message } from "#/helpers/apihelpers";
+import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import PaystackPop from "@paystack/inline-js";
 import { ArrowDownRight, WalletIcon, Zap } from "lucide-react";
 import { useRef } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 
+const paystackInstance = new PaystackPop();
+
 const QUICK_AMOUNTS = [5000, 10000, 20000, 50000];
 
 export default function Wallet() {
+  const qc = useQueryClient();
   const modalRef = useRef<ModalHandle>(null);
-  const methods = useForm<DepositForm>({ defaultValues: { amount: "" } });
+  const methods = useForm<DepositForm>({ defaultValues: { amount: "", currency: "NGN" } });
 
   const { data, isLoading } = useQuery({
     queryKey: ["wallet", "balance"],
@@ -28,17 +30,24 @@ export default function Wallet() {
 
   const deposit = useMutation({
     mutationFn: async (amount: number) => {
-      const resp = await apiClient.post<NgnDepositResponse>("/wallet/deposit", {
-        amount,
-        currency: "NGN",
-      });
-      return resp.data;
+      const resp = await apiClient.post<ApiResponse<NgnDepositResponse>>(
+        "/wallet/deposit",
+        { amount, currency: "NGN" },
+      );
+      return resp.data.data;
     },
-    onSuccess: ({ authorizationUrl }) => {
+    onSuccess: ({ accessCode }) => {
       modalRef.current?.close();
       methods.reset();
-      window.location.href = authorizationUrl;
+      paystackInstance.resumeTransaction(accessCode, {
+        onSuccess() {
+          qc.invalidateQueries({ queryKey: ["wallet", "balance"] });
+          qc.invalidateQueries({ queryKey: ["wallet", "transactions"] });
+          toast.success("Wallet funded successfully!");
+        },
+      });
     },
+    onError: (err) => toast.error(extract_message(err)),
   });
 
   const handleFund = methods.handleSubmit((values) => {
@@ -101,29 +110,21 @@ export default function Wallet() {
               className="btn items-start h-auto p-3 btn-ghost flex justify-start"
             >
               <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center shrink-0">
-                <ArrowDownRight className="w-5 h-5 text-primary" />
+                <ArrowDownRight className="w-5 h-5 text-primary-content" />
               </div>
               <div className="text-left items-start">
-                <p className="text-base font-medium text-base-content">
-                  Fund Wallet
-                </p>
-                <p className="text-sm text-base-content">
-                  Add money to your wallet
-                </p>
+                <p className="text-base font-medium text-base-content">Fund Wallet</p>
+                <p className="text-sm text-base-content/60">Add money to your wallet</p>
               </div>
             </button>
 
             <div className="flex items-center gap-3 p-3 rounded-xl border border-base-200">
-              <div className="w-10 h-10 rounded-lg bg-warning flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center shrink-0">
                 <Zap className="w-5 h-5 text-warning" />
               </div>
               <div>
-                <p className="text-base font-medium text-base-content">
-                  Auto Debit
-                </p>
-                <p className="text-sm text-base-content">
-                  Enabled for contributions
-                </p>
+                <p className="text-base font-medium text-base-content">Auto Debit</p>
+                <p className="text-sm text-base-content/60">Enabled for contributions</p>
               </div>
               <input
                 type="checkbox"
@@ -135,6 +136,7 @@ export default function Wallet() {
           </div>
         </div>
       </div>
+
       <Modal
         ref={modalRef}
         title="Fund Wallet"
@@ -179,18 +181,16 @@ export default function Wallet() {
             />
 
             <div className="grid grid-cols-4 gap-2">
-              {QUICK_AMOUNTS.map((amount) => (
+              {QUICK_AMOUNTS.map((amt) => (
                 <button
-                  key={amount}
+                  key={amt}
                   type="button"
                   className="btn btn-sm btn-outline"
                   onClick={() =>
-                    methods.setValue("amount", String(amount), {
-                      shouldValidate: true,
-                    })
+                    methods.setValue("amount", String(amt), { shouldValidate: true })
                   }
                 >
-                  ₦{amount / 1000}k
+                  ₦{amt / 1000}k
                 </button>
               ))}
             </div>

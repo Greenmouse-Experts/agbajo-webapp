@@ -34,6 +34,7 @@ import { Route as ClusterManagerIssuesIndexRouteImport } from './routes/cluster-
 import { Route as ClusterManagerInvitationsIndexRouteImport } from './routes/cluster-manager/invitations.index'
 import { Route as ClusterManagerGroupsIndexRouteImport } from './routes/cluster-manager/groups.index'
 import { Route as ClusterManagerContributionsIndexRouteImport } from './routes/cluster-manager/contributions.index'
+import { Route as AdminWithdrawalsIndexRouteImport } from './routes/admin/withdrawals.index'
 import { Route as AdminReportsIndexRouteImport } from './routes/admin/reports.index'
 import { Route as AdminPoliciesIndexRouteImport } from './routes/admin/policies.index'
 import { Route as AdminPlansIndexRouteImport } from './routes/admin/plans.index'
@@ -189,6 +190,11 @@ const ClusterManagerContributionsIndexRoute =
     path: '/contributions/',
     getParentRoute: () => ClusterManagerRouteRoute,
   } as any)
+const AdminWithdrawalsIndexRoute = AdminWithdrawalsIndexRouteImport.update({
+  id: '/withdrawals/',
+  path: '/withdrawals/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminReportsIndexRoute = AdminReportsIndexRouteImport.update({
   id: '/reports/',
   path: '/reports/',
@@ -323,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/admin/plans/': typeof AdminPlansIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
+  '/admin/withdrawals/': typeof AdminWithdrawalsIndexRoute
   '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
   '/cluster-manager/groups/': typeof ClusterManagerGroupsIndexRoute
   '/cluster-manager/invitations/': typeof ClusterManagerInvitationsIndexRoute
@@ -367,6 +374,7 @@ export interface FileRoutesByTo {
   '/admin/plans': typeof AdminPlansIndexRoute
   '/admin/policies': typeof AdminPoliciesIndexRoute
   '/admin/reports': typeof AdminReportsIndexRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsIndexRoute
   '/cluster-manager/contributions': typeof ClusterManagerContributionsIndexRoute
   '/cluster-manager/groups': typeof ClusterManagerGroupsIndexRoute
   '/cluster-manager/invitations': typeof ClusterManagerInvitationsIndexRoute
@@ -415,6 +423,7 @@ export interface FileRoutesById {
   '/admin/plans/': typeof AdminPlansIndexRoute
   '/admin/policies/': typeof AdminPoliciesIndexRoute
   '/admin/reports/': typeof AdminReportsIndexRoute
+  '/admin/withdrawals/': typeof AdminWithdrawalsIndexRoute
   '/cluster-manager/contributions/': typeof ClusterManagerContributionsIndexRoute
   '/cluster-manager/groups/': typeof ClusterManagerGroupsIndexRoute
   '/cluster-manager/invitations/': typeof ClusterManagerInvitationsIndexRoute
@@ -464,6 +473,7 @@ export interface FileRouteTypes {
     | '/admin/plans/'
     | '/admin/policies/'
     | '/admin/reports/'
+    | '/admin/withdrawals/'
     | '/cluster-manager/contributions/'
     | '/cluster-manager/groups/'
     | '/cluster-manager/invitations/'
@@ -508,6 +518,7 @@ export interface FileRouteTypes {
     | '/admin/plans'
     | '/admin/policies'
     | '/admin/reports'
+    | '/admin/withdrawals'
     | '/cluster-manager/contributions'
     | '/cluster-manager/groups'
     | '/cluster-manager/invitations'
@@ -555,6 +566,7 @@ export interface FileRouteTypes {
     | '/admin/plans/'
     | '/admin/policies/'
     | '/admin/reports/'
+    | '/admin/withdrawals/'
     | '/cluster-manager/contributions/'
     | '/cluster-manager/groups/'
     | '/cluster-manager/invitations/'
@@ -767,6 +779,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClusterManagerContributionsIndexRouteImport
       parentRoute: typeof ClusterManagerRouteRoute
     }
+    '/admin/withdrawals/': {
+      id: '/admin/withdrawals/'
+      path: '/withdrawals'
+      fullPath: '/admin/withdrawals/'
+      preLoaderRoute: typeof AdminWithdrawalsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/reports/': {
       id: '/admin/reports/'
       path: '/reports'
@@ -922,6 +941,7 @@ interface AdminRouteRouteChildren {
   AdminPlansIndexRoute: typeof AdminPlansIndexRoute
   AdminPoliciesIndexRoute: typeof AdminPoliciesIndexRoute
   AdminReportsIndexRoute: typeof AdminReportsIndexRoute
+  AdminWithdrawalsIndexRoute: typeof AdminWithdrawalsIndexRoute
   AdminGroupsDIndexRoute: typeof AdminGroupsDIndexRoute
   AdminPlansIdIndexRoute: typeof AdminPlansIdIndexRoute
 }
@@ -938,6 +958,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminPlansIndexRoute: AdminPlansIndexRoute,
   AdminPoliciesIndexRoute: AdminPoliciesIndexRoute,
   AdminReportsIndexRoute: AdminReportsIndexRoute,
+  AdminWithdrawalsIndexRoute: AdminWithdrawalsIndexRoute,
   AdminGroupsDIndexRoute: AdminGroupsDIndexRoute,
   AdminPlansIdIndexRoute: AdminPlansIdIndexRoute,
 }

@@ -1,7 +1,7 @@
 import apiClient from "#/api/simpleApi";
 import SimpleInput from "#/components/modals/inputs/SimpleInput";
 import { extract_message } from "#/helpers/apihelpers";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { KeyRound, Lock } from "lucide-react";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -18,12 +18,19 @@ interface WithdrawalPinProps {
 }
 
 // TODO: confirm endpoint path with backend.
-const PIN_ENDPOINT = "/wallet/withdrawal-pin";
+const PIN_ENDPOINT = "/auth/pin";
 
 export default function WithdrawalPin({
   hasPin = false,
   onSuccess,
 }: WithdrawalPinProps) {
+  const pin_query = useQuery({
+    queryKey: ["withdrawal-pin"],
+    queryFn: async () => {
+      let resp = await apiClient.get(PIN_ENDPOINT);
+      return resp.data;
+    },
+  });
   const methods = useForm<WithdrawalPinForm>({
     defaultValues: { password: "", pin: "" },
   });
