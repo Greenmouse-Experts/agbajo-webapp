@@ -552,7 +552,8 @@ function RouteComponent() {
                   const label = freqLabel(plan.frequency, plan.frequencyAmount);
                   const color = PALETTES[idx % PALETTES.length];
                   const number = String(idx + 1).padStart(2, "0");
-
+                  const colorName = color.replace("bg-", "text-");
+                  const ringColor = color.replace("bg-", "ring-");
                   const items = [
                     {
                       icon: PiggyBank,
@@ -579,12 +580,12 @@ function RouteComponent() {
                   return (
                     <div
                       key={plan.id}
-                      className="relative rounded-2xl bg-base-100 border border-base-200 shadow-sm flex flex-col overflow-hidden"
+                      className="relative rounded-2xl bg-base-100 border border-base-200 shadow-sm flex flex-col"
                     >
                       {/* Number badge */}
                       <div className="absolute left-1/2 -translate-x-1/2 -top-5 z-10">
                         <div
-                          className={`w-10 h-10 rounded-full ${color} text-white flex items-center justify-center text-sm font-semibold ring-4 ring-base-100`}
+                          className={`w-10 h-10 rounded-full ${color}  flex items-center justify-center text-sm font-semibold ring-4  !bg-white  ${colorName} ${ringColor}`}
                         >
                           {number}
                         </div>
@@ -596,6 +597,9 @@ function RouteComponent() {
                       >
                         <h3 className="text-xl font-bold leading-tight">
                           {plan.name}
+                          <span className="text-sm text-base-content/60">
+                            {colorName}
+                          </span>
                         </h3>
                       </div>
 
