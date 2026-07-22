@@ -14,6 +14,7 @@ import { Route as ContributorRouteRouteImport } from './routes/contributor/route
 import { Route as ClusterManagerRouteRouteImport } from './routes/cluster-manager/route'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FundingIndexRouteImport } from './routes/funding/index'
 import { Route as ContributorIndexRouteImport } from './routes/contributor/index'
 import { Route as ClusterManagerIndexRouteImport } from './routes/cluster-manager/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -75,6 +76,11 @@ const AdminRouteRoute = AdminRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FundingIndexRoute = FundingIndexRouteImport.update({
+  id: '/funding/',
+  path: '/funding/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContributorIndexRoute = ContributorIndexRouteImport.update({
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/cluster-manager/': typeof ClusterManagerIndexRoute
   '/contributor/': typeof ContributorIndexRoute
+  '/funding/': typeof FundingIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/admin': typeof HomeAuthAdminRoute
@@ -328,6 +335,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/cluster-manager': typeof ClusterManagerIndexRoute
   '/contributor': typeof ContributorIndexRoute
+  '/funding': typeof FundingIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/admin': typeof HomeAuthAdminRoute
@@ -373,6 +381,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/cluster-manager/': typeof ClusterManagerIndexRoute
   '/contributor/': typeof ContributorIndexRoute
+  '/funding/': typeof FundingIndexRoute
   '/auth/reset-password/confirm': typeof AuthResetPasswordConfirmRoute
   '/auth/reset-password/request': typeof AuthResetPasswordRequestRoute
   '/home/auth/admin': typeof HomeAuthAdminRoute
@@ -419,6 +428,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/cluster-manager/'
     | '/contributor/'
+    | '/funding/'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
     | '/home/auth/admin'
@@ -460,6 +470,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/cluster-manager'
     | '/contributor'
+    | '/funding'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
     | '/home/auth/admin'
@@ -504,6 +515,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/cluster-manager/'
     | '/contributor/'
+    | '/funding/'
     | '/auth/reset-password/confirm'
     | '/auth/reset-password/request'
     | '/home/auth/admin'
@@ -544,6 +556,7 @@ export interface RootRouteChildren {
   ClusterManagerRouteRoute: typeof ClusterManagerRouteRouteWithChildren
   ContributorRouteRoute: typeof ContributorRouteRouteWithChildren
   VerifyEmailRoute: typeof VerifyEmailRoute
+  FundingIndexRoute: typeof FundingIndexRoute
   AuthResetPasswordConfirmRoute: typeof AuthResetPasswordConfirmRoute
   AuthResetPasswordRequestRoute: typeof AuthResetPasswordRequestRoute
   HomeAuthAdminRoute: typeof HomeAuthAdminRoute
@@ -586,6 +599,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/funding/': {
+      id: '/funding/'
+      path: '/funding'
+      fullPath: '/funding/'
+      preLoaderRoute: typeof FundingIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contributor/': {
@@ -948,6 +968,7 @@ const rootRouteChildren: RootRouteChildren = {
   ClusterManagerRouteRoute: ClusterManagerRouteRouteWithChildren,
   ContributorRouteRoute: ContributorRouteRouteWithChildren,
   VerifyEmailRoute: VerifyEmailRoute,
+  FundingIndexRoute: FundingIndexRoute,
   AuthResetPasswordConfirmRoute: AuthResetPasswordConfirmRoute,
   AuthResetPasswordRequestRoute: AuthResetPasswordRequestRoute,
   HomeAuthAdminRoute: HomeAuthAdminRoute,
