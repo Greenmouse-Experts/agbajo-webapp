@@ -373,18 +373,18 @@ function Footer() {
 
         <form
           onSubmit={handleSubscribe}
-          className="bg-white rounded-2xl p-2 flex items-center gap-2 shadow-lg"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-2 sm:bg-white sm:rounded-2xl sm:p-2 sm:shadow-lg"
         >
           <input
             type="email"
             name="email"
             required
             placeholder="Enter your email address"
-            className="grow bg-transparent text-base-content px-4 py-3 outline-none placeholder:text-base-content/40"
+            className="grow min-w-0 bg-white sm:bg-transparent text-base-content px-4 py-3 outline-none placeholder:text-base-content/40 rounded-2xl sm:rounded-none shadow-lg sm:shadow-none"
           />
           <button
             type="submit"
-            className="btn bg-amber-400 hover:bg-amber-500 text-slate-900 border-0 rounded-xl px-6"
+            className="btn bg-amber-400 hover:bg-amber-500 text-slate-900 border-0 rounded-xl px-6 shrink-0"
           >
             Subscribe
           </button>
