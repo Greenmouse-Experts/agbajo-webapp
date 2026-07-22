@@ -44,6 +44,8 @@ import { Route as AdminContributorsIndexRouteImport } from './routes/admin/contr
 import { Route as AdminContributionsIndexRouteImport } from './routes/admin/contributions.index'
 import { Route as AdminComplaintsIndexRouteImport } from './routes/admin/complaints.index'
 import { Route as AdminClusterManagersIndexRouteImport } from './routes/admin/cluster-managers.index'
+import { Route as WalletDepositSuccessRouteImport } from './routes/wallet/deposit/success'
+import { Route as WalletDepositCancelRouteImport } from './routes/wallet/deposit/cancel'
 import { Route as HomeAuthSignupRouteImport } from './routes/home/auth/signup'
 import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 import { Route as HomeAuthAdminRouteImport } from './routes/home/auth/admin'
@@ -238,6 +240,16 @@ const AdminClusterManagersIndexRoute =
     path: '/cluster-managers/',
     getParentRoute: () => AdminRouteRoute,
   } as any)
+const WalletDepositSuccessRoute = WalletDepositSuccessRouteImport.update({
+  id: '/wallet/deposit/success',
+  path: '/wallet/deposit/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletDepositCancelRoute = WalletDepositCancelRouteImport.update({
+  id: '/wallet/deposit/cancel',
+  path: '/wallet/deposit/cancel',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeAuthSignupRoute = HomeAuthSignupRouteImport.update({
   id: '/home/auth/signup',
   path: '/home/auth/signup',
@@ -299,6 +311,8 @@ export interface FileRoutesByFullPath {
   '/home/auth/admin': typeof HomeAuthAdminRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/wallet/deposit/cancel': typeof WalletDepositCancelRoute
+  '/wallet/deposit/success': typeof WalletDepositSuccessRoute
   '/admin/cluster-managers/': typeof AdminClusterManagersIndexRoute
   '/admin/complaints/': typeof AdminComplaintsIndexRoute
   '/admin/contributions/': typeof AdminContributionsIndexRoute
@@ -341,6 +355,8 @@ export interface FileRoutesByTo {
   '/home/auth/admin': typeof HomeAuthAdminRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/wallet/deposit/cancel': typeof WalletDepositCancelRoute
+  '/wallet/deposit/success': typeof WalletDepositSuccessRoute
   '/admin/cluster-managers': typeof AdminClusterManagersIndexRoute
   '/admin/complaints': typeof AdminComplaintsIndexRoute
   '/admin/contributions': typeof AdminContributionsIndexRoute
@@ -387,6 +403,8 @@ export interface FileRoutesById {
   '/home/auth/admin': typeof HomeAuthAdminRoute
   '/home/auth/login': typeof HomeAuthLoginRoute
   '/home/auth/signup': typeof HomeAuthSignupRoute
+  '/wallet/deposit/cancel': typeof WalletDepositCancelRoute
+  '/wallet/deposit/success': typeof WalletDepositSuccessRoute
   '/admin/cluster-managers/': typeof AdminClusterManagersIndexRoute
   '/admin/complaints/': typeof AdminComplaintsIndexRoute
   '/admin/contributions/': typeof AdminContributionsIndexRoute
@@ -434,6 +452,8 @@ export interface FileRouteTypes {
     | '/home/auth/admin'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/wallet/deposit/cancel'
+    | '/wallet/deposit/success'
     | '/admin/cluster-managers/'
     | '/admin/complaints/'
     | '/admin/contributions/'
@@ -476,6 +496,8 @@ export interface FileRouteTypes {
     | '/home/auth/admin'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/wallet/deposit/cancel'
+    | '/wallet/deposit/success'
     | '/admin/cluster-managers'
     | '/admin/complaints'
     | '/admin/contributions'
@@ -521,6 +543,8 @@ export interface FileRouteTypes {
     | '/home/auth/admin'
     | '/home/auth/login'
     | '/home/auth/signup'
+    | '/wallet/deposit/cancel'
+    | '/wallet/deposit/success'
     | '/admin/cluster-managers/'
     | '/admin/complaints/'
     | '/admin/contributions/'
@@ -562,6 +586,8 @@ export interface RootRouteChildren {
   HomeAuthAdminRoute: typeof HomeAuthAdminRoute
   HomeAuthLoginRoute: typeof HomeAuthLoginRoute
   HomeAuthSignupRoute: typeof HomeAuthSignupRoute
+  WalletDepositCancelRoute: typeof WalletDepositCancelRoute
+  WalletDepositSuccessRoute: typeof WalletDepositSuccessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -811,6 +837,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClusterManagersIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/wallet/deposit/success': {
+      id: '/wallet/deposit/success'
+      path: '/wallet/deposit/success'
+      fullPath: '/wallet/deposit/success'
+      preLoaderRoute: typeof WalletDepositSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet/deposit/cancel': {
+      id: '/wallet/deposit/cancel'
+      path: '/wallet/deposit/cancel'
+      fullPath: '/wallet/deposit/cancel'
+      preLoaderRoute: typeof WalletDepositCancelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home/auth/signup': {
       id: '/home/auth/signup'
       path: '/home/auth/signup'
@@ -974,6 +1014,8 @@ const rootRouteChildren: RootRouteChildren = {
   HomeAuthAdminRoute: HomeAuthAdminRoute,
   HomeAuthLoginRoute: HomeAuthLoginRoute,
   HomeAuthSignupRoute: HomeAuthSignupRoute,
+  WalletDepositCancelRoute: WalletDepositCancelRoute,
+  WalletDepositSuccessRoute: WalletDepositSuccessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

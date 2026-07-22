@@ -3,8 +3,8 @@ import { formatCurrency } from "#/helpers/currency.ts";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal.tsx";
 import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
 import type {
-  WalletResponse,
-  DepositResponse,
+  WalletData,
+  NgnDepositResponse,
   DepositForm,
 } from "#/types/wallet.ts";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -19,19 +19,20 @@ export default function Wallet() {
   const methods = useForm<DepositForm>({ defaultValues: { amount: "" } });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["wallet"],
+    queryKey: ["wallet", "balance"],
     queryFn: async () => {
-      const resp = await apiClient.get<WalletResponse>("/wallet");
+      const resp = await apiClient.get<{ data: WalletData }>("/wallet");
       return resp.data.data;
     },
   });
 
   const deposit = useMutation({
     mutationFn: async (amount: number) => {
-      const resp = await apiClient.post<DepositResponse>("/wallet/deposit", {
+      const resp = await apiClient.post<NgnDepositResponse>("/wallet/deposit", {
         amount,
+        currency: "NGN",
       });
-      return resp.data.data;
+      return resp.data;
     },
     onSuccess: ({ authorizationUrl }) => {
       modalRef.current?.close();

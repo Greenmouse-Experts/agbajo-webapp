@@ -22,7 +22,9 @@ export interface ApiResponseV2<T = any> {
   status: number;
   path: string;
 }
-export const new_url = "https://agbajo-backend.onrender.com/";
+export const new_url =
+  import.meta.env.VITE_API_URL ?? "https://agbajo-backend.onrender.com/";
+
 const apiClient = axios.create({
   baseURL: new_url,
   withCredentials: true,
