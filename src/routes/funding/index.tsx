@@ -593,13 +593,10 @@ function RouteComponent() {
 
                       {/* Header */}
                       <div
-                        className={`${color} text-white pt-8 pb-6 px-6 text-center`}
+                        className={`${color} text-white pt-8 pb-6 px-6 rounded-t-xl text-center`}
                       >
                         <h3 className="text-xl font-bold leading-tight">
                           {plan.name}
-                          <span className="text-sm text-base-content/60">
-                            {colorName}
-                          </span>
                         </h3>
                       </div>
 
