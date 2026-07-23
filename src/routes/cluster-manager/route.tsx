@@ -114,7 +114,7 @@ function ClusterManagerLayout() {
                       {displayName}
                     </p>
                     <p className="text-sm text-base-content truncate max-w-full wrap-break-word">
-                      {String((user as AUTHRECORD | null)?.user?.email ?? "")}
+                      {String(user?.user?.email ?? "")}
                     </p>
                   </div>
                 </li>
