@@ -764,13 +764,13 @@ function AdminGroups() {
                   <h4 className="text-sm font-medium text-base-content">
                     Assigned Managers
                   </h4>
-                  <button
+                  {/*<button
                     className="btn btn-primary btn-sm"
                     onClick={() => assignModalRef.current?.open()}
                   >
                     <UserPlus className="w-4 h-4" />
                     Assign
-                  </button>
+                  </button>*/}
                 </div>
 
                 {selected.managers.length === 0 ? (
