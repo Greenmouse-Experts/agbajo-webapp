@@ -132,7 +132,7 @@ function AdminGroups() {
   const managersListQuery = useQuery<ApiResponseV2<GroupManager[]>>({
     queryKey: ["admin", "cluster-managers", "all"],
     queryFn: async () => {
-      const resp = await apiClient.get("users/cluster-managers");
+      const resp = await apiClient.get("admins/users/cluster-managers");
       return resp.data;
     },
   });
