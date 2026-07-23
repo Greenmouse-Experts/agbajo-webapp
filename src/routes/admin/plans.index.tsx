@@ -283,7 +283,7 @@ function RouteComponent() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) =>
       toast
-        .promise(apiClient.delete(`/plans/${id}`), {
+        .promise(apiClient.delete(`admins/plans/${id}`), {
           loading: "Deleting plan...",
           success: "Plan deleted",
           error: extract_message,
