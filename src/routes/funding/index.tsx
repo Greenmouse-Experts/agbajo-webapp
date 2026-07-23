@@ -260,89 +260,89 @@ function Navbar() {
   );
 }
 
-function CommissionTiers() {
-  const query = useQuery<ApiResponse<CommissionTier[]>>({
-    queryKey: ["commission-tiers"],
-    queryFn: async () => {
-      const resp = await apiClient.get("/commission-tiers");
-      return resp.data;
-    },
-  });
+// function CommissionTiers() {
+//   const query = useQuery<ApiResponse<CommissionTier[]>>({
+//     queryKey: ["commission-tiers"],
+//     queryFn: async () => {
+//       const resp = await apiClient.get("/commission-tiers");
+//       return resp.data;
+//     },
+//   });
+//   return null;
+//   return (
+//     <section className="max-w-7xl mx-auto px-4 py-16">
+//       <h2 className="text-xl sm:text-2xl font-extrabold tracking-wide text-teal-700 uppercase mb-10">
+//         Earn as a Cluster Manager
+//       </h2>
 
-  return (
-    <section className="max-w-7xl mx-auto px-4 py-16">
-      <h2 className="text-xl sm:text-2xl font-extrabold tracking-wide text-teal-700 uppercase mb-10">
-        Earn as a Cluster Manager
-      </h2>
+//       <PageLoader query={query} loadingText="Loading commission tiers...">
+//         {({ data: tiers }) => (
+//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+//             {tiers.map((tier, idx) => {
+//               const style = TIER_STYLES[idx % TIER_STYLES.length];
+//               const Icon = style.icon;
+//               const perGroup = Number(tier.commissionPerGroup);
+//               const label = capitalize(tier.frequency);
 
-      <PageLoader query={query} loadingText="Loading commission tiers...">
-        {({ data: tiers }) => (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-            {tiers.map((tier, idx) => {
-              const style = TIER_STYLES[idx % TIER_STYLES.length];
-              const Icon = style.icon;
-              const perGroup = Number(tier.commissionPerGroup);
-              const label = capitalize(tier.frequency);
+//               return (
+//                 <div
+//                   key={tier.id}
+//                   className="rounded-2xl bg-base-100 border border-base-200 shadow-sm overflow-hidden flex flex-col"
+//                 >
+//                   <div className={`h-1.5 ${style.bar}`} />
+//                   <div className="p-5 flex flex-col gap-4">
+//                     <p
+//                       className={`text-xs font-bold uppercase tracking-wide ${style.text}`}
+//                     >
+//                       {tier.name}
+//                     </p>
 
-              return (
-                <div
-                  key={tier.id}
-                  className="rounded-2xl bg-base-100 border border-base-200 shadow-sm overflow-hidden flex flex-col"
-                >
-                  <div className={`h-1.5 ${style.bar}`} />
-                  <div className="p-5 flex flex-col gap-4">
-                    <p
-                      className={`text-xs font-bold uppercase tracking-wide ${style.text}`}
-                    >
-                      {tier.name}
-                    </p>
+//                     <div className="flex items-center gap-3">
+//                       <div
+//                         className={`w-10 h-10 rounded-lg ${style.iconBg} flex items-center justify-center shrink-0`}
+//                       >
+//                         <Icon className={`w-5 h-5 ${style.text}`} />
+//                       </div>
+//                       <div>
+//                         <p className="text-2xl font-extrabold text-base-content leading-none">
+//                           {formatCurrency(perGroup)}
+//                         </p>
+//                         <p className="text-xs text-base-content/50 uppercase tracking-wide mt-1">
+//                           Per Group · {label}
+//                         </p>
+//                       </div>
+//                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-10 h-10 rounded-lg ${style.iconBg} flex items-center justify-center shrink-0`}
-                      >
-                        <Icon className={`w-5 h-5 ${style.text}`} />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-extrabold text-base-content leading-none">
-                          {formatCurrency(perGroup)}
-                        </p>
-                        <p className="text-xs text-base-content/50 uppercase tracking-wide mt-1">
-                          Per Group · {label}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-base-200 pt-4">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-base-content/40 mb-3">
-                        Example Earnings
-                      </p>
-                      <div className="space-y-2">
-                        {EXAMPLE_GROUPS.map((n) => (
-                          <div
-                            key={n}
-                            className="flex items-center justify-between text-sm"
-                          >
-                            <span className="text-base-content/70">
-                              {n} groups
-                            </span>
-                            <span className={`font-bold ${style.text}`}>
-                              {formatCurrency(perGroup * n)}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </PageLoader>
-    </section>
-  );
-}
+//                     <div className="border-t border-base-200 pt-4">
+//                       <p className="text-xs font-semibold uppercase tracking-wide text-base-content/40 mb-3">
+//                         Example Earnings
+//                       </p>
+//                       <div className="space-y-2">
+//                         {EXAMPLE_GROUPS.map((n) => (
+//                           <div
+//                             key={n}
+//                             className="flex items-center justify-between text-sm"
+//                           >
+//                             <span className="text-base-content/70">
+//                               {n} groups
+//                             </span>
+//                             <span className={`font-bold ${style.text}`}>
+//                               {formatCurrency(perGroup * n)}
+//                             </span>
+//                           </div>
+//                         ))}
+//                       </div>
+//                     </div>
+//                   </div>
+//                 </div>
+//               );
+//             })}
+//           </div>
+//         )}
+//       </PageLoader>
+//     </section>
+//   );
+// }
 
 function Footer() {
   const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
@@ -581,7 +581,7 @@ function RouteComponent() {
                     <Link
                       to="/home/auth/signup"
                       key={plan.id}
-                      className="relative rounded-2xl bg-base-100 border border-base-200 shadow-sm flex flex-col"
+                      className="relative rounded-t-2xl bg-base-100 border border-base-200 shadow-sm flex flex-col"
                     >
                       {/* Number badge */}
                       <div className="absolute left-1/2 -translate-x-1/2 -top-5 z-10">
@@ -594,7 +594,7 @@ function RouteComponent() {
 
                       {/* Header */}
                       <div
-                        className={`${color} text-white pt-8 pb-6 px-6 rounded-xl text-center`}
+                        className={`${color} text-white pt-8 pb-6 px-6 rounded-t-2xl text-center`}
                       >
                         <h3 className="text-xl font-bold leading-tight">
                           {plan.name}
@@ -613,7 +613,7 @@ function RouteComponent() {
 
                       {/* Structure header */}
                       <div
-                        className={`${color} text-white/90 py-2.5 px-6 text-center text-xs font-medium`}
+                        className={`${color} text-white/90 py-2.5 px-6 text-center text-xs font-medium uppercase`}
                       >
                         Contribution Structure Per Member {label}
                       </div>
@@ -644,7 +644,7 @@ function RouteComponent() {
 
                       {/* Total footer */}
                       <div
-                        className={`${color} text-white py-5 px-6 text-center`}
+                        className={`${color} text-white py-5 px-6 text-center rounded-b-2xl`}
                       >
                         <p className="text-xs text-white/80">
                           Total {label.toLowerCase()} contribution
@@ -661,7 +661,7 @@ function RouteComponent() {
           </PageLoader>
         </div>
 
-        <CommissionTiers />
+        {/*<CommissionTiers />*/}
       </main>
 
       <Footer />
