@@ -74,7 +74,7 @@ function AdminContributions() {
     queryKey: ["admin", "contributions", statusFilter, dateRange],
     queryFn: () =>
       apiClient
-        .get<ApiResponse<Contribution[]>>("admin/contributions", {
+        .get<ApiResponse<Contribution[]>>("admins/contributions", {
           params: {
             ...(statusFilter !== "all" && { status: statusFilter }),
             ...(dateRange.start && { from: dateRange.start }),

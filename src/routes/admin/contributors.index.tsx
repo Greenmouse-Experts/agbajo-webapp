@@ -1,14 +1,11 @@
 import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  Eye,
-  UserCheck,
-  UserX,
-  Mail,
-  Star,
-  AlertCircle,
-} from "lucide-react";
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { Eye, UserCheck, UserX, Mail, Star, AlertCircle } from "lucide-react";
 import apiClient from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
 
@@ -63,7 +60,8 @@ function AdminContributors() {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selected, setSelected] = useState<Contributor | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<VerificationStatus>("pending");
+  const [selectedStatus, setSelectedStatus] =
+    useState<VerificationStatus>("pending");
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery<UsersPage>({
@@ -72,11 +70,13 @@ function AdminContributors() {
         const params: Record<string, string | number> = { limit: 10 };
         if (searchQuery) params.search = searchQuery;
         if (pageParam) params.cursor = pageParam as string;
-        const resp = await apiClient.get("/users", { params });
+        const resp = await apiClient.get("/admins/users", { params });
         return resp.data.data as UsersPage;
       },
       getNextPageParam: (lastPage) =>
-        lastPage.pagination.hasMore ? lastPage.pagination.nextCursor ?? undefined : undefined,
+        lastPage.pagination.hasMore
+          ? (lastPage.pagination.nextCursor ?? undefined)
+          : undefined,
       initialPageParam: "",
     });
 
@@ -233,7 +233,10 @@ function AdminContributors() {
                     className="btn btn-success btn-sm flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({ id: selected.id, status: "verified" })
+                      kycMutation.mutate({
+                        id: selected.id,
+                        status: "verified",
+                      })
                     }
                   >
                     <UserCheck className="w-4 h-4" />
@@ -243,7 +246,10 @@ function AdminContributors() {
                     className="btn btn-error btn-sm flex-1"
                     disabled={kycMutation.isPending}
                     onClick={() =>
-                      kycMutation.mutate({ id: selected.id, status: "rejected" })
+                      kycMutation.mutate({
+                        id: selected.id,
+                        status: "rejected",
+                      })
                     }
                   >
                     <UserX className="w-4 h-4" />

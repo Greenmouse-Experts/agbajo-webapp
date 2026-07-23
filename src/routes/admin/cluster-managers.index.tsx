@@ -112,7 +112,7 @@ function AdminClusterManagers() {
   const managersQuery = useQuery<ApiResponseV2<Manager[]>>({
     queryKey: ["admin", "cluster-managers"],
     queryFn: async () => {
-      let resp = await apiClient.get("users/cluster-managers");
+      let resp = await apiClient.get("admins/users/cluster-managers");
       return resp.data;
     },
   });
