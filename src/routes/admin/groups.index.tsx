@@ -188,7 +188,7 @@ function AdminGroups() {
   const deleteMutation = useMutation({
     mutationFn: (id: string) =>
       toast
-        .promise(apiClient.delete(`groups/${id}`), {
+        .promise(apiClient.delete(`admins/groups/${id}`), {
           loading: "Deleting group...",
           success: "Group deleted",
           error: extract_message,
