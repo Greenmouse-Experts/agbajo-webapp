@@ -5,11 +5,7 @@ import SimpleInput from "#/components/modals/inputs/SimpleInput";
 import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 import type { Actions } from "#/components/tables/pop-up";
 import { extract_message } from "#/helpers/apihelpers";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { LayoutGrid, Pencil, Plus, Trash2 } from "lucide-react";
 import { forwardRef, useRef, useState } from "react";
@@ -71,9 +67,7 @@ const columns: columnType<Plan>[] = [
   {
     key: "contributionAmount",
     label: "Contribution",
-    render: (val) => (
-      <span className="font-medium">{formatCurrency(val)}</span>
-    ),
+    render: (val) => <span className="font-medium">{formatCurrency(val)}</span>,
   },
   {
     key: "frequency",
@@ -138,8 +132,8 @@ const PlanFormModal = forwardRef<ModalHandle, PlanFormModalProps>(
         toast
           .promise(
             isEdit
-              ? apiClient.patch(`/plans/${plan!.id}`, body)
-              : apiClient.post("/plans", body),
+              ? apiClient.patch(`admins/plans/${plan!.id}`, body)
+              : apiClient.post(`admins/plans`, body),
             {
               loading: isEdit ? "Updating plan..." : "Creating plan...",
               success: isEdit ? "Plan updated" : "Plan created",
