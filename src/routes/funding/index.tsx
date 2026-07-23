@@ -2,7 +2,7 @@ import apiClient, { type ApiResponse } from "#/api/simpleApi.ts";
 import { formatCurrency } from "#/helpers/currency.ts";
 import PageLoader from "#/components/layout/PageLoader.tsx";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   PiggyBank,
   ShieldCheck,
@@ -578,7 +578,8 @@ function RouteComponent() {
                   ];
 
                   return (
-                    <div
+                    <Link
+                      to="/home/auth/signup"
                       key={plan.id}
                       className="relative rounded-2xl bg-base-100 border border-base-200 shadow-sm flex flex-col"
                     >
@@ -593,7 +594,7 @@ function RouteComponent() {
 
                       {/* Header */}
                       <div
-                        className={`${color} text-white pt-8 pb-6 px-6 rounded-t-xl text-center`}
+                        className={`${color} text-white pt-8 pb-6 px-6 rounded-xl text-center`}
                       >
                         <h3 className="text-xl font-bold leading-tight">
                           {plan.name}
@@ -652,7 +653,7 @@ function RouteComponent() {
                           {formatCurrency(total)}
                         </p>
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>
