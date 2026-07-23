@@ -92,7 +92,7 @@ function AdminWithdrawals() {
       if (search.status !== "all") params.status = search.status;
       if (search.currency !== "all") params.currency = search.currency;
       const resp = await apiClient.get<{ data: WithdrawalsData }>(
-        "/admin/wallet/withdrawals",
+        "/admins/wallet/withdrawals/",
         { params },
       );
       return resp.data.data;
@@ -102,7 +102,17 @@ function AdminWithdrawals() {
   const handleExport = (withdrawals: AdminWithdrawal[]) => {
     try {
       const csv = [
-        ["Date", "User", "Email", "Amount", "Currency", "Provider", "Reference", "Description", "Status"].join(","),
+        [
+          "Date",
+          "User",
+          "Email",
+          "Amount",
+          "Currency",
+          "Provider",
+          "Reference",
+          "Description",
+          "Status",
+        ].join(","),
         ...withdrawals.map((w) =>
           [
             new Date(w.createdAt).toLocaleDateString(),
@@ -183,20 +193,29 @@ function AdminWithdrawals() {
               {/* Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "Total (page)", value: formatCurrency(successTotal), cls: "" },
+                  {
+                    label: "Total (page)",
+                    value: formatCurrency(successTotal),
+                    cls: "",
+                  },
                   { label: "All Records", value: total, cls: "" },
                   {
                     label: "Success",
-                    value: withdrawals.filter((w) => w.status === "success").length,
+                    value: withdrawals.filter((w) => w.status === "success")
+                      .length,
                     cls: "text-success",
                   },
                   {
                     label: "Pending",
-                    value: withdrawals.filter((w) => w.status === "pending").length,
+                    value: withdrawals.filter((w) => w.status === "pending")
+                      .length,
                     cls: "text-warning",
                   },
                 ].map(({ label, value, cls }) => (
-                  <div key={label} className="stat bg-base-100 rounded-box shadow-sm">
+                  <div
+                    key={label}
+                    className="stat bg-base-100 rounded-box shadow-sm"
+                  >
                     <div className="stat-title">{label}</div>
                     <div className={`stat-value text-2xl ${cls}`}>{value}</div>
                   </div>
@@ -205,7 +224,9 @@ function AdminWithdrawals() {
 
               {withdrawals.length === 0 ? (
                 <div className="card bg-base-100 shadow-sm p-12 text-center">
-                  <p className="text-base-content font-medium">No withdrawals found</p>
+                  <p className="text-base-content font-medium">
+                    No withdrawals found
+                  </p>
                   <p className="text-base-content/60 text-sm mt-1">
                     Try adjusting your filters
                   </p>
@@ -239,7 +260,9 @@ function AdminWithdrawals() {
                         {withdrawals.map((w) => (
                           <tr key={w.id} className="hover">
                             <td>
-                              <div className="font-medium">{w.user?.name ?? "—"}</div>
+                              <div className="font-medium">
+                                {w.user?.name ?? "—"}
+                              </div>
                               <div className="text-xs text-base-content/50">
                                 {w.user?.email}
                               </div>
@@ -259,11 +282,17 @@ function AdminWithdrawals() {
                             </td>
                             <td>
                               {w.provider === "stripe" ? (
-                                <span className="badge badge-info badge-sm">Stripe</span>
+                                <span className="badge badge-info badge-sm">
+                                  Stripe
+                                </span>
                               ) : w.provider === "paystack" ? (
-                                <span className="badge badge-accent badge-sm">Paystack</span>
+                                <span className="badge badge-accent badge-sm">
+                                  Paystack
+                                </span>
                               ) : (
-                                <span className="text-base-content/40 text-sm">—</span>
+                                <span className="text-base-content/40 text-sm">
+                                  —
+                                </span>
                               )}
                             </td>
                             <td className="max-w-xs">
@@ -280,11 +309,14 @@ function AdminWithdrawals() {
                               <StatusBadge status={w.status} />
                             </td>
                             <td className="text-sm text-base-content/60 whitespace-nowrap">
-                              {new Date(w.createdAt).toLocaleDateString("en-NG", {
-                                day: "numeric",
-                                month: "short",
-                                year: "numeric",
-                              })}
+                              {new Date(w.createdAt).toLocaleDateString(
+                                "en-NG",
+                                {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
                             </td>
                           </tr>
                         ))}
