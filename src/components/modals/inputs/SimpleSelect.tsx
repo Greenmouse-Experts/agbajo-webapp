@@ -11,12 +11,13 @@ interface SimpleSelectProps<T = any> extends PropsWithChildren {
   label?: string;
   name?: string;
   render: (item: T, index: number) => React.ReactNode;
+  extractItems?: (data: any) => T[];
 }
 
 export default function SimpleSelect<
   T extends ApiResponse | ApiResponse<T[]> | ApiResponse<T[]>,
 >(props: SimpleSelectProps<T>) {
-  const { route, value, onChange, label, name, render } = props;
+  const { route, value, onChange, label, name, render, extractItems } = props;
 
   // ✅ SAFE: prevents crash when no FormProvider exists
   let formState: any = null;
@@ -90,7 +91,13 @@ export default function SimpleSelect<
     );
 
   const raw = query.data?.data as any;
-  const items: T[] = Array.isArray(raw) ? raw : Array.isArray(raw?.data) ? raw.data : [];
+  const items: T[] = extractItems
+    ? extractItems(raw)
+    : Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw?.data)
+        ? raw.data
+        : [];
 
   return (
     <div className="w-full space-y-2">

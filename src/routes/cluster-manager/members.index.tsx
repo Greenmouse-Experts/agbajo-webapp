@@ -262,6 +262,7 @@ function ClusterManagerMembers() {
               onChange={(v) =>
                 setInviteForm({ ...inviteForm, groupId: v ?? "" })
               }
+              extractItems={(data) => data?.groups ?? []}
               render={(g: any) => (
                 <option key={g.id} value={g.id}>
                   {g.groupName ?? g.group_name}
