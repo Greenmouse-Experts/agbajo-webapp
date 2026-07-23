@@ -187,7 +187,7 @@ function AdminGroups() {
   const createMutation = useMutation({
     mutationFn: (body: object) =>
       toast
-        .promise(apiClient.post("groups", body), {
+        .promise(apiClient.post("admins/groups", body), {
           loading: "Creating group...",
           success: "Group created",
           error: extract_message,
@@ -300,7 +300,9 @@ function AdminGroups() {
       key: "edit",
       label: "Edit",
       render: (g) => (
-        <span className={`flex items-center gap-2 ${g.createdBy !== currentUserId ? "opacity-40" : ""}`}>
+        <span
+          className={`flex items-center gap-2 ${g.createdBy !== currentUserId ? "opacity-40" : ""}`}
+        >
           <Pencil className="w-3 h-3" /> Edit
         </span>
       ),
