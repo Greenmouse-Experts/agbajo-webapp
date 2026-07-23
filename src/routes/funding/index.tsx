@@ -531,8 +531,15 @@ function RouteComponent() {
 
       <main className="flex-1">
         <Hero />
-
-        <div className="max-w-6xl mx-auto px-4 py-16">
+        <div className="container mx-auto  px-4  py-16">
+          <h2 className="text-xl text-primary font-bold mb-4">
+            Choose Your Plan
+          </h2>
+          <p className="  text-4xl font-bold">
+            Pick the cluster size <br /> that matches your goals
+          </p>
+        </div>
+        <div className="container  mx-auto px-4 py-16">
           <PageLoader query={query} loadingText="Loading plans...">
             {({ data: plans }) => (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-16">
