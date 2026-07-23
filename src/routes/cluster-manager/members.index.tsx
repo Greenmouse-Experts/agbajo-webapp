@@ -52,7 +52,7 @@ function ClusterManagerMembers() {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [inviteForm, setInviteForm] = useState({ email: "", groupId: "" });
+  const [inviteForm, setInviteForm] = useState({ email: "", firstName: "", lastName: "", groupId: "" });
 
   const { data: members = [], isLoading } = useQuery({
     queryKey: ["cluster-manager", "members"],
@@ -70,11 +70,11 @@ function ClusterManagerMembers() {
   });
 
   const inviteMutation = useMutation({
-    mutationFn: (body: typeof inviteForm) =>
-      apiClient.post("cluster-manager/members/invite", body),
+    mutationFn: ({ groupId, ...body }: typeof inviteForm) =>
+      apiClient.post(`groups/${groupId}/email-invitation`, body),
     onSuccess: () => {
       modalRef.current?.close();
-      setInviteForm({ email: "", groupId: "" });
+      setInviteForm({ email: "", firstName: "", lastName: "", groupId: "" });
     },
   });
 
@@ -241,6 +241,34 @@ function ClusterManagerMembers() {
           </p>
 
           <form onSubmit={handleInvite} className="space-y-4 mt-6">
+            <div className="grid grid-cols-2 gap-3">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">First Name</legend>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="Jane"
+                  value={inviteForm.firstName}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, firstName: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Last Name</legend>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="Doe"
+                  value={inviteForm.lastName}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, lastName: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Email Address</legend>
               <input
