@@ -16,6 +16,7 @@ import {
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
+import PhoneNumberInput from "#/components/modals/inputs/PhoneNumberInput";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 
@@ -551,19 +552,11 @@ function AdminClusterManagers() {
               />
             </fieldset>
 
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Phone Number</legend>
-              <input
-                type="tel"
-                className="input w-full"
-                placeholder="+2348012345678"
-                value={inviteForm.phoneNumber}
-                onChange={(e) =>
-                  setInviteForm({ ...inviteForm, phoneNumber: e.target.value })
-                }
-                required
-              />
-            </fieldset>
+            <PhoneNumberInput
+              value={inviteForm.phoneNumber}
+              onChange={(v) => setInviteForm({ ...inviteForm, phoneNumber: v })}
+              required
+            />
 
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Role</legend>

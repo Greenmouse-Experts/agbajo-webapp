@@ -5,10 +5,10 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
-import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
-import "react-phone-number-input/style.css";
+import { isValidPhoneNumber } from "react-phone-number-input";
 import apiClient from "#/api/simpleApi";
 import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
+import PhoneNumberInput from "#/components/modals/inputs/PhoneNumberInput";
 import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/invitations/accept/")({
@@ -147,31 +147,18 @@ function AcceptInvitePage() {
                 </fieldset>
               </div>
 
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Phone Number</legend>
-                <Controller
-                  control={control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                    <PhoneInput
-                      international
-                      defaultCountry="NG"
-                      countryCallingCodeEditable={false}
-                      placeholder="801 234 5678"
-                      value={field.value}
-                      onChange={(v) => field.onChange(v ?? "")}
-                      onBlur={field.onBlur}
-                      className={`input w-full items-center gap-2 ${errors.phoneNumber ? "input-error" : ""}`}
-                    />
-                  )}
-                />
-                {errors.phoneNumber && (
-                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {errors.phoneNumber.message}
-                  </p>
+              <Controller
+                control={control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <PhoneNumberInput
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    error={errors.phoneNumber?.message}
+                  />
                 )}
-              </fieldset>
+              />
 
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Password</legend>

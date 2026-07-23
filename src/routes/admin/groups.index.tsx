@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useAuth } from "#/store/authStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Users,
@@ -19,7 +20,18 @@ import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 import type { Group, GroupManager, Plan } from "#/types/groups.js";
 
+type CreatedByFilter = "admin" | "manager";
+
+interface GroupsSearch {
+  createdBy: CreatedByFilter;
+  search: string;
+}
+
 export const Route = createFileRoute("/admin/groups/")({
+  validateSearch: (s): GroupsSearch => ({
+    createdBy: (s.createdBy as CreatedByFilter) || "admin",
+    search: String(s.search ?? ""),
+  }),
   component: AdminGroups,
 });
 
@@ -112,19 +124,37 @@ const columns: columnType<Group>[] = [
   },
 ];
 
+const TABS: { label: string; value: CreatedByFilter }[] = [
+  { label: "Created by Admin", value: "admin" },
+  { label: "Created by Cluster Manager", value: "manager" },
+];
+
 function AdminGroups() {
+  const [authUser] = useAuth();
+  const currentUserId = String(authUser?.user?.id ?? "");
   const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { createdBy, search: searchQuery } = Route.useSearch();
+
+  const setSearch = (patch: Partial<GroupsSearch>) =>
+    navigate({ search: (prev) => ({ ...prev, ...patch }) });
+
   const createModalRef = useRef<HTMLDialogElement>(null);
   const editModalRef = useRef<HTMLDialogElement>(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const [createForm, setCreateForm] = useState(defaultForm);
   const [editGroup, setEditGroup] = useState<Group | null>(null);
   const [editForm, setEditForm] = useState(defaultForm);
 
   const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
-    queryKey: ["admin", "groups"],
+    queryKey: ["admin", "groups", createdBy, searchQuery],
     queryFn: async () => {
-      const resp = await apiClient.get("groups");
+      const resp = await apiClient.get("groups", {
+        params: {
+          createdBy,
+          ...(searchQuery ? { search: searchQuery } : {}),
+          limit: 10,
+        },
+      });
       return resp.data;
     },
   });
@@ -152,7 +182,7 @@ function AdminGroups() {
   const planOptions = plansQuery.data ?? [];
 
   const invalidateGroups = () =>
-    queryClient.invalidateQueries({ queryKey: ["admin", "groups"] });
+    queryClient.invalidateQueries({ queryKey: ["admin", "groups", createdBy] });
 
   const createMutation = useMutation({
     mutationFn: (body: object) =>
@@ -248,10 +278,10 @@ function AdminGroups() {
   const groupActions: Actions<Group>[] = [
     {
       key: "view",
-      label: "Preview",
+      label: "View Group",
       render: () => (
         <span className="flex items-center gap-2">
-          <Eye className="w-3 h-3" /> Preview
+          <Eye className="w-3 h-3" /> View Group
         </span>
       ),
       action: (g, nav) => nav({ to: "/admin/groups/$d", params: { d: g.id } }),
@@ -269,11 +299,12 @@ function AdminGroups() {
     {
       key: "edit",
       label: "Edit",
-      render: () => (
-        <span className="flex items-center gap-2">
+      render: (g) => (
+        <span className={`flex items-center gap-2 ${g.createdBy !== currentUserId ? "opacity-40" : ""}`}>
           <Pencil className="w-3 h-3" /> Edit
         </span>
       ),
+      disabled: (g) => g.createdBy !== currentUserId,
       action: openEdit,
     },
     {
@@ -306,20 +337,29 @@ function AdminGroups() {
         </button>
       </div>
 
+      {/* Creator tabs */}
+      <div className="tabs tabs-border">
+        {TABS.map((tab) => (
+          <button
+            key={tab.value}
+            className={`tab ${createdBy === tab.value ? "tab-active font-semibold" : ""}`}
+            onClick={() => setSearch({ createdBy: tab.value })}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <div className="card bg-base-100 shadow-sm p-4">
-        <SearchBar value={searchQuery} onChange={setSearchQuery} />
+        <SearchBar
+          value={searchQuery}
+          onChange={(v: string) => setSearch({ search: v })}
+        />
       </div>
 
       <PageLoader query={groupsQuery}>
         {(data) => {
-          const all = data.data.groups as Group[];
-          const q = searchQuery.toLowerCase();
-          const filtered = all.filter(
-            (g) =>
-              g.groupName.toLowerCase().includes(q) ||
-              g.type.toLowerCase().includes(q) ||
-              g.frequency.toLowerCase().includes(q),
-          );
+          const filtered = (data.data.groups ?? []) as Group[];
 
           if (filtered.length === 0) {
             return (
