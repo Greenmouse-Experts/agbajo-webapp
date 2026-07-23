@@ -104,7 +104,7 @@ const TIER_STYLES = [
 ];
 
 const EXAMPLE_GROUPS = [10, 20, 100];
-
+const base_url = "https://agbajo.africa";
 const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
@@ -237,7 +237,7 @@ function Navbar() {
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
-              href={l.href}
+              href={base_url + l.href}
               className={`text-sm font-semibold transition-colors ${
                 l.href === "/funding"
                   ? "text-orange-500"
@@ -531,7 +531,7 @@ function RouteComponent() {
 
       <main className="flex-1">
         <Hero />
-        <div className="container mx-auto  px-4  py-16">
+        <div className="container mx-auto  px-4  py-16 ">
           <h2 className="text-xl text-primary font-bold mb-4">
             Choose Your Plan
           </h2>
