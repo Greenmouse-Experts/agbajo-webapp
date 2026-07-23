@@ -171,7 +171,7 @@ const HERO_FEATURES = [
 function Hero() {
   return (
     <section className="bg-gradient-to-br from-[#0a3a2c] to-[#0d4a35] text-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto px-4 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         {/* Copy */}
         <div>
           <p className="text-orange-400 font-bold text-sm tracking-widest uppercase mb-6">
