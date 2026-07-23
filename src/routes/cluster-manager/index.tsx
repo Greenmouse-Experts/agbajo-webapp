@@ -114,6 +114,7 @@ function ClusterManagerDashboard() {
             ),
             trendCls: "text-success",
             link: "/cluster-manager/groups" as const,
+            linkSearch: { createdBy: "self" as const },
             linkLabel: "View groups",
             linkCls: "text-emerald-600",
           },
@@ -129,6 +130,7 @@ function ClusterManagerDashboard() {
             ),
             trendCls: "text-success",
             link: "/cluster-manager/groups" as const,
+            linkSearch: { createdBy: "self" as const },
             linkLabel: "View members",
             linkCls: "text-blue-600",
           },
@@ -144,6 +146,7 @@ function ClusterManagerDashboard() {
             ),
             trendCls: "text-success",
             link: "/cluster-manager/groups" as const,
+            linkSearch: { createdBy: "self" as const },
             linkLabel: "View contributions",
             linkCls: "text-amber-600",
           },
@@ -155,6 +158,7 @@ function ClusterManagerDashboard() {
             trend: null,
             trendCls: "",
             link: "/cluster-manager/groups" as const,
+            linkSearch: { createdBy: "self" as const },
             linkLabel: "Process payouts",
             linkCls: "text-rose-600",
           },
@@ -167,6 +171,7 @@ function ClusterManagerDashboard() {
             trend,
             trendCls,
             link,
+            linkSearch,
             linkLabel,
             linkCls,
           }) => (
@@ -196,6 +201,7 @@ function ClusterManagerDashboard() {
               </div>
               <Link
                 to={link}
+                search={linkSearch}
                 className={`text-sm ${linkCls} hover:underline mt-2 inline-block`}
               >
                 {linkLabel}
@@ -267,6 +273,7 @@ function ClusterManagerDashboard() {
               {[
                 {
                   to: "/cluster-manager/groups" as const,
+                  search: { createdBy: "self" as const },
                   bg: "bg-emerald-100 group-hover:bg-emerald-200",
                   border: "hover:border-emerald-200 hover:bg-emerald-50",
                   icon: <Folder className="w-5 h-5 text-emerald-600" />,
@@ -275,6 +282,7 @@ function ClusterManagerDashboard() {
                 },
                 {
                   to: "/cluster-manager/groups" as const,
+                  search: { createdBy: "self" as const },
                   bg: "bg-blue-100 group-hover:bg-blue-200",
                   border: "hover:border-blue-200 hover:bg-blue-50",
                   icon: <Users className="w-5 h-5 text-blue-600" />,
@@ -283,6 +291,7 @@ function ClusterManagerDashboard() {
                 },
                 {
                   to: "/cluster-manager/groups" as const,
+                  search: { createdBy: "self" as const },
                   bg: "bg-amber-100 group-hover:bg-amber-200",
                   border: "hover:border-amber-200 hover:bg-amber-50",
                   icon: <DollarSign className="w-5 h-5 text-amber-600" />,
@@ -291,16 +300,18 @@ function ClusterManagerDashboard() {
                 },
                 {
                   to: "/cluster-manager/groups" as const,
+                  search: { createdBy: "self" as const },
                   bg: "bg-red-100 group-hover:bg-red-200",
                   border: "hover:border-red-200 hover:bg-red-50",
                   icon: <AlertTriangle className="w-5 h-5 text-red-600" />,
                   label: "Report Issue",
                   sub: "Escalate to admin",
                 },
-              ].map(({ to, bg, border, icon, label, sub }) => (
+              ].map(({ to, search, bg, border, icon, label, sub }) => (
                 <Link
                   key={label}
                   to={to}
+                  search={search}
                   className={`flex items-center gap-3 p-3 rounded-lg border border-base-200 ${border} transition-all group`}
                 >
                   <div

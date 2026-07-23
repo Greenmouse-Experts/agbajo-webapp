@@ -1,5 +1,5 @@
 import { forwardRef, useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Users,
@@ -25,9 +25,23 @@ import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 import { useAuth } from "#/store/authStore.ts";
 
+type CreatedByFilter = "self" | "assigned";
+
+interface GroupsSearch {
+  createdBy: CreatedByFilter;
+}
+
 export const Route = createFileRoute("/cluster-manager/groups/")({
+  validateSearch: (s): GroupsSearch => ({
+    createdBy: (s.createdBy as CreatedByFilter) || "self",
+  }),
   component: AdminGroups,
 });
+
+const CM_TABS: { label: string; value: CreatedByFilter }[] = [
+  { label: "Created by Me", value: "self" },
+  { label: "Assigned by Admin", value: "assigned" },
+];
 
 type ContributionFrequency = "daily" | "weekly" | "monthly";
 type GroupType = "private" | "public";
@@ -404,6 +418,12 @@ function AdminGroups() {
   const [auth] = useAuth();
   const manager = auth?.user;
   const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const { createdBy } = Route.useSearch();
+
+  const setCreatedBy = (value: CreatedByFilter) =>
+    navigate({ search: (prev) => ({ ...prev, createdBy: value }) });
+
   const detailsModalRef = useRef<HTMLDialogElement>(null);
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
@@ -417,9 +437,11 @@ function AdminGroups() {
   const [editForm, setEditForm] = useState(defaultForm);
 
   const groupsQuery = useQuery<ApiResponseV2<Group[]>>({
-    queryKey: ["admin", "groups"],
+    queryKey: ["cluster-manager", "groups", createdBy],
     queryFn: async () => {
-      const resp = await apiClient.get("groups");
+      const resp = await apiClient.get("groups", {
+        params: { createdBy },
+      });
       return resp.data;
     },
   });
@@ -440,7 +462,7 @@ function AdminGroups() {
   const selected = groups.find((g) => g.id === selectedId) ?? null;
 
   const invalidateGroups = () =>
-    queryClient.invalidateQueries({ queryKey: ["admin", "groups"] });
+    queryClient.invalidateQueries({ queryKey: ["cluster-manager", "groups"] });
 
   const createMutation = useMutation({
     mutationFn: (body: object) =>
@@ -630,13 +652,26 @@ function AdminGroups() {
         </button>
       </div>
 
+      {/* Creator tabs */}
+      <div className="tabs tabs-border">
+        {CM_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            className={`tab ${createdBy === tab.value ? "tab-active font-semibold" : ""}`}
+            onClick={() => setCreatedBy(tab.value)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <div className="card bg-base-100 shadow-sm p-4">
         <SearchBar value={searchQuery} onChange={setSearchQuery} />
       </div>
 
       <PageLoader query={groupsQuery}>
         {(data) => {
-          const all = data.data.groups as Group[];
+          const all = (data.data.groups ?? []) as Group[];
           const q = searchQuery.toLowerCase();
           const filtered = all.filter(
             (g) =>

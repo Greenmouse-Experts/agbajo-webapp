@@ -10,6 +10,7 @@ import {
   UserX,
 } from "lucide-react";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import SimpleSelect from "#/components/modals/inputs/SimpleSelect";
 
 export const Route = createFileRoute("/cluster-manager/members/")({
   component: ClusterManagerMembers,
@@ -24,11 +25,6 @@ interface Member {
   total_contributions?: number;
   profile?: { full_name: string; email: string; phone_number?: string };
   group?: { id: string; group_name: string };
-}
-
-interface Group {
-  id: string;
-  group_name: string;
 }
 
 const statusBadgeClass: Record<MemberStatus, string> = {
@@ -63,14 +59,6 @@ function ClusterManagerMembers() {
     queryFn: () =>
       apiClient.get<ApiResponse<Member[]>>("/members").then((r) => r.data.data),
   });
-
-  // const { data: groups = [] } = useQuery({
-  //   queryKey: ["cluster-manager", "groups-list"],
-  //   queryFn: () =>
-  //     apiClient
-  //       .get<ApiResponse<Group[]>>("cluster-manager/groups")
-  //       .then((r) => r.data.data),
-  // });
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: MemberStatus }) =>
@@ -267,24 +255,19 @@ function ClusterManagerMembers() {
               />
             </fieldset>
 
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Select Group</legend>
-              <select
-                className="select w-full"
-                value={inviteForm.groupId}
-                onChange={(e) =>
-                  setInviteForm({ ...inviteForm, groupId: e.target.value })
-                }
-                required
-              >
-                <option value="">Choose a group</option>
-                {/*{groups.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.group_name}
-                  </option>
-                ))}*/}
-              </select>
-            </fieldset>
+            <SimpleSelect
+              route="groups"
+              label="Select Group"
+              value={inviteForm.groupId || null}
+              onChange={(v) =>
+                setInviteForm({ ...inviteForm, groupId: v ?? "" })
+              }
+              render={(g: any) => (
+                <option key={g.id} value={g.id}>
+                  {g.groupName ?? g.group_name}
+                </option>
+              )}
+            />
 
             <div className="modal-action">
               <button

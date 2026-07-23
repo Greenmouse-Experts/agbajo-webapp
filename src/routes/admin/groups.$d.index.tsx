@@ -315,6 +315,7 @@ function GroupDetailPage() {
     <div className="space-y-6">
       <Link
         to="/admin/groups"
+        search={{ createdBy: "admin", search: "" }}
         className="inline-flex items-center gap-1.5 text-sm text-base-content/60 hover:text-base-content transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />

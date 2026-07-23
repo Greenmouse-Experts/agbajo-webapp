@@ -236,6 +236,7 @@ function RouteComponent() {
 
             <Link
               to="/admin/groups"
+              search={{ createdBy: "admin", search: "" }}
               className="flex items-center gap-3 p-3 rounded-xl border border-base-200 hover:border-primary/40 hover:bg-primary/5 transition-all group"
             >
               <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
