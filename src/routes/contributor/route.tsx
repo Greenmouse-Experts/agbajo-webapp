@@ -51,7 +51,7 @@ const navItems: NavItem[] = [
   { to: "/contributor/wallet", label: "Wallet", icon: Wallet },
   { to: "/contributor/kyc", label: "KYC", icon: Shield },
   { to: "/contributor/complaints", label: "Complaints", icon: MessageSquare },
-  { to: "/contributor/invitations", label: "Invitations", icon: Mail },
+  // { to: "/contributor/invitations", label: "Invitations", icon: Mail },
 ];
 
 export const Route = createFileRoute("/contributor")({

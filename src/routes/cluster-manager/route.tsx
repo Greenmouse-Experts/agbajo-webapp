@@ -19,6 +19,7 @@ import {
   Bell,
   Settings,
   X,
+  Wallet2,
 } from "lucide-react";
 import { logout, useAuth, type AUTHRECORD } from "#/store/authStore";
 
@@ -46,6 +47,8 @@ const navItems: NavItem[] = [
   { to: "/cluster-manager/payouts", label: "Payouts", icon: Wallet },
   { to: "/cluster-manager/kyc", label: "KYC", icon: Shield },
   { to: "/cluster-manager/issues", label: "Issues", icon: AlertTriangle },
+  { to: "/cluster-manager/wallet", label: "Wallet", icon: Wallet2 },
+
   { to: "/cluster-manager/invitations", label: "Invitations", icon: Mail },
 ];
 
