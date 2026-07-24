@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -109,6 +109,11 @@ function AdminClusterManagers() {
   const roles: Role[] = Array.isArray(rolesQuery.data?.data)
     ? rolesQuery.data.data
     : [];
+
+  useEffect(() => {
+    const cmRole = roles.find((r) => r.name === "cluster_manager");
+    if (cmRole) setInviteForm((f) => ({ ...f, roleId: String(cmRole.id) }));
+  }, [roles]);
 
   const managersQuery = useQuery<ApiResponseV2<Manager[]>>({
     queryKey: ["admin", "cluster-managers"],
@@ -557,28 +562,6 @@ function AdminClusterManagers() {
               onChange={(v) => setInviteForm({ ...inviteForm, phoneNumber: v })}
               required
             />
-
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">Role</legend>
-              <select
-                className="select w-full"
-                value={inviteForm.roleId}
-                onChange={(e) =>
-                  setInviteForm({ ...inviteForm, roleId: e.target.value })
-                }
-                required
-                disabled={rolesQuery.isLoading}
-              >
-                <option value="" disabled>
-                  {rolesQuery.isLoading ? "Loading roles..." : "Select a role"}
-                </option>
-                {roles.map((r) => (
-                  <option key={r.id} value={String(r.id)}>
-                    {r.name}
-                  </option>
-                ))}
-              </select>
-            </fieldset>
 
             <div className="modal-action">
               <button
