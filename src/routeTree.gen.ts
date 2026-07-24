@@ -54,6 +54,7 @@ import { Route as HomeAuthLoginRouteImport } from './routes/home/auth/login'
 import { Route as HomeAuthAdminRouteImport } from './routes/home/auth/admin'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
 import { Route as AuthResetPasswordConfirmRouteImport } from './routes/auth/reset-password/confirm'
+import { Route as ContributorGroupIdIndexRouteImport } from './routes/contributor/group.$id.index'
 import { Route as ClusterManagerGroupsDIndexRouteImport } from './routes/cluster-manager/groups.$d.index'
 import { Route as AdminPlansIdIndexRouteImport } from './routes/admin/plans/$id.index'
 import { Route as AdminGroupsDIndexRouteImport } from './routes/admin/groups.$d.index'
@@ -295,6 +296,11 @@ const AuthResetPasswordConfirmRoute =
     path: '/auth/reset-password/confirm',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ContributorGroupIdIndexRoute = ContributorGroupIdIndexRouteImport.update({
+  id: '/group/$id/',
+  path: '/group/$id/',
+  getParentRoute: () => ContributorRouteRoute,
+} as any)
 const ClusterManagerGroupsDIndexRoute =
   ClusterManagerGroupsDIndexRouteImport.update({
     id: '/groups/$d/',
@@ -361,6 +367,7 @@ export interface FileRoutesByFullPath {
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
+  '/contributor/group/$id/': typeof ContributorGroupIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -408,6 +415,7 @@ export interface FileRoutesByTo {
   '/admin/groups/$d': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d': typeof ClusterManagerGroupsDIndexRoute
+  '/contributor/group/$id': typeof ContributorGroupIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -459,6 +467,7 @@ export interface FileRoutesById {
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
+  '/contributor/group/$id/': typeof ContributorGroupIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -511,6 +520,7 @@ export interface FileRouteTypes {
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
+    | '/contributor/group/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -558,6 +568,7 @@ export interface FileRouteTypes {
     | '/admin/groups/$d'
     | '/admin/plans/$id'
     | '/cluster-manager/groups/$d'
+    | '/contributor/group/$id'
   id:
     | '__root__'
     | '/'
@@ -608,6 +619,7 @@ export interface FileRouteTypes {
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
+    | '/contributor/group/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -945,6 +957,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordConfirmRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contributor/group/$id/': {
+      id: '/contributor/group/$id/'
+      path: '/group/$id'
+      fullPath: '/contributor/group/$id/'
+      preLoaderRoute: typeof ContributorGroupIdIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
     '/cluster-manager/groups/$d/': {
       id: '/cluster-manager/groups/$d/'
       path: '/groups/$d'
@@ -1046,6 +1065,7 @@ interface ContributorRouteRouteChildren {
   ContributorKycIndexRoute: typeof ContributorKycIndexRoute
   ContributorPayoutsIndexRoute: typeof ContributorPayoutsIndexRoute
   ContributorWalletIndexRoute: typeof ContributorWalletIndexRoute
+  ContributorGroupIdIndexRoute: typeof ContributorGroupIdIndexRoute
 }
 
 const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
@@ -1058,6 +1078,7 @@ const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
   ContributorKycIndexRoute: ContributorKycIndexRoute,
   ContributorPayoutsIndexRoute: ContributorPayoutsIndexRoute,
   ContributorWalletIndexRoute: ContributorWalletIndexRoute,
+  ContributorGroupIdIndexRoute: ContributorGroupIdIndexRoute,
 }
 
 const ContributorRouteRouteWithChildren =

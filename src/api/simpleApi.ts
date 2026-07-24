@@ -8,6 +8,7 @@ export interface ApiResponse<T = any> {
   // status: string;
   statusCode: number;
   path: string;
+  pagination: Pagination;
 }
 export interface Pagination {
   hasMore: boolean;
