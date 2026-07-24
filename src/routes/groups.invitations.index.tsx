@@ -14,6 +14,7 @@ function RouteComponent() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // console.log(auth);
     if (!auth) {
       navigate({ to: "/home/auth/login" });
       return;
@@ -26,7 +27,7 @@ function RouteComponent() {
     } else {
       navigate({ to: "/contributor/invitations" });
     }
-  }, [auth, navigate]);
+  }, [auth]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
