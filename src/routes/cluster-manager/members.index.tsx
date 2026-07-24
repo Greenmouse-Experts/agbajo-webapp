@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
 import SimpleSelect from "#/components/modals/inputs/SimpleSelect";
+import { toast } from "sonner";
+import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/cluster-manager/members/")({
   component: ClusterManagerMembers,
@@ -52,7 +54,12 @@ function ClusterManagerMembers() {
   const modalRef = useRef<HTMLDialogElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [inviteForm, setInviteForm] = useState({ email: "", firstName: "", lastName: "", groupId: "" });
+  const [inviteForm, setInviteForm] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    groupId: "",
+  });
 
   const { data: members = [], isLoading } = useQuery({
     queryKey: ["cluster-manager", "members"],
@@ -67,6 +74,9 @@ function ClusterManagerMembers() {
       queryClient.invalidateQueries({
         queryKey: ["cluster-manager", "members"],
       }),
+    onError: (error: any) => {
+      return toast.error(extract_message(error));
+    },
   });
 
   const inviteMutation = useMutation({
