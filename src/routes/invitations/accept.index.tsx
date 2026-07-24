@@ -12,7 +12,9 @@ import PhoneNumberInput from "#/components/modals/inputs/PhoneNumberInput";
 import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/invitations/accept/")({
-  validateSearch: (s): { token?: string } => ({ token: s?.token as string | undefined }),
+  validateSearch: (s): { token?: string } => ({
+    token: s?.token as string | undefined,
+  }),
   component: AcceptInvitePage,
 });
 
@@ -20,6 +22,7 @@ const schema = z
   .object({
     firstName: z.string().min(2, "First name must be at least 2 characters"),
     lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    email: z.string().email("Enter a valid email address"),
     phoneNumber: z
       .string()
       .min(1, "Phone number is required")
@@ -49,11 +52,12 @@ function AcceptInvitePage() {
 
   const mutation = useMutation({
     mutationFn: (values: FormValues) =>
-      apiClient.post("/auth/invitations/accept", {
-        token,
+      apiClient.post(`/groups/invitations/email/${token}/accept`, {
         firstName: values.firstName,
         lastName: values.lastName,
+        email: values.email,
         password: values.password,
+        confirmPassword: values.confirmPassword,
         phoneNumber: values.phoneNumber,
       }),
     onSuccess: () => {
@@ -95,9 +99,7 @@ function AcceptInvitePage() {
             />
           </div>
           <h1 className="text-2xl font-bold text-primary-content">AGBAJO</h1>
-          <p className="text-primary-content/80 mt-1">
-            Accept your invitation
-          </p>
+          <p className="text-primary-content/80 mt-1">Accept your invitation</p>
         </div>
 
         <div className="card bg-base-100 shadow-xl">
@@ -146,6 +148,23 @@ function AcceptInvitePage() {
                   )}
                 </fieldset>
               </div>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Email Address</legend>
+                <input
+                  type="email"
+                  className={`input w-full ${errors.email ? "input-error" : ""}`}
+                  placeholder="jane@example.com"
+                  autoComplete="email"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {errors.email.message}
+                  </p>
+                )}
+              </fieldset>
 
               <Controller
                 control={control}
