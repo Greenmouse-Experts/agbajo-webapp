@@ -65,7 +65,7 @@ function AcceptInvitePage() {
         // lastName: values.lastName,
         // email: values.email,
         //
-        ...props
+        ...props,
         password: values.password,
         confirmPassword: values.confirmPassword,
         phoneNumber: values.phoneNumber,
@@ -125,8 +125,6 @@ function AcceptInvitePage() {
               onSubmit={handleSubmit((d) => mutation.mutate(d))}
               className="space-y-4"
             >
-
-
               <Controller
                 control={control}
                 name="phoneNumber"
