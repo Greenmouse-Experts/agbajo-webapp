@@ -30,12 +30,12 @@ export const Route = createFileRoute("/invitations/accept/")({
 
 const schema = z
   .object({
-    phoneNumber: z
-      .string()
-      .min(1, "Phone number is required")
-      .refine((v) => isValidPhoneNumber(v), {
-        message: "Enter a valid phone number (e.g. +234 801 234 5678)",
-      }),
+    // phoneNumber: z
+    //   .string()
+    //   .min(1, "Phone number is required")
+    //   .refine((v) => isValidPhoneNumber(v), {
+    //     message: "Enter a valid phone number (e.g. +234 801 234 5678)",
+    //   }),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
@@ -60,15 +60,17 @@ function AcceptInvitePage() {
 
   const mutation = useMutation({
     mutationFn: (values: FormValues) =>
-      apiClient.post(`/groups/invitations/email/${token}/accept`, {
+      apiClient.post(`/auth/invitations/accept`, {
         // firstName: values.firstName,
         // lastName: values.lastName,
         // email: values.email,
         //
         ...props,
+        token,
+        phoneNumber: String("+" + props.phoneNumber),
         password: values.password,
         confirmPassword: values.confirmPassword,
-        phoneNumber: values.phoneNumber,
+        // phoneNumber: values.phoneNumber,
       }),
     onSuccess: () => {
       toast.success("Account created! You can now sign in.");
@@ -125,7 +127,7 @@ function AcceptInvitePage() {
               onSubmit={handleSubmit((d) => mutation.mutate(d))}
               className="space-y-4"
             >
-              <Controller
+              {/*<Controller
                 control={control}
                 name="phoneNumber"
                 render={({ field }) => (
@@ -136,7 +138,7 @@ function AcceptInvitePage() {
                     error={errors.phoneNumber?.message}
                   />
                 )}
-              />
+              />*/}
 
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Password</legend>
