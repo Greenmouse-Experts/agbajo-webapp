@@ -621,6 +621,7 @@ function AdminGroups() {
         </span>
       ),
       action: openEdit,
+      disabled: (g) => g.createdBy !== String(manager?.id),
     },
     {
       key: "delete",
@@ -631,6 +632,7 @@ function AdminGroups() {
         </span>
       ),
       action: (g) => deleteMutation.mutate(g.id),
+      disabled: (g) => g.createdBy !== String(manager?.id),
     },
   ];
 
