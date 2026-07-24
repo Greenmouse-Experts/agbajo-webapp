@@ -95,12 +95,12 @@ export default function ClusterWallet() {
                   <p className="text-white text-sm">Pending Balance</p>
                   <p className="text-white font-medium">{formatCurrency(0)}</p>
                 </div>
-                <button
+                {/*<button
                   onClick={() => modalRef.current?.open()}
                   className="btn bg-white text-green-800 hover:bg-white border-0"
                 >
                   Fund Wallet
-                </button>
+                </button>*/}
               </div>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function ClusterWallet() {
           <div className="card-body gap-4">
             <h3 className="font-semibold text-base-content">Quick Actions</h3>
 
-            <button
+            {/*<button
               onClick={() => modalRef.current?.open()}
               className="btn items-start h-auto p-3 btn-ghost flex justify-start"
             >
@@ -126,7 +126,7 @@ export default function ClusterWallet() {
                   Add money to your wallet
                 </p>
               </div>
-            </button>
+            </button>*/}
 
             <div className="flex items-center gap-3 p-3 rounded-xl border border-base-200">
               <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center shrink-0">
