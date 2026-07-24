@@ -1,8 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { PageHeader } from "./-components/PageHeader";
-import apiClient, { type ApiResponse } from "#/api/simpleApi";
-import type { MyGroup } from "#/types/groups.js";
 import PublicGroupsList from "#/components/groups/PublicGroupsList";
 import MyGroupsList from "#/components/groups/MyGroupsList";
 
@@ -24,13 +21,7 @@ function ContributorGroups() {
   const { tab } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
 
-  const { data: myGroups = [] } = useQuery({
-    queryKey: ["contributor", "groups"],
-    queryFn: () =>
-      apiClient.get<ApiResponse<MyGroup[]>>("/groups").then((r) => r.data.data),
-  });
-
-  const myGroupIds = new Set(myGroups.map((g) => g.id));
+  // const myGroupIds = new Set(myGroups.groups.map((g) => g.id));
 
   const setTab = (t: GroupTab) =>
     navigate({ search: (prev) => ({ ...prev, tab: t }) });
@@ -54,11 +45,7 @@ function ContributorGroups() {
         ))}
       </div>
 
-      {tab === "public" ? (
-        <PublicGroupsList myGroupIds={myGroupIds} />
-      ) : (
-        <MyGroupsList />
-      )}
+      {tab === "public" ? <PublicGroupsList /> : <MyGroupsList />}
     </div>
   );
 }
