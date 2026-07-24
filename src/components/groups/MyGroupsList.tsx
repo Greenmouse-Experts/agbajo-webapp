@@ -28,7 +28,11 @@ export default function MyGroupsList() {
     queryFn: () =>
       apiClient
         .get("groups", {
-          params: { search: search || undefined, limit: 10, cursor: cursor || undefined },
+          params: {
+            search: search || undefined,
+            limit: 10,
+            cursor: cursor || undefined,
+          },
         })
         .then((r) => r.data),
   });
@@ -45,7 +49,10 @@ export default function MyGroupsList() {
             type="text"
             placeholder="Search my groups..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCursor(null); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCursor(null);
+            }}
           />
         </label>
       </div>
@@ -74,7 +81,9 @@ export default function MyGroupsList() {
                           {group.groupName}
                         </h3>
                         {group.memberStatus && (
-                          <span className={`badge ${statusBadge[group.memberStatus]} shrink-0 capitalize`}>
+                          <span
+                            className={`badge ${statusBadge[group.memberStatus]} shrink-0 capitalize`}
+                          >
                             {group.memberStatus}
                           </span>
                         )}
@@ -83,7 +92,12 @@ export default function MyGroupsList() {
                       <div className="space-y-1.5 text-sm text-base-content/70">
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-3.5 h-3.5 shrink-0" />
-                          <span>{formatCurrency(group.contributionAmount)} · <span className="capitalize">{group.frequency}</span></span>
+                          <span>
+                            {formatCurrency(group.contributionAmount)} ·{" "}
+                            <span className="capitalize">
+                              {group.frequency}
+                            </span>
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Users className="w-3.5 h-3.5 shrink-0" />
@@ -91,7 +105,17 @@ export default function MyGroupsList() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Calendar className="w-3.5 h-3.5 shrink-0" />
-                          <span>Starts {new Date(group.startDate).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}</span>
+                          <span>
+                            Starts{" "}
+                            {new Date(group.startDate).toLocaleDateString(
+                              "en-NG",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )}
+                          </span>
                         </div>
                         {group.currentCycle !== undefined && (
                           <div className="flex items-center gap-2">
@@ -112,8 +136,20 @@ export default function MyGroupsList() {
                   {pagination.total} group{pagination.total !== 1 ? "s" : ""}
                 </span>
                 <div className="join">
-                  <button className="join-item btn btn-sm" disabled={!cursor} onClick={() => setCursor(null)}>«</button>
-                  <button className="join-item btn btn-sm" disabled={!pagination.hasMore} onClick={() => setCursor(pagination.nextCursor)}>»</button>
+                  <button
+                    className="join-item btn btn-sm"
+                    disabled={!cursor}
+                    onClick={() => setCursor(null)}
+                  >
+                    «
+                  </button>
+                  <button
+                    className="join-item btn btn-sm"
+                    disabled={!pagination.hasMore}
+                    onClick={() => setCursor(pagination.nextCursor)}
+                  >
+                    »
+                  </button>
                 </div>
               </div>
             )}

@@ -23,8 +23,12 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
     queryKey: ["groups", "public", search, cursor],
     queryFn: () =>
       apiClient
-        .get("groups/public", {
-          params: { search: search || undefined, limit: 10, cursor: cursor || undefined },
+        .get("/groups/public", {
+          params: {
+            search: search || undefined,
+            limit: 10,
+            cursor: cursor || undefined,
+          },
         })
         .then((r) => r.data),
   });
@@ -56,7 +60,10 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
             type="text"
             placeholder="Search groups..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCursor(null); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCursor(null);
+            }}
           />
         </label>
       </div>
@@ -67,8 +74,12 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
             {groups.length === 0 ? (
               <div className="card bg-base-100 shadow p-12 text-center">
                 <Users className="w-12 h-12 text-base-content/20 mx-auto mb-3" />
-                <p className="font-medium text-base-content">No public groups found</p>
-                <p className="text-sm text-base-content/60 mt-1">Try a different search</p>
+                <p className="font-medium text-base-content">
+                  No public groups found
+                </p>
+                <p className="text-sm text-base-content/60 mt-1">
+                  Try a different search
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -76,19 +87,29 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
                   const alreadyMember = myGroupIds.has(group.id);
                   const requested = requestedIds.has(group.id);
                   return (
-                    <div key={group.id} className="card bg-base-100 shadow hover:shadow-md transition-shadow">
+                    <div
+                      key={group.id}
+                      className="card bg-base-100 shadow hover:shadow-md transition-shadow"
+                    >
                       <div className="card-body p-4 gap-3">
                         <div className="flex items-start justify-between gap-2">
                           <h3 className="font-semibold text-base-content line-clamp-1">
                             {group.groupName}
                           </h3>
-                          <span className="badge badge-outline capitalize shrink-0">{group.type}</span>
+                          <span className="badge badge-outline capitalize shrink-0">
+                            {group.type}
+                          </span>
                         </div>
 
                         <div className="space-y-1.5 text-sm text-base-content/70">
                           <div className="flex items-center gap-2">
                             <DollarSign className="w-3.5 h-3.5 shrink-0" />
-                            <span>{formatCurrency(group.contributionAmount)} · <span className="capitalize">{group.frequency}</span></span>
+                            <span>
+                              {formatCurrency(group.contributionAmount)} ·{" "}
+                              <span className="capitalize">
+                                {group.frequency}
+                              </span>
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Users className="w-3.5 h-3.5 shrink-0" />
@@ -96,11 +117,22 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
                           </div>
                           <div className="flex items-center gap-2">
                             <Calendar className="w-3.5 h-3.5 shrink-0" />
-                            <span>Starts {new Date(group.startDate).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}</span>
+                            <span>
+                              Starts{" "}
+                              {new Date(group.startDate).toLocaleDateString(
+                                "en-NG",
+                                {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                },
+                              )}
+                            </span>
                           </div>
                           {group.managers.length > 0 && (
                             <p className="truncate text-xs text-base-content/50">
-                              Manager: {group.managers[0].firstName} {group.managers[0].lastName}
+                              Manager: {group.managers[0].firstName}{" "}
+                              {group.managers[0].lastName}
                             </p>
                           )}
                         </div>
@@ -109,11 +141,16 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
                           {alreadyMember ? (
                             <span className="badge badge-success">Member</span>
                           ) : requested ? (
-                            <span className="badge badge-warning">Requested</span>
+                            <span className="badge badge-warning">
+                              Requested
+                            </span>
                           ) : (
                             <button
                               className="btn btn-primary btn-sm"
-                              onClick={() => { setJoiningGroup(group); joinModalRef.current?.showModal(); }}
+                              onClick={() => {
+                                setJoiningGroup(group);
+                                joinModalRef.current?.showModal();
+                              }}
                             >
                               <LogIn className="w-4 h-4" />
                               Join
@@ -133,8 +170,20 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
                   {pagination.total} group{pagination.total !== 1 ? "s" : ""}
                 </span>
                 <div className="join">
-                  <button className="join-item btn btn-sm" disabled={!cursor} onClick={() => setCursor(null)}>«</button>
-                  <button className="join-item btn btn-sm" disabled={!pagination.hasMore} onClick={() => setCursor(pagination.nextCursor)}>»</button>
+                  <button
+                    className="join-item btn btn-sm"
+                    disabled={!cursor}
+                    onClick={() => setCursor(null)}
+                  >
+                    «
+                  </button>
+                  <button
+                    className="join-item btn btn-sm"
+                    disabled={!pagination.hasMore}
+                    onClick={() => setCursor(pagination.nextCursor)}
+                  >
+                    »
+                  </button>
                 </div>
               </div>
             )}
@@ -144,26 +193,39 @@ export default function PublicGroupsList({ myGroupIds = new Set() }: Props) {
 
       <dialog ref={joinModalRef} className="modal">
         <div className="modal-box">
-          <h3 className="text-lg font-semibold text-base-content">Join Group</h3>
+          <h3 className="text-lg font-semibold text-base-content">
+            Join Group
+          </h3>
           {joiningGroup && (
             <p className="mt-2 text-base-content/70">
               Send a join request to{" "}
-              <span className="font-medium text-base-content">{joiningGroup.groupName}</span>?
+              <span className="font-medium text-base-content">
+                {joiningGroup.groupName}
+              </span>
+              ?
             </p>
           )}
           <div className="modal-action">
-            <form method="dialog"><button className="btn btn-ghost">Cancel</button></form>
+            <form method="dialog">
+              <button className="btn btn-ghost">Cancel</button>
+            </form>
             <button
               className="btn btn-primary"
               disabled={requestJoinMutation.isPending}
-              onClick={() => joiningGroup && requestJoinMutation.mutate(joiningGroup.id)}
+              onClick={() =>
+                joiningGroup && requestJoinMutation.mutate(joiningGroup.id)
+              }
             >
-              {requestJoinMutation.isPending && <span className="loading loading-spinner loading-sm" />}
+              {requestJoinMutation.isPending && (
+                <span className="loading loading-spinner loading-sm" />
+              )}
               Send Request
             </button>
           </div>
         </div>
-        <form method="dialog" className="modal-backdrop"><button>close</button></form>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
     </>
   );

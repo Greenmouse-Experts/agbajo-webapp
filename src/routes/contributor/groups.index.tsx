@@ -27,9 +27,7 @@ function ContributorGroups() {
   const { data: myGroups = [] } = useQuery({
     queryKey: ["contributor", "groups"],
     queryFn: () =>
-      apiClient
-        .get<ApiResponse<MyGroup[]>>("contributor/groups")
-        .then((r) => r.data.data),
+      apiClient.get<ApiResponse<MyGroup[]>>("/groups").then((r) => r.data.data),
   });
 
   const myGroupIds = new Set(myGroups.map((g) => g.id));
