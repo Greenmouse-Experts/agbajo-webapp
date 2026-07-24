@@ -68,13 +68,24 @@ function ClusterManagerMembers() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: MemberStatus }) =>
-      apiClient.patch(`cluster-manager/members/${id}/status`, { status }),
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: MemberStatus;
+    }) => {
+      let resp = await apiClient.patch(`cluster-manager/members/${id}/status`, {
+        status,
+      });
+      return resp.data;
+    },
     onSuccess: () =>
       queryClient.invalidateQueries({
         queryKey: ["cluster-manager", "members"],
       }),
     onError: (error: any) => {
+      console.log(error, "error");
       return toast.error(extract_message(error));
     },
   });
@@ -84,7 +95,12 @@ function ClusterManagerMembers() {
       apiClient.post(`groups/${groupId}/email-invitation`, body),
     onSuccess: () => {
       modalRef.current?.close();
+      toast.success("Invitation sent successfully");
       setInviteForm({ email: "", firstName: "", lastName: "", groupId: "" });
+    },
+    onError: (error: any) => {
+      console.log(error, "error");
+      return toast.error(extract_message(error));
     },
   });
 
