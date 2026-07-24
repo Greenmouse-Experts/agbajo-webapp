@@ -1,41 +1,33 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
-import { isValidPhoneNumber } from "react-phone-number-input";
 import apiClient from "#/api/simpleApi";
 import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
-import PhoneNumberInput from "#/components/modals/inputs/PhoneNumberInput";
 import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/invitations/accept/")({
-  validateSearch: (
-    s,
-  ): {
+  validateSearch: (s): {
     token?: string;
     email?: string;
     firstName?: string;
-    LastName?: string;
+    lastName?: string;
+    phoneNumber?: string;
   } => ({
     token: s?.token as string | undefined,
-    email: s?.email,
-    firstName: s?.firstName,
-    LastName: s?.LastName,
+    email: s?.email as string | undefined,
+    firstName: s?.firstName as string | undefined,
+    lastName: s?.lastName as string | undefined,
+    phoneNumber: s?.phoneNumber as string | undefined,
   }),
   component: AcceptInvitePage,
 });
 
 const schema = z
   .object({
-    // phoneNumber: z
-    //   .string()
-    //   .min(1, "Phone number is required")
-    //   .refine((v) => isValidPhoneNumber(v), {
-    //     message: "Enter a valid phone number (e.g. +234 801 234 5678)",
-    //   }),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
@@ -54,23 +46,17 @@ function AcceptInvitePage() {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const mutation = useMutation({
     mutationFn: (values: FormValues) =>
       apiClient.post(`/auth/invitations/accept`, {
-        // firstName: values.firstName,
-        // lastName: values.lastName,
-        // email: values.email,
-        //
         ...props,
         token,
-        phoneNumber: String("+" + props.phoneNumber),
+        phoneNumber: props.phoneNumber ? `+${props.phoneNumber}` : undefined,
         password: values.password,
         confirmPassword: values.confirmPassword,
-        // phoneNumber: values.phoneNumber,
       }),
     onSuccess: () => {
       toast.success("Account created! You can now sign in.");
@@ -127,19 +113,6 @@ function AcceptInvitePage() {
               onSubmit={handleSubmit((d) => mutation.mutate(d))}
               className="space-y-4"
             >
-              {/*<Controller
-                control={control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <PhoneNumberInput
-                    value={field.value}
-                    onChange={field.onChange}
-                    onBlur={field.onBlur}
-                    error={errors.phoneNumber?.message}
-                  />
-                )}
-              />*/}
-
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Password</legend>
                 <SimpleInput
