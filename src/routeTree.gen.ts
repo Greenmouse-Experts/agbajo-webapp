@@ -29,6 +29,7 @@ import { Route as ContributorInvitationsIndexRouteImport } from './routes/contri
 import { Route as ContributorGroupsIndexRouteImport } from './routes/contributor/groups.index'
 import { Route as ContributorContributionsIndexRouteImport } from './routes/contributor/contributions.index'
 import { Route as ContributorComplaintsIndexRouteImport } from './routes/contributor/complaints.index'
+import { Route as ClusterManagerWalletIndexRouteImport } from './routes/cluster-manager/wallet.index'
 import { Route as ClusterManagerPayoutsIndexRouteImport } from './routes/cluster-manager/payouts.index'
 import { Route as ClusterManagerMembersIndexRouteImport } from './routes/cluster-manager/members.index'
 import { Route as ClusterManagerKycIndexRouteImport } from './routes/cluster-manager/kyc.index'
@@ -161,6 +162,12 @@ const ContributorComplaintsIndexRoute =
     id: '/complaints/',
     path: '/complaints/',
     getParentRoute: () => ContributorRouteRoute,
+  } as any)
+const ClusterManagerWalletIndexRoute =
+  ClusterManagerWalletIndexRouteImport.update({
+    id: '/wallet/',
+    path: '/wallet/',
+    getParentRoute: () => ClusterManagerRouteRoute,
   } as any)
 const ClusterManagerPayoutsIndexRoute =
   ClusterManagerPayoutsIndexRouteImport.update({
@@ -355,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/cluster-manager/kyc/': typeof ClusterManagerKycIndexRoute
   '/cluster-manager/members/': typeof ClusterManagerMembersIndexRoute
   '/cluster-manager/payouts/': typeof ClusterManagerPayoutsIndexRoute
+  '/cluster-manager/wallet/': typeof ClusterManagerWalletIndexRoute
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
@@ -403,6 +411,7 @@ export interface FileRoutesByTo {
   '/cluster-manager/kyc': typeof ClusterManagerKycIndexRoute
   '/cluster-manager/members': typeof ClusterManagerMembersIndexRoute
   '/cluster-manager/payouts': typeof ClusterManagerPayoutsIndexRoute
+  '/cluster-manager/wallet': typeof ClusterManagerWalletIndexRoute
   '/contributor/complaints': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions': typeof ContributorContributionsIndexRoute
   '/contributor/groups': typeof ContributorGroupsIndexRoute
@@ -455,6 +464,7 @@ export interface FileRoutesById {
   '/cluster-manager/kyc/': typeof ClusterManagerKycIndexRoute
   '/cluster-manager/members/': typeof ClusterManagerMembersIndexRoute
   '/cluster-manager/payouts/': typeof ClusterManagerPayoutsIndexRoute
+  '/cluster-manager/wallet/': typeof ClusterManagerWalletIndexRoute
   '/contributor/complaints/': typeof ContributorComplaintsIndexRoute
   '/contributor/contributions/': typeof ContributorContributionsIndexRoute
   '/contributor/groups/': typeof ContributorGroupsIndexRoute
@@ -508,6 +518,7 @@ export interface FileRouteTypes {
     | '/cluster-manager/kyc/'
     | '/cluster-manager/members/'
     | '/cluster-manager/payouts/'
+    | '/cluster-manager/wallet/'
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
@@ -556,6 +567,7 @@ export interface FileRouteTypes {
     | '/cluster-manager/kyc'
     | '/cluster-manager/members'
     | '/cluster-manager/payouts'
+    | '/cluster-manager/wallet'
     | '/contributor/complaints'
     | '/contributor/contributions'
     | '/contributor/groups'
@@ -607,6 +619,7 @@ export interface FileRouteTypes {
     | '/cluster-manager/kyc/'
     | '/cluster-manager/members/'
     | '/cluster-manager/payouts/'
+    | '/cluster-manager/wallet/'
     | '/contributor/complaints/'
     | '/contributor/contributions/'
     | '/contributor/groups/'
@@ -781,6 +794,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/contributor/complaints/'
       preLoaderRoute: typeof ContributorComplaintsIndexRouteImport
       parentRoute: typeof ContributorRouteRoute
+    }
+    '/cluster-manager/wallet/': {
+      id: '/cluster-manager/wallet/'
+      path: '/wallet'
+      fullPath: '/cluster-manager/wallet/'
+      preLoaderRoute: typeof ClusterManagerWalletIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
     }
     '/cluster-manager/payouts/': {
       id: '/cluster-manager/payouts/'
@@ -1036,6 +1056,7 @@ interface ClusterManagerRouteRouteChildren {
   ClusterManagerKycIndexRoute: typeof ClusterManagerKycIndexRoute
   ClusterManagerMembersIndexRoute: typeof ClusterManagerMembersIndexRoute
   ClusterManagerPayoutsIndexRoute: typeof ClusterManagerPayoutsIndexRoute
+  ClusterManagerWalletIndexRoute: typeof ClusterManagerWalletIndexRoute
   ClusterManagerGroupsDIndexRoute: typeof ClusterManagerGroupsDIndexRoute
 }
 
@@ -1049,6 +1070,7 @@ const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
   ClusterManagerKycIndexRoute: ClusterManagerKycIndexRoute,
   ClusterManagerMembersIndexRoute: ClusterManagerMembersIndexRoute,
   ClusterManagerPayoutsIndexRoute: ClusterManagerPayoutsIndexRoute,
+  ClusterManagerWalletIndexRoute: ClusterManagerWalletIndexRoute,
   ClusterManagerGroupsDIndexRoute: ClusterManagerGroupsDIndexRoute,
 }
 
