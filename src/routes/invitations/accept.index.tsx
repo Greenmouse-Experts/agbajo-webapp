@@ -12,17 +12,24 @@ import PhoneNumberInput from "#/components/modals/inputs/PhoneNumberInput";
 import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/invitations/accept/")({
-  validateSearch: (s): { token?: string } => ({
+  validateSearch: (
+    s,
+  ): {
+    token?: string;
+    email?: string;
+    firstName?: string;
+    LastName?: string;
+  } => ({
     token: s?.token as string | undefined,
+    email: s?.email,
+    firstName: s?.firstName,
+    LastName: s?.LastName,
   }),
   component: AcceptInvitePage,
 });
 
 const schema = z
   .object({
-    firstName: z.string().min(2, "First name must be at least 2 characters"),
-    lastName: z.string().min(2, "Last name must be at least 2 characters"),
-    email: z.string().email("Enter a valid email address"),
     phoneNumber: z
       .string()
       .min(1, "Phone number is required")
@@ -40,7 +47,8 @@ const schema = z
 type FormValues = z.infer<typeof schema>;
 
 function AcceptInvitePage() {
-  const { token } = Route.useSearch();
+  const props = Route.useSearch();
+  const { token } = props;
   const navigate = useNavigate();
 
   const {
@@ -53,9 +61,11 @@ function AcceptInvitePage() {
   const mutation = useMutation({
     mutationFn: (values: FormValues) =>
       apiClient.post(`/groups/invitations/email/${token}/accept`, {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: values.email,
+        // firstName: values.firstName,
+        // lastName: values.lastName,
+        // email: values.email,
+        //
+        ...props
         password: values.password,
         confirmPassword: values.confirmPassword,
         phoneNumber: values.phoneNumber,
@@ -115,56 +125,7 @@ function AcceptInvitePage() {
               onSubmit={handleSubmit((d) => mutation.mutate(d))}
               className="space-y-4"
             >
-              <div className="grid grid-cols-2 gap-3">
-                <fieldset className="fieldset">
-                  <legend className="fieldset-legend">First Name</legend>
-                  <input
-                    type="text"
-                    className={`input w-full ${errors.firstName ? "input-error" : ""}`}
-                    placeholder="John"
-                    {...register("firstName")}
-                  />
-                  {errors.firstName && (
-                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      {errors.firstName.message}
-                    </p>
-                  )}
-                </fieldset>
 
-                <fieldset className="fieldset">
-                  <legend className="fieldset-legend">Last Name</legend>
-                  <input
-                    type="text"
-                    className={`input w-full ${errors.lastName ? "input-error" : ""}`}
-                    placeholder="Doe"
-                    {...register("lastName")}
-                  />
-                  {errors.lastName && (
-                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                      <AlertCircle className="w-3.5 h-3.5" />
-                      {errors.lastName.message}
-                    </p>
-                  )}
-                </fieldset>
-              </div>
-
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend">Email Address</legend>
-                <input
-                  type="email"
-                  className={`input w-full ${errors.email ? "input-error" : ""}`}
-                  placeholder="jane@example.com"
-                  autoComplete="email"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {errors.email.message}
-                  </p>
-                )}
-              </fieldset>
 
               <Controller
                 control={control}
