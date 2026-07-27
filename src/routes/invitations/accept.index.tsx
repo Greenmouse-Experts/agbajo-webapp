@@ -28,6 +28,9 @@ export const Route = createFileRoute("/invitations/accept/")({
 
 const schema = z
   .object({
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    email: z.string().email("Enter a valid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
@@ -47,13 +50,22 @@ function AcceptInvitePage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      firstName: props.firstName ?? "",
+      lastName: props.lastName ?? "",
+      email: props.email ?? "",
+    },
+  });
 
   const mutation = useMutation({
     mutationFn: (values: FormValues) =>
-      apiClient.post(`/auth/invitations/accept`, {
-        ...props,
+      apiClient.post(`/groups/email-invitations/${token}/join`, {
         token,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
         phoneNumber: props.phoneNumber ? `+${props.phoneNumber}` : undefined,
         password: values.password,
         confirmPassword: values.confirmPassword,
@@ -113,6 +125,57 @@ function AcceptInvitePage() {
               onSubmit={handleSubmit((d) => mutation.mutate(d))}
               className="space-y-4"
             >
+              <div className="grid grid-cols-2 gap-3">
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">First Name</legend>
+                  <input
+                    type="text"
+                    className={`input w-full ${errors.firstName ? "input-error" : ""}`}
+                    placeholder="John"
+                    {...register("firstName")}
+                  />
+                  {errors.firstName && (
+                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {errors.firstName.message}
+                    </p>
+                  )}
+                </fieldset>
+
+                <fieldset className="fieldset">
+                  <legend className="fieldset-legend">Last Name</legend>
+                  <input
+                    type="text"
+                    className={`input w-full ${errors.lastName ? "input-error" : ""}`}
+                    placeholder="Doe"
+                    {...register("lastName")}
+                  />
+                  {errors.lastName && (
+                    <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      {errors.lastName.message}
+                    </p>
+                  )}
+                </fieldset>
+              </div>
+
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Email Address</legend>
+                <input
+                  type="email"
+                  className={`input w-full ${errors.email ? "input-error" : ""}`}
+                  placeholder="john@example.com"
+                  autoComplete="email"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="fieldset-label text-error flex items-center gap-1 mt-1">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {errors.email.message}
+                  </p>
+                )}
+              </fieldset>
+
               <fieldset className="fieldset">
                 <legend className="fieldset-legend">Password</legend>
                 <SimpleInput

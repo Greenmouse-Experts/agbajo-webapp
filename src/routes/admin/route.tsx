@@ -60,7 +60,7 @@ export const Route = createFileRoute("/admin")({
     console.log("user", user);
     if (!user) return redirect({ to: "/home/auth/login" });
     if (user?.user.roles.includes("admin")) return user;
-    return redirect({ to: "/home/auth/login" });
+    return redirect({ to: "/home/auth/admin" });
   },
 });
 

@@ -92,7 +92,7 @@ function ClusterManagerMembers() {
 
   const inviteMutation = useMutation({
     mutationFn: ({ groupId, ...body }: typeof inviteForm) =>
-      apiClient.post(`groups/${groupId}/email-invitation`, body),
+      apiClient.post(`groups/${groupId}/email-invitations`, body),
     onSuccess: () => {
       modalRef.current?.close();
       toast.success("Invitation sent successfully");
