@@ -14,7 +14,7 @@ type GroupTab = "public" | "my" | "invitations";
 export const Route = createFileRoute("/contributor/groups/")({
   validateSearch: (s): { tab: GroupTab } => {
     const t = s?.tab as GroupTab;
-    return { tab: t === "my" || t === "invitations" ? t : "public" };
+    return { tab: t === "public" || t === "invitations" ? t : "my" };
   },
   component: ContributorGroups,
 });
