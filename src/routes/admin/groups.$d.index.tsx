@@ -6,6 +6,7 @@ import {
   Calendar,
   Check,
   DollarSign,
+  Mail,
   Users,
   UserPlus,
   X,
@@ -15,6 +16,7 @@ import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
+import InviteByEmailModal from "#/components/modals/InviteByEmailModal";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 import { useAuth, type AUTHRECORD } from "#/store/authStore";
@@ -268,6 +270,7 @@ function GroupDetailPage() {
   const authId = String(authUser?.user?.id ?? "");
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
+  const inviteByEmailModalRef = useRef<ModalHandle>(null);
   const [memberSearch, setMemberSearch] = useState("");
 
   const groupQuery = useQuery({
@@ -346,13 +349,22 @@ function GroupDetailPage() {
                     </p>
                   </div>
                   {isOwner && (
-                    <button
-                      className="btn btn-primary shrink-0"
-                      onClick={() => inviteModalRef.current?.open()}
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      Invite Members
-                    </button>
+                    <div className="flex gap-2 shrink-0">
+                      <button
+                        className="btn btn-outline btn-sm"
+                        onClick={() => inviteByEmailModalRef.current?.open()}
+                      >
+                        <Mail className="w-4 h-4" />
+                        Invite by Email
+                      </button>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => inviteModalRef.current?.open()}
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        Invite Members
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -525,6 +537,7 @@ function GroupDetailPage() {
             onChanged={invalidate}
           />
           <InviteUserModal ref={inviteModalRef} groupId={d} />
+          <InviteByEmailModal ref={inviteByEmailModalRef} groupId={d} />
         </>
       )}
     </div>

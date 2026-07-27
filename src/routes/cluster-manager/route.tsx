@@ -2,6 +2,7 @@ import {
   createFileRoute,
   Link,
   Outlet,
+  redirect,
   useRouterState,
 } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
@@ -21,7 +22,12 @@ import {
   X,
   Wallet2,
 } from "lucide-react";
-import { logout, useAuth, type AUTHRECORD } from "#/store/authStore";
+import {
+  get_user_value,
+  logout,
+  useAuth,
+  type AUTHRECORD,
+} from "#/store/authStore";
 
 interface NavItem {
   to: string;
@@ -54,6 +60,17 @@ const navItems: NavItem[] = [
 
 export const Route = createFileRoute("/cluster-manager")({
   component: ClusterManagerLayout,
+  loader: () => {
+    const user = get_user_value();
+    if (!user) {
+      return redirect({
+        to: "/home/auth/login",
+      });
+    }
+    if (!user.user.roles.includes("cluster-manager")) {
+      return redirect({ to: "/home/auth/login" });
+    }
+  },
 });
 
 function ClusterManagerLayout() {
