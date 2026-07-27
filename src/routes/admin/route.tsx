@@ -57,8 +57,10 @@ export const Route = createFileRoute("/admin")({
   component: AdminLayout,
   loader: () => {
     const user = get_user_value();
+    console.log("user", user);
+    if (!user) return redirect({ to: "/home/auth/login" });
     if (user?.user.roles.includes("admin")) return user;
-    redirect({ to: "/contributor" });
+    return redirect({ to: "/home/auth/login" });
   },
 });
 
