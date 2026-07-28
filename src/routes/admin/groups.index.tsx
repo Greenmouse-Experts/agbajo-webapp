@@ -114,6 +114,20 @@ const columns: columnType<Group>[] = [
     ),
   },
   {
+    key: "minMembers",
+    label: "Min. Members",
+    // render: (value: number) => (
+    //   <span className="badge badge-outline capitalize">{value}</span>
+    // ),
+  },
+  // {
+  //   key: "maxMembers",
+  //   label: "Max Members",
+  //   render: (value: number) => (
+  //     <span className="badge badge-outline capitalize">{value}</span>
+  //   ),
+  // },
+  {
     key: "startDate",
     label: "Start Date",
     render: (value: string) => (
