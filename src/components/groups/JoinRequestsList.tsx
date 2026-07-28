@@ -18,9 +18,10 @@ interface JoinRequest {
 
 interface Props {
   groupId: string;
+  embedded?: boolean;
 }
 
-export default function JoinRequestsList({ groupId }: Props) {
+export default function JoinRequestsList({ groupId, embedded = false }: Props) {
   const queryClient = useQueryClient();
   const isAdmin = get_user_value()?.user.roles.includes("admin") ?? false;
 
@@ -43,11 +44,14 @@ export default function JoinRequestsList({ groupId }: Props) {
         ? `admins/groups/${groupId}/join-requests/${userId}`
         : `groups/${groupId}/join-requests/${userId}`;
       return toast
-        .promise(apiClient.patch(url, { action: "accept" }).then(invalidate), {
-          loading: "Accepting request...",
-          success: "Request accepted",
-          error: extract_message,
-        })
+        .promise(
+          apiClient.patch(url, { action: "approved" }).then(invalidate),
+          {
+            loading: "Accepting request...",
+            success: "Request accepted",
+            error: extract_message,
+          },
+        )
         .unwrap();
     },
   });
@@ -109,18 +113,23 @@ export default function JoinRequestsList({ groupId }: Props) {
     },
   ];
 
+  const inner = (
+    <QueryCompLayout query={query}>
+      {(res) => {
+        const requests = res.data ?? [];
+        return <CustomTable data={requests} columns={columns} ring={false} />;
+      }}
+    </QueryCompLayout>
+  );
+
+  if (embedded) return <>{inner}</>;
+
   return (
     <div className="card bg-base-100 shadow-sm overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
         <h3 className="font-semibold text-base-content">Join Requests</h3>
       </div>
-
-      <QueryCompLayout query={query}>
-        {(res) => {
-          const requests = res.data ?? [];
-          return <CustomTable data={requests} columns={columns} ring={false} />;
-        }}
-      </QueryCompLayout>
+      {inner}
     </div>
   );
 }

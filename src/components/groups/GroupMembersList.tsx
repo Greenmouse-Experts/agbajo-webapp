@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Users, RefreshCw } from "lucide-react";
-import apiClient, { type ApiResponse } from "#/api/simpleApi";
+import apiClient from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
 import QueryCompLayout from "#/components/layout/QueryCompLayout";
 
@@ -15,15 +15,17 @@ interface GroupMember {
 interface Props {
   groupId: string;
   queryScope?: string;
+  embedded?: boolean;
 }
 
 export default function GroupMembersList({
   groupId,
   queryScope = "group",
+  embedded = false,
 }: Props) {
   const [search, setSearch] = useState("");
 
-  const membersQuery = useQuery<ApiResponse<GroupMember[]>>({
+  const membersQuery = useQuery<{ data: { members: GroupMember[] } }>({
     queryKey: [queryScope, groupId, "members", search],
     queryFn: async () => {
       const resp = await apiClient.get(`groups/${groupId}/members`, {
@@ -33,23 +35,18 @@ export default function GroupMembersList({
     },
   });
 
-  return (
-    <div className="card bg-base-100 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
-        <h3 className="font-semibold text-base-content">Members</h3>
-        {membersQuery.isFetching && !membersQuery.isLoading && (
-          <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin" />
-        )}
-      </div>
-
-      <div className="px-5 py-3 border-b border-base-200">
+  const inner = (
+    <>
+      <div className="flex items-center justify-between px-5 py-3 border-b border-base-200">
         <SearchBar value={search} onChange={setSearch} />
+        {membersQuery.isFetching && !membersQuery.isLoading && (
+          <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin ml-3 shrink-0" />
+        )}
       </div>
 
       <QueryCompLayout query={membersQuery}>
         {(res) => {
-          const members = res.data ?? [];
-
+          const members = res.data?.members ?? [];
           if (members.length === 0) {
             return (
               <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
@@ -84,6 +81,17 @@ export default function GroupMembersList({
           );
         }}
       </QueryCompLayout>
+    </>
+  );
+
+  if (embedded) return <>{inner}</>;
+
+  return (
+    <div className="card bg-base-100 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
+        <h3 className="font-semibold text-base-content">Members</h3>
+      </div>
+      {inner}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { forwardRef, useRef, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -23,7 +23,12 @@ import { useAuth, type AUTHRECORD } from "#/store/authStore";
 import JoinRequestsList from "#/components/groups/JoinRequestsList";
 import GroupMembersList from "#/components/groups/GroupMembersList";
 
+type TabParam = "members" | "requests";
+
 export const Route = createFileRoute("/cluster-manager/groups/$d/")({
+  validateSearch: (s): { tab?: TabParam } => ({
+    tab: (s?.tab as TabParam) ?? "members",
+  }),
   component: GroupDetailPage,
 });
 
@@ -270,6 +275,8 @@ function GroupDetailPage() {
   const [rawUser] = useAuth();
   const authUser = rawUser as AUTHRECORD | null;
   const authId = String(authUser?.user?.id ?? "");
+  const navigate = useNavigate();
+  const { tab = "members" } = Route.useSearch();
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
   const inviteByEmailModalRef = useRef<ModalHandle>(null);
@@ -454,11 +461,28 @@ function GroupDetailPage() {
                 )}
               </div>
 
-              {/* Join Requests */}
-              <JoinRequestsList groupId={d} />
-
-              {/* Members */}
-              <GroupMembersList groupId={d} queryScope="cluster-manager" />
+              {/* Members / Requests tabs */}
+              <div className="card bg-base-100 shadow-sm overflow-hidden">
+                <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">
+                  {(["members", "requests"] as TabParam[]).map((t) => (
+                    <button
+                      key={t}
+                      role="tab"
+                      className={`tab capitalize${tab === t ? " tab-active font-semibold" : ""}`}
+                      onClick={() =>
+                        navigate({ to: ".", search: (prev) => ({ ...prev, tab: t }) })
+                      }
+                    >
+                      {t === "members" ? "Members" : "Join Requests"}
+                    </button>
+                  ))}
+                </div>
+                {tab === "members" ? (
+                  <GroupMembersList groupId={d} queryScope="cluster-manager" embedded />
+                ) : (
+                  <JoinRequestsList groupId={d} embedded />
+                )}
+              </div>
             </div>
           )
         }
