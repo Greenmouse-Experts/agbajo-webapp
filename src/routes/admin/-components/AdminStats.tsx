@@ -120,9 +120,7 @@ export default function AdminStats() {
       {/* Total Contributions */}
       <div className="stat-card group hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between">
-          <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center">
-            <DollarSign className="w-6 h-6 text-accent" />
-          </div>
+          <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center"></div>
           <span className="flex items-center text-success text-base font-medium">
             <TrendingUp className="w-4 h-4" />
           </span>

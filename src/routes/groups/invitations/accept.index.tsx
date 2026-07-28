@@ -19,8 +19,20 @@ export const Route = createFileRoute("/groups/invitations/accept/")({
 });
 
 interface InvitationData {
-  group: { id: string; groupName: string; contributionAmount: string; frequency: string };
-  invitation: { id: string; email: string; firstName: string; lastName: string; expiresAt: string; status: string };
+  group: {
+    id: string;
+    groupName: string;
+    contributionAmount: string;
+    frequency: string;
+  };
+  invitation: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    expiresAt: string;
+    status: string;
+  };
   isNewUser: boolean;
 }
 
@@ -39,11 +51,23 @@ const schema = z
 
 type FormValues = z.infer<typeof schema>;
 
-function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; token: string; phoneNumber?: string }) {
+function AcceptInviteForm({
+  data,
+  token,
+  phoneNumber,
+}: {
+  data: InvitationData;
+  token: string;
+  phoneNumber?: string;
+}) {
   const navigate = useNavigate();
   const { group, invitation } = data;
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       firstName: invitation.firstName ?? "",
@@ -75,10 +99,11 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
       <div className="card-body">
         {/* Group info banner */}
         <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 mb-2 space-y-1">
-          <p className="font-semibold text-base-content text-sm">{group.groupName}</p>
+          <p className="font-semibold text-base-content text-sm">
+            {group.groupName}
+          </p>
           <div className="flex items-center gap-3 text-xs text-base-content/60">
             <span className="flex items-center gap-1">
-              <DollarSign className="w-3 h-3" />
               ₦{Number(group.contributionAmount).toLocaleString()}
             </span>
             <span className="flex items-center gap-1">
@@ -88,10 +113,17 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
           </div>
         </div>
 
-        <h2 className="text-xl font-semibold text-base-content mb-0">Complete your account</h2>
-        <p className="text-base-content/60 text-sm mb-4">Fill in your details to activate your account.</p>
+        <h2 className="text-xl font-semibold text-base-content mb-0">
+          Complete your account
+        </h2>
+        <p className="text-base-content/60 text-sm mb-4">
+          Fill in your details to activate your account.
+        </p>
 
-        <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
+        <form
+          onSubmit={handleSubmit((d) => mutation.mutate(d))}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-2 gap-3">
             <fieldset className="fieldset">
               <legend className="fieldset-legend">First Name</legend>
@@ -103,7 +135,8 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
               />
               {errors.firstName && (
                 <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                  <AlertCircle className="w-3.5 h-3.5" />{errors.firstName.message}
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  {errors.firstName.message}
                 </p>
               )}
             </fieldset>
@@ -118,7 +151,8 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
               />
               {errors.lastName && (
                 <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                  <AlertCircle className="w-3.5 h-3.5" />{errors.lastName.message}
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  {errors.lastName.message}
                 </p>
               )}
             </fieldset>
@@ -135,7 +169,8 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
             />
             {errors.email && (
               <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                <AlertCircle className="w-3.5 h-3.5" />{errors.email.message}
+                <AlertCircle className="w-3.5 h-3.5" />
+                {errors.email.message}
               </p>
             )}
           </fieldset>
@@ -151,7 +186,8 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
             />
             {errors.password && (
               <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                <AlertCircle className="w-3.5 h-3.5" />{errors.password.message}
+                <AlertCircle className="w-3.5 h-3.5" />
+                {errors.password.message}
               </p>
             )}
           </fieldset>
@@ -167,14 +203,22 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
             />
             {errors.confirmPassword && (
               <p className="fieldset-label text-error flex items-center gap-1 mt-1">
-                <AlertCircle className="w-3.5 h-3.5" />{errors.confirmPassword.message}
+                <AlertCircle className="w-3.5 h-3.5" />
+                {errors.confirmPassword.message}
               </p>
             )}
           </fieldset>
 
-          <button type="submit" disabled={mutation.isPending} className="btn btn-primary w-full">
+          <button
+            type="submit"
+            disabled={mutation.isPending}
+            className="btn btn-primary w-full"
+          >
             {mutation.isPending ? (
-              <><span className="loading loading-spinner loading-sm" />Activating account...</>
+              <>
+                <span className="loading loading-spinner loading-sm" />
+                Activating account...
+              </>
             ) : (
               "Activate Account"
             )}
@@ -184,7 +228,12 @@ function AcceptInviteForm({ data, token, phoneNumber }: { data: InvitationData; 
         <div className="mt-4 text-center">
           <p className="text-sm text-base-content/60">
             Already have an account?{" "}
-            <Link to="/home/auth/login" className="text-primary font-bold hover:underline">Sign in</Link>
+            <Link
+              to="/home/auth/login"
+              className="text-primary font-bold hover:underline"
+            >
+              Sign in
+            </Link>
           </p>
         </div>
       </div>
@@ -197,7 +246,8 @@ function AcceptInvitePage() {
 
   const query = useQuery<{ status: string; data: InvitationData }>({
     queryKey: ["invitation", token],
-    queryFn: () => apiClient.get(`/groups/email-invitations/${token}`).then((r) => r.data),
+    queryFn: () =>
+      apiClient.get(`/groups/email-invitations/${token}`).then((r) => r.data),
     enabled: !!token,
   });
 
@@ -209,9 +259,12 @@ function AcceptInvitePage() {
             <AlertCircle className="w-12 h-12 text-error" />
             <h1 className="text-xl font-bold">Invalid invitation link</h1>
             <p className="text-base-content/60 text-sm">
-              This link is missing a token. Please use the link from your invitation email.
+              This link is missing a token. Please use the link from your
+              invitation email.
             </p>
-            <Link to="/home/auth/login" className="btn btn-primary w-full">Go to Login</Link>
+            <Link to="/home/auth/login" className="btn btn-primary w-full">
+              Go to Login
+            </Link>
           </div>
         </div>
       </div>
@@ -223,14 +276,24 @@ function AcceptInvitePage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-20 h-20 rounded-2xl shadow-lg overflow-hidden mb-4 mx-auto">
-            <img src="/agbajo-logo.jpeg" alt="Agbajo Africa" className="w-full h-full object-contain" />
+            <img
+              src="/agbajo-logo.jpeg"
+              alt="Agbajo Africa"
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="text-2xl font-bold text-primary-content">AGBAJO</h1>
           <p className="text-primary-content/80 mt-1">Accept your invitation</p>
         </div>
 
         <PageLoader query={query} loadingText="Loading invitation...">
-          {(res) => <AcceptInviteForm data={res.data} token={token} phoneNumber={phoneNumber} />}
+          {(res) => (
+            <AcceptInviteForm
+              data={res.data}
+              token={token}
+              phoneNumber={phoneNumber}
+            />
+          )}
         </PageLoader>
       </div>
     </div>

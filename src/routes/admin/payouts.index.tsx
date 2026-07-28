@@ -125,7 +125,6 @@ function AdminPayouts() {
           onClick={() => modalRef.current?.showModal()}
           className="btn btn-primary"
         >
-          <DollarSign className="w-4 h-4" />
           Manual Payout
         </button>
       </div>
