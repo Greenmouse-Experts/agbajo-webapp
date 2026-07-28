@@ -6,11 +6,9 @@ import {
   Calendar,
   Check,
   DollarSign,
-  Mail,
   Users,
   UserPlus,
   X,
-  RefreshCw,
 } from "lucide-react";
 import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
@@ -21,6 +19,7 @@ import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 import { useAuth, type AUTHRECORD } from "#/store/authStore";
 import JoinRequestsList from "#/components/groups/JoinRequestsList";
+import GroupMembersList from "#/components/groups/GroupMembersList";
 
 export const Route = createFileRoute("/admin/groups/$d/")({
   component: GroupDetailPage,
@@ -275,22 +274,10 @@ function GroupDetailPage() {
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
   const inviteByEmailModalRef = useRef<ModalHandle>(null);
-  const [memberSearch, setMemberSearch] = useState("");
-
   const groupQuery = useQuery({
     queryKey: ["admin", "group", d],
     queryFn: async () => {
       const resp = await apiClient.get(`groups/${d}`);
-      return resp.data;
-    },
-  });
-
-  const membersQuery = useQuery({
-    queryKey: ["admin", "group", d, "members", memberSearch],
-    queryFn: async () => {
-      const resp = await apiClient.get(`groups/${d}/members`, {
-        params: memberSearch ? { search: memberSearch } : {},
-      });
       return resp.data;
     },
   });
@@ -315,7 +302,6 @@ function GroupDetailPage() {
   });
 
   const group = groupQuery.data?.data as GroupDetail | undefined;
-  const members = (membersQuery.data?.data?.members ?? []) as GroupMember[];
   const isOwner = !!group && group.createdBy === authId;
 
   return (
@@ -466,63 +452,7 @@ function GroupDetailPage() {
               <JoinRequestsList groupId={d} />
 
               {/* Members */}
-              <div className="card bg-base-100 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-base-content">Members</h3>
-                    {!membersQuery.isLoading && (
-                      <span className="badge badge-neutral badge-sm">
-                        {members.length}
-                      </span>
-                    )}
-                  </div>
-                  {membersQuery.isFetching && (
-                    <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin" />
-                  )}
-                </div>
-
-                <div className="px-5 py-3 border-b border-base-200">
-                  <SearchBar value={memberSearch} onChange={setMemberSearch} />
-                </div>
-
-                {membersQuery.isLoading ? (
-                  <div className="flex justify-center py-10">
-                    <span className="loading loading-spinner loading-md" />
-                  </div>
-                ) : members.length === 0 ? (
-                  <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
-                    <Users className="w-8 h-8" />
-                    <p className="text-sm">
-                      {memberSearch
-                        ? "No members match your search"
-                        : "No members yet"}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-base-200">
-                    {members.map((m) => (
-                      <div
-                        key={m.id}
-                        className="flex items-center gap-3 px-5 py-3.5 hover:bg-base-200/40 transition-colors"
-                      >
-                        <Initials
-                          name={m.firstName}
-                          color="from-secondary to-accent"
-                          size="md"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium text-base-content truncate">
-                            {m.firstName} {m.lastName}
-                          </p>
-                          <p className="text-sm text-base-content/50 truncate">
-                            {m.email}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <GroupMembersList groupId={d} queryScope="admin" />
             </div>
           )
         }
