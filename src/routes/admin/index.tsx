@@ -93,13 +93,11 @@ function RouteComponent() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-base-content/60 mt-1">
-            Overview of platform performance and activities
-          </p>
-        </div>
-        <div className="badge badge-primary">Live Data</div>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <p className="text-base-content/60 mt-1">
+          Overview of platform performance and activities
+        </p>
+        <div className="badge badge-primary shrink-0">Live Data</div>
       </div>
       <AdminStats />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
