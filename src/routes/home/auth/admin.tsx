@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -71,10 +71,10 @@ function LoginPage() {
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="text-xl font-semibold text-base-content mb-0">
-              Welcome back
+              Admin Portal
             </h2>
             <p className="text-base-content text-base mb-2">
-              Sign in to your account to continue
+              Sign in with your administrator credentials
             </p>
 
             <form
@@ -150,17 +150,6 @@ function LoginPage() {
               </button>
             </form>
 
-            <div className="mt-2 text-center">
-              <p className="text-base text-base-content">
-                Don't have an account?{" "}
-                <Link
-                  to="/home/auth/signup"
-                  className="text-primary font-bold hover:underline"
-                >
-                  Sign up
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
 

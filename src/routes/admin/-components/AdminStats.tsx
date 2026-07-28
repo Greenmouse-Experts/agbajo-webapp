@@ -16,7 +16,11 @@ interface StatsResponse {
   status: string;
   data: {
     users: { total: number; last7Days: number; percentageChange: number };
-    activeGroups: { total: number; last7Days: number; percentageChange: number };
+    activeGroups: {
+      total: number;
+      last7Days: number;
+      percentageChange: number;
+    };
   };
 }
 
@@ -40,7 +44,7 @@ export default function AdminStats() {
   const query = useQuery<StatsResponse>({
     queryKey: ["admin", "stats"],
     queryFn: async () => {
-      const resp = await apiClient.get("groups/analytics");
+      const resp = await apiClient.get("admin/groups/analytics");
       return resp.data;
     },
   });
