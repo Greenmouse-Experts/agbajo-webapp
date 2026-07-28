@@ -18,10 +18,9 @@ interface JoinRequest {
 
 interface Props {
   groupId: string;
-  embedded?: boolean;
 }
 
-export default function JoinRequestsList({ groupId, embedded = false }: Props) {
+export default function JoinRequestsList({ groupId }: Props) {
   const queryClient = useQueryClient();
   const isAdmin = get_user_value()?.user.roles.includes("admin") ?? false;
 
@@ -41,7 +40,7 @@ export default function JoinRequestsList({ groupId, embedded = false }: Props) {
   const acceptMutation = useMutation({
     mutationFn: (userId: string) => {
       const url = isAdmin
-        ? `admins/groups/${groupId}/join-requests/${userId}`
+        ? `/groups/${groupId}/join-requests/${userId}`
         : `groups/${groupId}/join-requests/${userId}`;
       return toast
         .promise(
@@ -59,7 +58,7 @@ export default function JoinRequestsList({ groupId, embedded = false }: Props) {
   const declineMutation = useMutation({
     mutationFn: (userId: string) => {
       const url = isAdmin
-        ? `admins/groups/${groupId}/join-requests/${userId}`
+        ? `/groups/${groupId}/join-requests/${userId}`
         : `groups/${groupId}/join-requests/${userId}`;
       return toast
         .promise(apiClient.patch(url, { action: "decline" }).then(invalidate), {
@@ -113,23 +112,18 @@ export default function JoinRequestsList({ groupId, embedded = false }: Props) {
     },
   ];
 
-  const inner = (
-    <QueryCompLayout query={query}>
-      {(res) => {
-        const requests = res.data ?? [];
-        return <CustomTable data={requests} columns={columns} ring={false} />;
-      }}
-    </QueryCompLayout>
-  );
-
-  if (embedded) return <>{inner}</>;
-
   return (
     <div className="card bg-base-100 shadow-sm overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
         <h3 className="font-semibold text-base-content">Join Requests</h3>
       </div>
-      {inner}
+
+      <QueryCompLayout query={query}>
+        {(res) => {
+          const requests = res.data ?? [];
+          return <CustomTable data={requests} columns={columns} ring={false} />;
+        }}
+      </QueryCompLayout>
     </div>
   );
 }
