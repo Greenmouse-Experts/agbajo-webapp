@@ -462,27 +462,41 @@ function GroupDetailPage() {
               </div>
 
               {/* Members / Requests tabs */}
-              <div className="card bg-base-100 shadow-sm overflow-hidden">
-                <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">
-                  {(["members", "requests"] as TabParam[]).map((t) => (
-                    <button
-                      key={t}
-                      role="tab"
-                      className={`tab capitalize${tab === t ? " tab-active font-semibold" : ""}`}
-                      onClick={() =>
-                        navigate({ to: ".", search: (prev) => ({ ...prev, tab: t }) })
-                      }
-                    >
-                      {t === "members" ? "Members" : "Join Requests"}
-                    </button>
-                  ))}
-                </div>
-                {tab === "members" ? (
-                  <GroupMembersList groupId={d} queryScope="cluster-manager" embedded />
-                ) : (
-                  <JoinRequestsList groupId={d} embedded />
-                )}
-              </div>
+              {(() => {
+                const showRequests = isOwner && group.type !== "private";
+                const activeTab = showRequests ? tab : "members";
+                return (
+                  <div className="card bg-base-100 shadow-sm overflow-hidden">
+                    <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">
+                      <button
+                        role="tab"
+                        className={`tab${activeTab === "members" ? " tab-active font-semibold" : ""}`}
+                        onClick={() =>
+                          navigate({ to: ".", search: (prev) => ({ ...prev, tab: "members" }) })
+                        }
+                      >
+                        Members
+                      </button>
+                      {showRequests && (
+                        <button
+                          role="tab"
+                          className={`tab${activeTab === "requests" ? " tab-active font-semibold" : ""}`}
+                          onClick={() =>
+                            navigate({ to: ".", search: (prev) => ({ ...prev, tab: "requests" }) })
+                          }
+                        >
+                          Join Requests
+                        </button>
+                      )}
+                    </div>
+                    {activeTab === "members" ? (
+                      <GroupMembersList groupId={d} queryScope="cluster-manager" embedded />
+                    ) : (
+                      <JoinRequestsList groupId={d} embedded />
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )
         }

@@ -19,12 +19,18 @@ export default function PublicGroupsList() {
   const joinModalRef = useRef<ModalHandle>(null);
   const [joiningGroup, setJoiningGroup] = useState<Group | null>(null);
 
-  const groupsQuery = useQuery<ApiResponse<{ groups: Group[]; pagination: any }>>({
+  const groupsQuery = useQuery<
+    ApiResponse<{ groups: Group[]; pagination: any }>
+  >({
     queryKey: ["groups", "public", search, cursor],
     queryFn: () =>
       apiClient
         .get("/groups/public", {
-          params: { search: search || undefined, limit: 10, cursor: cursor || undefined },
+          params: {
+            search: search || undefined,
+            limit: 10,
+            cursor: cursor || undefined,
+          },
         })
         .then((r) => r.data),
   });
@@ -41,7 +47,6 @@ export default function PublicGroupsList() {
     onSuccess: (_, groupId) => {
       setRequestedIds((prev) => new Set(prev).add(groupId));
       joinModalRef.current?.close();
-
     },
   });
 
@@ -57,7 +62,9 @@ export default function PublicGroupsList() {
           <div>
             <div className="text-sm">{managerName(managers[0])}</div>
             {managers.length > 1 && (
-              <div className="text-xs text-base-content/60">+{managers.length - 1} more</div>
+              <div className="text-xs text-base-content/60">
+                +{managers.length - 1} more
+              </div>
             )}
           </div>
         ),
@@ -81,7 +88,18 @@ export default function PublicGroupsList() {
     {
       key: "frequency",
       label: "Frequency",
-      render: (value: string) => <span className="capitalize text-base-content/60">{value}</span>,
+      render: (value: string) => (
+        <span className="capitalize text-base-content/60">{value}</span>
+      ),
+    },
+    {
+      key: "startDate",
+      label: "Start Date",
+      render: (value: string) => (
+        <span className="capitalize text-base-content/60">
+          {new Date(value).toLocaleDateString()}
+        </span>
+      ),
     },
     {
       key: "type",
@@ -95,7 +113,8 @@ export default function PublicGroupsList() {
       label: "",
       render: (_: any, item: Group) => {
         const requested = requestedIds.has(item.id);
-        if (requested) return <span className="badge badge-warning">Requested</span>;
+        if (requested)
+          return <span className="badge badge-warning">Requested</span>;
         return (
           <button
             className="btn btn-primary btn-sm"
@@ -122,7 +141,10 @@ export default function PublicGroupsList() {
             type="text"
             placeholder="Search groups..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCursor(null); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCursor(null);
+            }}
           />
         </label>
       </div>
@@ -140,8 +162,20 @@ export default function PublicGroupsList() {
                     {pagination.total} group{pagination.total !== 1 ? "s" : ""}
                   </span>
                   <div className="join">
-                    <button className="join-item btn btn-sm" disabled={!cursor} onClick={() => setCursor(null)}>«</button>
-                    <button className="join-item btn btn-sm" disabled={!pagination.hasMore} onClick={() => setCursor(pagination.nextCursor)}>»</button>
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={!cursor}
+                      onClick={() => setCursor(null)}
+                    >
+                      «
+                    </button>
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={!pagination.hasMore}
+                      onClick={() => setCursor(pagination.nextCursor)}
+                    >
+                      »
+                    </button>
                   </div>
                 </div>
               )}
@@ -155,15 +189,22 @@ export default function PublicGroupsList() {
         title="Join Group"
         actions={
           <>
-            <button className="btn btn-ghost" onClick={() => joinModalRef.current?.close()}>
+            <button
+              className="btn btn-ghost"
+              onClick={() => joinModalRef.current?.close()}
+            >
               Cancel
             </button>
             <button
               className="btn btn-primary"
               disabled={requestJoinMutation.isPending}
-              onClick={() => joiningGroup && requestJoinMutation.mutate(joiningGroup.id)}
+              onClick={() =>
+                joiningGroup && requestJoinMutation.mutate(joiningGroup.id)
+              }
             >
-              {requestJoinMutation.isPending && <span className="loading loading-spinner loading-sm" />}
+              {requestJoinMutation.isPending && (
+                <span className="loading loading-spinner loading-sm" />
+              )}
               Send Request
             </button>
           </>
@@ -172,7 +213,10 @@ export default function PublicGroupsList() {
         {joiningGroup && (
           <p className="text-base-content/70">
             Send a join request to{" "}
-            <span className="font-medium text-base-content">{joiningGroup.groupName}</span>?
+            <span className="font-medium text-base-content">
+              {joiningGroup.groupName}
+            </span>
+            ?
           </p>
         )}
       </DialogModal>
