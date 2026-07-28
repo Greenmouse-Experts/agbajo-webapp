@@ -37,6 +37,8 @@ export default function GroupMembersList({
     },
   });
 
+  const total = membersQuery.data?.data?.total;
+
   const inner = (
     <>
       <div className="flex items-center gap-2 px-5 py-3 border-b border-base-200">
@@ -92,7 +94,12 @@ export default function GroupMembersList({
   return (
     <div className="card bg-base-100 shadow-sm overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
-        <h3 className="font-semibold text-base-content">Members</h3>
+        <div className="flex items-center gap-2">
+          <h3 className="font-semibold text-base-content">Members</h3>
+          {total !== undefined && (
+            <span className="badge badge-neutral badge-sm">{total}</span>
+          )}
+        </div>
       </div>
       {inner}
     </div>
