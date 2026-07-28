@@ -93,6 +93,13 @@ export default function PublicGroupsList() {
       ),
     },
     {
+      key: "memberCount",
+      label: "Member Count",
+      render: (value: number) => (
+        <span className="text-base-content/60">{value}</span>
+      ),
+    },
+    {
       key: "startDate",
       label: "Start Date",
       render: (value: string) => (

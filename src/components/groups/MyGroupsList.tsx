@@ -28,7 +28,9 @@ const columns: columnType<MyGroupItem>[] = [
     render: (value: number, item: MyGroupItem) => (
       <div>
         <span className="font-medium">{formatCurrency(value)}</span>
-        <span className="text-xs text-base-content/60 ml-1 capitalize">/ {item.frequency}</span>
+        <span className="text-xs text-base-content/60 ml-1 capitalize">
+          / {item.frequency}
+        </span>
       </div>
     ),
   },
@@ -45,14 +47,27 @@ const columns: columnType<MyGroupItem>[] = [
     key: "startDate",
     label: "Start Date",
     render: (value: string) =>
-      new Date(value).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" }),
+      new Date(value).toLocaleDateString("en-NG", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+  },
+  {
+    key: "memberCount",
+    label: "Member Count",
+    render: (value: number) => (
+      <span className="text-base-content/60">{value}</span>
+    ),
   },
   {
     key: "memberStatus",
     label: "Status",
     render: (value?: MemberStatus) =>
       value ? (
-        <span className={`badge ${statusBadge[value]} capitalize`}>{value}</span>
+        <span className={`badge ${statusBadge[value]} capitalize`}>
+          {value}
+        </span>
       ) : null,
   },
 ];
@@ -62,12 +77,18 @@ export default function MyGroupsList() {
   const [cursor, setCursor] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const groupsQuery = useQuery<ApiResponse<{ groups: MyGroupItem[]; pagination: any }>>({
+  const groupsQuery = useQuery<
+    ApiResponse<{ groups: MyGroupItem[]; pagination: any }>
+  >({
     queryKey: ["contributor", "my-groups", search, cursor],
     queryFn: () =>
       apiClient
         .get("groups", {
-          params: { search: search || undefined, limit: 10, cursor: cursor || undefined },
+          params: {
+            search: search || undefined,
+            limit: 10,
+            cursor: cursor || undefined,
+          },
         })
         .then((r) => r.data),
   });
@@ -81,7 +102,10 @@ export default function MyGroupsList() {
             type="text"
             placeholder="Search my groups..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setCursor(null); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCursor(null);
+            }}
           />
         </label>
       </div>
@@ -104,7 +128,12 @@ export default function MyGroupsList() {
                 <CustomTable
                   data={groups}
                   columns={columns}
-                  onRowClick={(g) => navigate({ to: "/contributor/group/$id", params: { id: g.id } })}
+                  onRowClick={(g) =>
+                    navigate({
+                      to: "/contributor/group/$id",
+                      params: { id: g.id },
+                    })
+                  }
                 />
               )}
               {pagination && (
@@ -113,8 +142,20 @@ export default function MyGroupsList() {
                     {pagination.total} group{pagination.total !== 1 ? "s" : ""}
                   </span>
                   <div className="join">
-                    <button className="join-item btn btn-sm" disabled={!cursor} onClick={() => setCursor(null)}>«</button>
-                    <button className="join-item btn btn-sm" disabled={!pagination.hasMore} onClick={() => setCursor(pagination.nextCursor)}>»</button>
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={!cursor}
+                      onClick={() => setCursor(null)}
+                    >
+                      «
+                    </button>
+                    <button
+                      className="join-item btn btn-sm"
+                      disabled={!pagination.hasMore}
+                      onClick={() => setCursor(pagination.nextCursor)}
+                    >
+                      »
+                    </button>
                   </div>
                 </div>
               )}
