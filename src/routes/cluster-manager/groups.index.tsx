@@ -926,13 +926,9 @@ function AdminGroups() {
               <legend className="fieldset-legend">Max Members</legend>
               <input
                 type="number"
-                className="input w-full"
-                placeholder="10"
-                value={createForm.maxMembers}
-                onChange={(e) =>
-                  setCreateForm({ ...createForm, maxMembers: e.target.value })
-                }
-                required
+                className="input w-full input-disabled"
+                value={10}
+                readOnly
               />
             </fieldset>
 
@@ -1110,12 +1106,9 @@ function AdminGroups() {
               <legend className="fieldset-legend">Max Members</legend>
               <input
                 type="number"
-                className="input w-full"
-                value={editForm.maxMembers}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, maxMembers: e.target.value })
-                }
-                required
+                className="input w-full input-disabled"
+                value={10}
+                readOnly
               />
             </fieldset>
 
