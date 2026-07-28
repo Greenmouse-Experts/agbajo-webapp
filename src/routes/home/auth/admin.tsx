@@ -149,13 +149,12 @@ function LoginPage() {
                 )}
               </button>
             </form>
-
           </div>
         </div>
-
+        {/*
         <p className="text-center text-base text-primary-content mt-8">
           By continuing, you agree to our Terms of Service and Privacy Policy.
-        </p>
+        </p>*/}
       </div>
     </div>
   );
