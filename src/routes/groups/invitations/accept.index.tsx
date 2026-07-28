@@ -10,7 +10,7 @@ import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
 import { extract_message } from "#/helpers/apihelpers";
 import PageLoader from "#/components/layout/PageLoader";
 
-export const Route = createFileRoute("/invitations/accept/")({
+export const Route = createFileRoute("/groups/invitations/accept/")({
   validateSearch: (s): { token?: string; phoneNumber?: string } => ({
     token: s?.token as string | undefined,
     phoneNumber: s?.phoneNumber as string | undefined,
