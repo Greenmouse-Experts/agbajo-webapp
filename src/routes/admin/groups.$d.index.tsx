@@ -200,11 +200,14 @@ const InviteUserModal = forwardRef<ModalHandle, InviteModalProps>(
     const inviteMutation = useMutation({
       mutationFn: (userId: string) =>
         toast
-          .promise(apiClient.post(`groups/${groupId}/invite/${userId}`), {
-            loading: "Sending invite...",
-            success: "Invite sent",
-            error: extract_message,
-          })
+          .promise(
+            apiClient.post(`admins/groups/${groupId}/invite/${userId}`),
+            {
+              loading: "Sending invite...",
+              success: "Invite sent",
+              error: extract_message,
+            },
+          )
           .unwrap(),
     });
 
