@@ -244,7 +244,7 @@ function AdminGroups() {
   const editMutation = useMutation({
     mutationFn: ({ id, body }: { id: string; body: object }) =>
       toast
-        .promise(apiClient.patch(`groups/${id}`, body), {
+        .promise(apiClient.patch(`admin/groups/${id}`, body), {
           loading: "Updating group...",
           success: "Group updated",
           error: extract_message,

@@ -15,15 +15,19 @@ interface GroupMember {
 interface Props {
   groupId: string;
   queryScope?: string;
+  embedded?: boolean;
 }
 
 export default function GroupMembersList({
   groupId,
   queryScope = "group",
+  embedded = false,
 }: Props) {
   const [search, setSearch] = useState("");
 
-  const membersQuery = useQuery<ApiResponse<GroupMember[]>>({
+  const membersQuery = useQuery<
+    ApiResponse<{ members: GroupMember[]; total: number }>
+  >({
     queryKey: [queryScope, groupId, "members", search],
     queryFn: async () => {
       const resp = await apiClient.get(`groups/${groupId}/members`, {
@@ -33,22 +37,18 @@ export default function GroupMembersList({
     },
   });
 
-  return (
-    <div className="card bg-base-100 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
-        <h3 className="font-semibold text-base-content">Members</h3>
-        {membersQuery.isFetching && !membersQuery.isLoading && (
-          <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin" />
-        )}
-      </div>
-
-      <div className="px-5 py-3 border-b border-base-200">
+  const inner = (
+    <>
+      <div className="flex items-center gap-2 px-5 py-3 border-b border-base-200">
         <SearchBar value={search} onChange={setSearch} />
+        {membersQuery.isFetching && !membersQuery.isLoading && (
+          <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin shrink-0" />
+        )}
       </div>
 
       <QueryCompLayout query={membersQuery}>
         {(res) => {
-          const members = res.data ?? [];
+          const members = res.data?.members ?? [];
 
           if (members.length === 0) {
             return (
@@ -84,6 +84,17 @@ export default function GroupMembersList({
           );
         }}
       </QueryCompLayout>
+    </>
+  );
+
+  if (embedded) return <>{inner}</>;
+
+  return (
+    <div className="card bg-base-100 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
+        <h3 className="font-semibold text-base-content">Members</h3>
+      </div>
+      {inner}
     </div>
   );
 }
