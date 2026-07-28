@@ -44,7 +44,7 @@ export default function AdminStats() {
   const query = useQuery<StatsResponse>({
     queryKey: ["admin", "stats"],
     queryFn: async () => {
-      const resp = await apiClient.get("admins/groups/analytics");
+      const resp = await apiClient.get("/admins/groups/analytics");
       return resp.data;
     },
   });
