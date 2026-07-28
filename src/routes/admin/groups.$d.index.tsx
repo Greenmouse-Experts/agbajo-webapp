@@ -458,13 +458,19 @@ function GroupDetailPage() {
               {/* Members / Requests tabs */}
               <div className="card bg-base-100 shadow-sm overflow-hidden">
                 <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">
-                  {(["members", "requests"] as TabParam[]).map((t) => (
+                  {(group.type === "private"
+                    ? ["members"]
+                    : ["members", "requests"]
+                  ).map((t) => (
                     <button
                       key={t}
                       role="tab"
                       className={`tab capitalize${tab === t ? " tab-active font-semibold" : ""}`}
                       onClick={() =>
-                        navigate({ to: ".", search: (prev) => ({ ...prev, tab: t }) })
+                        navigate({
+                          to: ".",
+                          search: (prev) => ({ ...prev, tab: t }),
+                        })
                       }
                     >
                       {t === "members" ? "Members" : "Join Requests"}
