@@ -112,10 +112,16 @@ function GroupDetailPage() {
               <div className="card bg-base-100 shadow-sm overflow-hidden">
                 <div className="bg-gradient-to-br from-primary/10 to-secondary/5 px-6 pt-6 pb-4">
                   <div className="flex flex-wrap gap-2 mb-3">
-                    <span className="badge badge-primary capitalize">{group.type}</span>
-                    <span className="badge badge-ghost capitalize">{group.frequency}</span>
+                    <span className="badge badge-primary capitalize">
+                      {group.type}
+                    </span>
+                    <span className="badge badge-ghost capitalize">
+                      {group.frequency}
+                    </span>
                   </div>
-                  <h1 className="text-2xl font-bold text-base-content">{group.groupName}</h1>
+                  <h1 className="text-2xl font-bold text-base-content">
+                    {group.groupName}
+                  </h1>
                   <p className="text-xs text-base-content/50 mt-1">
                     Created {formatDate(group.createdAt)}
                   </p>
@@ -149,12 +155,18 @@ function GroupDetailPage() {
                     },
                   ].map(({ icon, label, value, bg }) => (
                     <div key={label} className="flex flex-col gap-2 p-4">
-                      <div className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center`}>
+                      <div
+                        className={`w-8 h-8 rounded-lg ${bg} flex items-center justify-center`}
+                      >
                         {icon}
                       </div>
                       <div>
-                        <p className="text-xs text-base-content/50 uppercase tracking-wide">{label}</p>
-                        <p className="font-semibold text-base-content text-sm capitalize">{value}</p>
+                        <p className="text-xs text-base-content/50 uppercase tracking-wide">
+                          {label}
+                        </p>
+                        <p className="font-semibold text-base-content text-sm capitalize">
+                          {value}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -188,7 +200,9 @@ function GroupDetailPage() {
                           <p className="font-medium text-base-content text-sm truncate">
                             {managerName(m)}
                           </p>
-                          <p className="text-xs text-base-content/50 truncate">{m.email}</p>
+                          <p className="text-xs text-base-content/50 truncate">
+                            {m.email}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -223,7 +237,9 @@ function GroupDetailPage() {
                   <div className="flex flex-col items-center gap-2 py-10 text-base-content/30">
                     <Users className="w-8 h-8" />
                     <p className="text-sm">
-                      {memberSearch ? "No members match your search" : "No members yet"}
+                      {memberSearch
+                        ? "No members match your search"
+                        : "No members yet"}
                     </p>
                   </div>
                 ) : (
@@ -241,7 +257,9 @@ function GroupDetailPage() {
                           <p className="font-medium text-base-content text-sm truncate">
                             {m.firstName} {m.lastName}
                           </p>
-                          <p className="text-xs text-base-content/50 truncate">{m.email}</p>
+                          <p className="text-xs text-base-content/50 truncate">
+                            {m.email}
+                          </p>
                         </div>
                       </div>
                     ))}

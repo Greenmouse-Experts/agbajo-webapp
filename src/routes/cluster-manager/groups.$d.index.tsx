@@ -227,8 +227,14 @@ const InviteUserModal = forwardRef<ModalHandle, InviteModalProps>(
           ) : (
             <div className="divide-y divide-base-200 max-h-[50vh] overflow-y-auto -mx-1 px-1">
               {users.map((u) => (
-                <div key={u.id} className="flex items-center gap-3 py-3 first:pt-0">
-                  <Initials name={u.firstName} color="from-secondary to-accent" />
+                <div
+                  key={u.id}
+                  className="flex items-center gap-3 py-3 first:pt-0"
+                >
+                  <Initials
+                    name={u.firstName}
+                    color="from-secondary to-accent"
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-base-content truncate">
                       {managerName(u)}
@@ -487,7 +493,9 @@ function GroupDetailPage() {
                   <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
                     <Users className="w-8 h-8" />
                     <p className="text-sm">
-                      {memberSearch ? "No members match your search" : "No members yet"}
+                      {memberSearch
+                        ? "No members match your search"
+                        : "No members yet"}
                     </p>
                   </div>
                 ) : (
@@ -497,7 +505,11 @@ function GroupDetailPage() {
                         key={m.id}
                         className="flex items-center gap-3 px-5 py-3.5 hover:bg-base-200/40 transition-colors"
                       >
-                        <Initials name={m.firstName} color="from-secondary to-accent" size="md" />
+                        <Initials
+                          name={m.firstName}
+                          color="from-secondary to-accent"
+                          size="md"
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="font-medium text-base-content truncate">
                             {m.firstName} {m.lastName}

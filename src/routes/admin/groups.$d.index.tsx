@@ -94,7 +94,7 @@ const AssignManagerModal = forwardRef<ModalHandle, AssignModalProps>(
     const managersQuery = useQuery<ApiResponseV2<GroupManager[]>>({
       queryKey: ["cluster-managers", "assignable", search],
       queryFn: async () => {
-        const resp = await apiClient.get("users/cluster-managers", {
+        const resp = await apiClient.get("admins/users/cluster-managers", {
           params: search ? { search } : {},
         });
         return resp.data;
@@ -190,7 +190,7 @@ const InviteUserModal = forwardRef<ModalHandle, InviteModalProps>(
     const usersQuery = useQuery({
       queryKey: ["contributors", "invitable", search],
       queryFn: async () => {
-        const resp = await apiClient.get("/users", {
+        const resp = await apiClient.get("admins/users", {
           params: search ? { search } : {},
         });
         return resp.data;
@@ -350,13 +350,6 @@ function GroupDetailPage() {
                   </div>
                   {isOwner && (
                     <div className="flex gap-2 shrink-0">
-                      <button
-                        className="btn btn-outline btn-sm"
-                        onClick={() => inviteByEmailModalRef.current?.open()}
-                      >
-                        <Mail className="w-4 h-4" />
-                        Invite by Email
-                      </button>
                       <button
                         className="btn btn-primary"
                         onClick={() => inviteModalRef.current?.open()}

@@ -16,7 +16,7 @@ export default function ConTrend() {
   const query = useQuery<ContributionTrendResponse>({
     queryKey: ["contributions-trend"],
     queryFn: async () => {
-      const resp = await apiClient.get("admin/contributions-trend");
+      const resp = await apiClient.get("admins/contributions-trend");
       return resp.data;
     },
   });
