@@ -20,6 +20,7 @@ import InviteByEmailModal from "#/components/modals/InviteByEmailModal";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 import { useAuth, type AUTHRECORD } from "#/store/authStore";
+import JoinRequestsList from "#/components/groups/JoinRequestsList";
 
 export const Route = createFileRoute("/cluster-manager/groups/$d/")({
   component: GroupDetailPage,
@@ -464,6 +465,9 @@ function GroupDetailPage() {
                   </div>
                 )}
               </div>
+
+              {/* Join Requests */}
+              <JoinRequestsList groupId={d} />
 
               {/* Members */}
               <div className="card bg-base-100 shadow-sm overflow-hidden">
