@@ -39,13 +39,15 @@ function LoginPage() {
       toast.success("Welcome back!");
       set_user_value(data.data);
       const user = data.data.user;
+      console.log("login", user);
       if (user.roles.includes("admin")) {
         return navigate({ to: "/admin" });
+      } else if (user.roles.includes("cluster_manager")) {
+        return navigate({ to: "/cluster-manager" });
       } else if (user.roles.includes("user")) {
         return navigate({ to: "/contributor" });
       }
-
-      return navigate({ to: "/cluster-manager" });
+      return navigate({ to: "/contributor" });
     },
     onError: (err) => {
       toast.error(extract_message(err));

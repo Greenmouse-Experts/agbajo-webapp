@@ -67,7 +67,7 @@ export const Route = createFileRoute("/cluster-manager")({
         to: "/home/auth/login",
       });
     }
-    if (!user.user.roles.includes("cluster-manager")) {
+    if (!user.user.roles.includes("cluster_manager")) {
       return redirect({ to: "/home/auth/login" });
     }
   },
@@ -78,7 +78,9 @@ function ClusterManagerLayout() {
   const user = rawUser as AUTHRECORD | null;
   const { location } = useRouterState();
   const closeSidebar = () => {
-    const el = document.getElementById("cluster-manager-drawer") as HTMLInputElement | null;
+    const el = document.getElementById(
+      "cluster-manager-drawer",
+    ) as HTMLInputElement | null;
     if (el) el.checked = false;
   };
   const displayName: string = String(

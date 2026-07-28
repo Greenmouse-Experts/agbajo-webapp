@@ -4,7 +4,7 @@ import { getDefaultStore } from "jotai/vanilla";
 import apiClient from "#/api/simpleApi";
 import { toast } from "sonner";
 
-type roles = "user" | "admin" | "cluster-manager";
+type roles = "user" | "admin" | "cluster_manager";
 export interface USER {
   id: string | number;
   email: string;
@@ -98,17 +98,20 @@ export const logout = () => {
     window.location.href = "/home/auth/login";
   };
 
-  toast.promise(auth_logout().catch(() => {}), {
-    loading: "Logging out...",
-    success: () => {
-      doLogout();
-      return "Logged out";
+  toast.promise(
+    auth_logout().catch(() => {}),
+    {
+      loading: "Logging out...",
+      success: () => {
+        doLogout();
+        return "Logged out";
+      },
+      error: () => {
+        doLogout();
+        return "Logged out";
+      },
     },
-    error: () => {
-      doLogout();
-      return "Logged out";
-    },
-  });
+  );
 };
 
 export const show_logout = () => {
