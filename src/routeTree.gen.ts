@@ -20,6 +20,7 @@ import { Route as ClusterManagerIndexRouteImport } from './routes/cluster-manage
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ContributorSettingsRouteImport } from './routes/contributor/settings'
 import { Route as ClusterManagerSettingsRouteImport } from './routes/cluster-manager/settings'
+import { Route as InvitationsAcceptIndexRouteImport } from './routes/invitations/accept.index'
 import { Route as GroupsInvitationsIndexRouteImport } from './routes/groups.invitations.index'
 import { Route as ContributorWalletIndexRouteImport } from './routes/contributor/wallet.index'
 import { Route as ContributorPayoutsIndexRouteImport } from './routes/contributor/payouts.index'
@@ -114,6 +115,11 @@ const ClusterManagerSettingsRoute = ClusterManagerSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => ClusterManagerRouteRoute,
+} as any)
+const InvitationsAcceptIndexRoute = InvitationsAcceptIndexRouteImport.update({
+  id: '/invitations/accept/',
+  path: '/invitations/accept/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const GroupsInvitationsIndexRoute = GroupsInvitationsIndexRouteImport.update({
   id: '/groups/invitations/',
@@ -372,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
   '/groups/invitations/': typeof GroupsInvitationsIndexRoute
+  '/invitations/accept/': typeof InvitationsAcceptIndexRoute
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
@@ -421,6 +428,7 @@ export interface FileRoutesByTo {
   '/contributor/payouts': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet': typeof ContributorWalletIndexRoute
   '/groups/invitations': typeof GroupsInvitationsIndexRoute
+  '/invitations/accept': typeof InvitationsAcceptIndexRoute
   '/admin/groups/$d': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d': typeof ClusterManagerGroupsDIndexRoute
@@ -474,6 +482,7 @@ export interface FileRoutesById {
   '/contributor/payouts/': typeof ContributorPayoutsIndexRoute
   '/contributor/wallet/': typeof ContributorWalletIndexRoute
   '/groups/invitations/': typeof GroupsInvitationsIndexRoute
+  '/invitations/accept/': typeof InvitationsAcceptIndexRoute
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
@@ -528,6 +537,7 @@ export interface FileRouteTypes {
     | '/contributor/payouts/'
     | '/contributor/wallet/'
     | '/groups/invitations/'
+    | '/invitations/accept/'
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
@@ -577,6 +587,7 @@ export interface FileRouteTypes {
     | '/contributor/payouts'
     | '/contributor/wallet'
     | '/groups/invitations'
+    | '/invitations/accept'
     | '/admin/groups/$d'
     | '/admin/plans/$id'
     | '/cluster-manager/groups/$d'
@@ -629,6 +640,7 @@ export interface FileRouteTypes {
     | '/contributor/payouts/'
     | '/contributor/wallet/'
     | '/groups/invitations/'
+    | '/invitations/accept/'
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
@@ -651,6 +663,7 @@ export interface RootRouteChildren {
   WalletDepositCancelRoute: typeof WalletDepositCancelRoute
   WalletDepositSuccessRoute: typeof WalletDepositSuccessRoute
   GroupsInvitationsIndexRoute: typeof GroupsInvitationsIndexRoute
+  InvitationsAcceptIndexRoute: typeof InvitationsAcceptIndexRoute
   GroupsInvitationsAcceptIndexRoute: typeof GroupsInvitationsAcceptIndexRoute
 }
 
@@ -732,6 +745,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/cluster-manager/settings'
       preLoaderRoute: typeof ClusterManagerSettingsRouteImport
       parentRoute: typeof ClusterManagerRouteRoute
+    }
+    '/invitations/accept/': {
+      id: '/invitations/accept/'
+      path: '/invitations/accept'
+      fullPath: '/invitations/accept/'
+      preLoaderRoute: typeof InvitationsAcceptIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/groups/invitations/': {
       id: '/groups/invitations/'
@@ -1122,6 +1142,7 @@ const rootRouteChildren: RootRouteChildren = {
   WalletDepositCancelRoute: WalletDepositCancelRoute,
   WalletDepositSuccessRoute: WalletDepositSuccessRoute,
   GroupsInvitationsIndexRoute: GroupsInvitationsIndexRoute,
+  InvitationsAcceptIndexRoute: InvitationsAcceptIndexRoute,
   GroupsInvitationsAcceptIndexRoute: GroupsInvitationsAcceptIndexRoute,
 }
 export const routeTree = rootRouteImport
