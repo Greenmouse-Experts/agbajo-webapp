@@ -58,7 +58,7 @@ export const Route = createFileRoute("/admin")({
   loader: () => {
     const user = get_user_value();
     console.log("user", user);
-    if (!user) return redirect({ to: "/home/auth/login" });
+    if (!user) return redirect({ to: "/home/auth/admn" });
     if (user?.user.roles.includes("admin")) return user;
     return redirect({ to: "/home/auth/admin" });
   },
@@ -69,7 +69,9 @@ function AdminLayout() {
   const user = rawUser as AUTHRECORD | null;
   const { location } = useRouterState();
   const closeSidebar = () => {
-    const el = document.getElementById("admin-drawer") as HTMLInputElement | null;
+    const el = document.getElementById(
+      "admin-drawer",
+    ) as HTMLInputElement | null;
     if (el) el.checked = false;
   };
   const displayName = String(user?.user?.name ?? "Admin");
