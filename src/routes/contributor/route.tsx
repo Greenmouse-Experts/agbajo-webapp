@@ -71,6 +71,10 @@ function ContributorLayout() {
   const [rawUser] = useAuth();
   const user = rawUser as AUTHRECORD | null;
   const { location } = useRouterState();
+  const closeSidebar = () => {
+    const el = document.getElementById("contributor-drawer") as HTMLInputElement | null;
+    if (el) el.checked = false;
+  };
   const displayName: string = String(
     (user as AUTHRECORD | null)?.user?.name ?? "User",
   );
@@ -189,6 +193,7 @@ function ContributorLayout() {
                     <Link
                       to={to as any}
                       className={isActive ? "active font-medium" : ""}
+                      onClick={closeSidebar}
                     >
                       <Icon className="w-5 h-5" />
                       {label}
@@ -204,6 +209,7 @@ function ContributorLayout() {
             <Link
               to={"/contributor/settings" as any}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-200  hover:text-base-content  font-medium transition-colors w-full"
+              onClick={closeSidebar}
             >
               <Settings className="w-4 h-4" />
               Settings

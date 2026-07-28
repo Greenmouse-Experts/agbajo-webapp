@@ -68,6 +68,10 @@ function AdminLayout() {
   const [rawUser] = useAuth();
   const user = rawUser as AUTHRECORD | null;
   const { location } = useRouterState();
+  const closeSidebar = () => {
+    const el = document.getElementById("admin-drawer") as HTMLInputElement | null;
+    if (el) el.checked = false;
+  };
   const displayName = String(user?.user?.name ?? "Admin");
   const initial = displayName.charAt(0).toUpperCase();
 
@@ -175,6 +179,7 @@ function AdminLayout() {
                     <Link
                       to={to as any}
                       className={isActive ? "active font-medium" : ""}
+                      onClick={closeSidebar}
                     >
                       <Icon className="w-5 h-5" />
                       {label}
@@ -190,6 +195,7 @@ function AdminLayout() {
             <Link
               to={"/admin/settings" as any}
               className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-200 text-base-content/60 hover:text-base-content text-sm font-medium transition-colors w-full"
+              onClick={closeSidebar}
             >
               <Settings className="w-4 h-4" />
               Settings
