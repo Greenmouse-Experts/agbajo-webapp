@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import apiClient from "#/api/simpleApi";
+import apiClient, { type ApiResponse } from "#/api/simpleApi";
 import QueryCompLayout from "#/components/layout/QueryCompLayout";
 import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 import { get_user_value } from "#/store/authStore";
@@ -24,7 +24,7 @@ export default function JoinRequestsList({ groupId }: Props) {
   const queryClient = useQueryClient();
   const isAdmin = get_user_value()?.user.roles.includes("admin") ?? false;
 
-  const query = useQuery<{ data: { requests: JoinRequest[] } }>({
+  const query = useQuery<ApiResponse<JoinRequest[]>>({
     queryKey: ["group", groupId, "join-requests"],
     queryFn: async () => {
       const resp = await apiClient.get(`groups/${groupId}/join-requests`);
@@ -33,18 +33,22 @@ export default function JoinRequestsList({ groupId }: Props) {
   });
 
   const invalidate = () =>
-    queryClient.invalidateQueries({ queryKey: ["group", groupId, "join-requests"] });
+    queryClient.invalidateQueries({
+      queryKey: ["group", groupId, "join-requests"],
+    });
 
   const acceptMutation = useMutation({
     mutationFn: (userId: string) => {
       const url = isAdmin
         ? `admins/groups/${groupId}/join-requests/${userId}`
         : `groups/${groupId}/join-requests/${userId}`;
-      return toast.promise(apiClient.patch(url, { action: "accept" }).then(invalidate), {
-        loading: "Accepting request...",
-        success: "Request accepted",
-        error: extract_message,
-      }).unwrap();
+      return toast
+        .promise(apiClient.patch(url, { action: "accept" }).then(invalidate), {
+          loading: "Accepting request...",
+          success: "Request accepted",
+          error: extract_message,
+        })
+        .unwrap();
     },
   });
 
@@ -53,11 +57,13 @@ export default function JoinRequestsList({ groupId }: Props) {
       const url = isAdmin
         ? `admins/groups/${groupId}/join-requests/${userId}`
         : `groups/${groupId}/join-requests/${userId}`;
-      return toast.promise(apiClient.patch(url, { action: "decline" }).then(invalidate), {
-        loading: "Declining request...",
-        success: "Request declined",
-        error: extract_message,
-      }).unwrap();
+      return toast
+        .promise(apiClient.patch(url, { action: "decline" }).then(invalidate), {
+          loading: "Declining request...",
+          success: "Request declined",
+          error: extract_message,
+        })
+        .unwrap();
     },
   });
 
@@ -74,7 +80,9 @@ export default function JoinRequestsList({ groupId }: Props) {
       key: "status",
       label: "Status",
       render: (_v, r) => (
-        <span className="badge badge-warning badge-sm capitalize">{r.status}</span>
+        <span className="badge badge-warning badge-sm capitalize">
+          {r.status}
+        </span>
       ),
     },
     {
@@ -109,14 +117,8 @@ export default function JoinRequestsList({ groupId }: Props) {
 
       <QueryCompLayout query={query}>
         {(res) => {
-          const requests = res.data?.requests ?? [];
-          return (
-            <CustomTable
-              data={requests}
-              columns={columns}
-              ring={false}
-            />
-          );
+          const requests = res.data ?? [];
+          return <CustomTable data={requests} columns={columns} ring={false} />;
         }}
       </QueryCompLayout>
     </div>
