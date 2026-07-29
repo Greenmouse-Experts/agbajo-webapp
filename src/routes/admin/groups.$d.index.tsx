@@ -10,7 +10,10 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
+import apiClient, {
+  type ApiResponse,
+  type ApiResponseV2,
+} from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
@@ -281,7 +284,7 @@ function GroupDetailPage() {
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
   const inviteByEmailModalRef = useRef<ModalHandle>(null);
-  const groupQuery = useQuery({
+  const groupQuery = useQuery<ApiResponse<GroupDetail>>({
     queryKey: ["admin", "group", d],
     queryFn: async () => {
       const resp = await apiClient.get(`groups/${d}`);
@@ -323,169 +326,178 @@ function GroupDetailPage() {
       </Link>
 
       <PageLoader query={groupQuery}>
-        {() =>
-          group && (
-            <div className="space-y-5">
-              {/* Header */}
-              <div className="card bg-base-100 shadow-sm p-6">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <span className="badge badge-primary capitalize">
-                        {group.type}
-                      </span>
-                      <span className="badge badge-outline capitalize">
-                        {group.frequency}
-                      </span>
-                    </div>
-                    <h1 className="text-2xl font-bold text-base-content">
-                      {group.groupName}
-                    </h1>
-                    <p className="text-sm text-base-content/50 mt-1">
-                      Created {formatDate(group.createdAt)}
-                    </p>
-                  </div>
-                  {isOwner && (
-                    <div className="flex gap-2 shrink-0">
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => inviteModalRef.current?.open()}
-                      >
-                        <UserPlus className="w-4 h-4" />
-                        Invite Members
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                <div className="divider my-4" />
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4">
-                  {[
-                    {
-                      icon: <DollarSign className="w-3.5 h-3.5" />,
-                      label: "Contribution",
-                      value: formatCurrency(group.contributionAmount),
-                    },
-                    {
-                      icon: <DollarSign className="w-3.5 h-3.5" />,
-                      label: "Per Interval",
-                      value: formatCurrency(group.frequencyAmount),
-                    },
-                    {
-                      icon: <Users className="w-3.5 h-3.5" />,
-                      label: "Max Members",
-                      value: group.maxMembers,
-                    },
-                    {
-                      icon: <Calendar className="w-3.5 h-3.5" />,
-                      label: "Start Date",
-                      value: formatDate(group.startDate),
-                    },
-                  ].map(({ icon, label, value }) => (
-                    <div key={label}>
-                      <div className="flex items-center gap-1 text-xs text-base-content/50 uppercase tracking-wide mb-1">
-                        {icon}
-                        {label}
+        {(data) => {
+          const isOwner = data.data.createdBy == authId;
+          return (
+            <>
+              {group && (
+                <div className="space-y-5">
+                  {/* Header */}
+                  <div className="card bg-base-100 shadow-sm p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2 mb-2">
+                          <span className="badge badge-primary capitalize">
+                            {group.type}
+                          </span>
+                          <span className="badge badge-outline capitalize">
+                            {group.frequency}
+                          </span>
+                        </div>
+                        <h1 className="text-2xl font-bold text-base-content">
+                          {group.groupName}
+                        </h1>
+                        <p className="text-sm text-base-content/50 mt-1">
+                          Created {formatDate(group.createdAt)}
+                        </p>
                       </div>
-                      <p className="font-semibold text-base-content capitalize">
-                        {value}
-                      </p>
+                      {isOwner && (
+                        <div className="flex gap-2 shrink-0">
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => inviteModalRef.current?.open()}
+                          >
+                            <UserPlus className="w-4 h-4" />
+                            Invite Members
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Managers */}
-              <div className="card bg-base-100 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-base-content">
-                      Managers
-                    </h3>
-                    <span className="badge badge-neutral badge-sm">
-                      {group.managers.length}
-                    </span>
-                  </div>
-                  {isOwner && (
-                    <button
-                      className="btn btn-outline btn-sm"
-                      onClick={() => assignModalRef.current?.open()}
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      Assign
-                    </button>
-                  )}
-                </div>
+                    <div className="divider my-4" />
 
-                {group.managers.length === 0 ? (
-                  <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
-                    <Users className="w-8 h-8" />
-                    <p className="text-sm">No managers assigned yet</p>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-base-200">
-                    {group.managers.map((m) => (
-                      <div
-                        key={m.id}
-                        className="flex items-center gap-3 px-5 py-3.5 hover:bg-base-200/40 transition-colors"
-                      >
-                        <Initials name={m.firstName} size="md" />
-                        <div className="min-w-0 flex-1">
-                          <p className="font-medium text-base-content truncate">
-                            {managerName(m)}
-                          </p>
-                          <p className="text-sm text-base-content/50 truncate">
-                            {m.email}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4">
+                      {[
+                        {
+                          icon: <DollarSign className="w-3.5 h-3.5" />,
+                          label: "Contribution",
+                          value: formatCurrency(group.contributionAmount),
+                        },
+                        {
+                          icon: <DollarSign className="w-3.5 h-3.5" />,
+                          label: "Per Interval",
+                          value: formatCurrency(group.frequencyAmount),
+                        },
+                        {
+                          icon: <Users className="w-3.5 h-3.5" />,
+                          label: "Max Members",
+                          value: group.maxMembers,
+                        },
+                        {
+                          icon: <Calendar className="w-3.5 h-3.5" />,
+                          label: "Start Date",
+                          value: formatDate(group.startDate),
+                        },
+                      ].map(({ icon, label, value }) => (
+                        <div key={label}>
+                          <div className="flex items-center gap-1 text-xs text-base-content/50 uppercase tracking-wide mb-1">
+                            {icon}
+                            {label}
+                          </div>
+                          <p className="font-semibold text-base-content capitalize">
+                            {value}
                           </p>
                         </div>
-                        {isOwner && (
-                          <button
-                            className="btn btn-ghost btn-sm btn-square text-error shrink-0"
-                            disabled={unassignMutation.isPending}
-                            onClick={() => unassignMutation.mutate(m.id)}
-                            title="Unassign"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                )}
-              </div>
 
-              {/* Members / Requests tabs */}
-              <div className="card bg-base-100 shadow-sm overflow-hidden">
-                <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">
-                  {(group.type === "private"
-                    ? ["members"]
-                    : ["members", "requests"]
-                  ).map((t) => (
-                    <button
-                      key={t}
-                      role="tab"
-                      className={`tab capitalize${tab === t ? " tab-active font-semibold" : ""}`}
-                      onClick={() =>
-                        navigate({
-                          to: ".",
-                          search: (prev) => ({ ...prev, tab: t }),
-                        })
-                      }
-                    >
-                      {t === "members" ? "Members" : "Join Requests"}
-                    </button>
-                  ))}
+                  {/* Managers */}
+                  <div className="card bg-base-100 shadow-sm overflow-hidden">
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-base-content">
+                          Managers
+                        </h3>
+                        <span className="badge badge-neutral badge-sm">
+                          {group.managers.length}
+                        </span>
+                      </div>
+                      {isOwner && (
+                        <button
+                          className="btn btn-outline btn-sm"
+                          onClick={() => assignModalRef.current?.open()}
+                        >
+                          <UserPlus className="w-4 h-4" />
+                          Assign
+                        </button>
+                      )}
+                    </div>
+
+                    {group.managers.length === 0 ? (
+                      <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
+                        <Users className="w-8 h-8" />
+                        <p className="text-sm">No managers assigned yet</p>
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-base-200">
+                        {group.managers.map((m) => (
+                          <div
+                            key={m.id}
+                            className="flex items-center gap-3 px-5 py-3.5 hover:bg-base-200/40 transition-colors"
+                          >
+                            <Initials name={m.firstName} size="md" />
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-base-content truncate">
+                                {managerName(m)}
+                              </p>
+                              <p className="text-sm text-base-content/50 truncate">
+                                {m.email}
+                              </p>
+                            </div>
+                            {isOwner && (
+                              <button
+                                className="btn btn-ghost btn-sm btn-square text-error shrink-0"
+                                disabled={unassignMutation.isPending}
+                                onClick={() => unassignMutation.mutate(m.id)}
+                                title="Unassign"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Members / Requests tabs */}
+                  <div className="card bg-base-100 shadow-sm overflow-hidden">
+                    <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">
+                      {(group.type === "private" || !isOwner
+                        ? ["members"]
+                        : ["members", "requests"]
+                      ).map((t) => (
+                        <button
+                          key={t}
+                          role="tab"
+                          className={`tab capitalize${tab === t ? " tab-active font-semibold" : ""}`}
+                          onClick={() =>
+                            navigate({
+                              to: ".",
+                              search: (prev) => ({ ...prev, tab: t }),
+                            })
+                          }
+                        >
+                          {t === "members" ? "Members" : "Join Requests"}
+                        </button>
+                      ))}
+                    </div>
+                    {tab === "members" ? (
+                      <GroupMembersList
+                        groupId={d}
+                        queryScope="admin"
+                        embedded
+                      />
+                    ) : (
+                      <JoinRequestsList groupId={d} embedded />
+                    )}
+                  </div>
                 </div>
-                {tab === "members" ? (
-                  <GroupMembersList groupId={d} queryScope="admin" embedded />
-                ) : (
-                  <JoinRequestsList groupId={d} embedded />
-                )}
-              </div>
-            </div>
-          )
-        }
+              )}
+            </>
+          );
+        }}
       </PageLoader>
 
       {group && (
