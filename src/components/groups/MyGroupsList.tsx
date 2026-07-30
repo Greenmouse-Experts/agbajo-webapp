@@ -53,13 +53,7 @@ const columns: columnType<MyGroupItem>[] = [
         year: "numeric",
       }),
   },
-  {
-    key: "memberCount",
-    label: "Member Count",
-    render: (value: number) => (
-      <span className="text-base-content/60">{value}</span>
-    ),
-  },
+
   {
     key: "memberStatus",
     label: "Status",
