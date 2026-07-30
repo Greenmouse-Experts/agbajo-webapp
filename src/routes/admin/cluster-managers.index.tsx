@@ -17,6 +17,7 @@ import apiClient, { type ApiResponseV2 } from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
 import PhoneNumberInput from "#/components/modals/inputs/PhoneNumberInput";
+import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
 import { toast } from "sonner";
 import { extract_message } from "#/helpers/apihelpers";
 
@@ -93,6 +94,8 @@ function AdminClusterManagers() {
   const queryClient = useQueryClient();
   const detailsModalRef = useRef<HTMLDialogElement>(null);
   const inviteModalRef = useRef<HTMLDialogElement>(null);
+  const deleteConfirmRef = useRef<ModalHandle>(null);
+  const [pendingDelete, setPendingDelete] = useState<Manager | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selected, setSelected] = useState<Manager | null>(null);
@@ -130,6 +133,25 @@ function AdminClusterManagers() {
       }),
     onSuccess: () => {
       detailsModalRef.current?.close();
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "cluster-managers"],
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      toast
+        .promise(apiClient.delete(`admins/users/${id}`), {
+          loading: "Deleting user...",
+          success: "User deleted",
+          error: extract_message,
+        })
+        .unwrap(),
+    onSuccess: () => {
+      deleteConfirmRef.current?.close();
+      detailsModalRef.current?.close();
+      setPendingDelete(null);
       queryClient.invalidateQueries({
         queryKey: ["admin", "cluster-managers"],
       });
@@ -325,15 +347,35 @@ function AdminClusterManagers() {
                           >
                             <Eye className="w-4 h-4" />
                           </button>
+                          <button
+                            className="btn btn-error btn-outline btn-sm btn-square"
+                            onClick={() => {
+                              setPendingDelete(manager);
+                              deleteConfirmRef.current?.open();
+                            }}
+                          >
+                            <UserX className="w-4 h-4" />
+                          </button>
                         </div>
                       ) : (
-                        <button
-                          className="btn btn-outline btn-sm w-full mt-4"
-                          onClick={() => openDetails(manager)}
-                        >
-                          <Eye className="w-4 h-4" />
-                          View Details
-                        </button>
+                        <div className="mt-4 flex gap-2">
+                          <button
+                            className="btn btn-outline btn-sm flex-1"
+                            onClick={() => openDetails(manager)}
+                          >
+                            <Eye className="w-4 h-4" />
+                            View Details
+                          </button>
+                          <button
+                            className="btn btn-error btn-outline btn-sm btn-square"
+                            onClick={() => {
+                              setPendingDelete(manager);
+                              deleteConfirmRef.current?.open();
+                            }}
+                          >
+                            <UserX className="w-4 h-4" />
+                          </button>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -494,6 +536,18 @@ function AdminClusterManagers() {
             </div>
 
             <div className="modal-action">
+              <button
+                className="btn btn-error btn-outline mr-auto"
+                onClick={() => {
+                  if (selected) {
+                    setPendingDelete(selected);
+                    deleteConfirmRef.current?.open();
+                  }
+                }}
+              >
+                <UserX className="w-4 h-4" />
+                Delete User
+              </button>
               <form method="dialog">
                 <button className="btn btn-ghost">Close</button>
               </form>
@@ -588,6 +642,43 @@ function AdminClusterManagers() {
           <button>close</button>
         </form>
       </dialog>
+
+      <Modal
+        ref={deleteConfirmRef}
+        title="Delete User"
+        actions={
+          <>
+            <button
+              className="btn btn-ghost"
+              onClick={() => deleteConfirmRef.current?.close()}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn btn-error"
+              disabled={deleteMutation.isPending}
+              onClick={() => {
+                if (pendingDelete) deleteMutation.mutate(pendingDelete.id);
+              }}
+            >
+              {deleteMutation.isPending ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                <UserX className="w-4 h-4" />
+              )}
+              Delete
+            </button>
+          </>
+        }
+      >
+        <p className="text-base-content">
+          Are you sure you want to delete{" "}
+          <span className="font-semibold">
+            {pendingDelete ? fullName(pendingDelete) : "this user"}
+          </span>
+          ? This action cannot be undone.
+        </p>
+      </Modal>
     </div>
   );
 }

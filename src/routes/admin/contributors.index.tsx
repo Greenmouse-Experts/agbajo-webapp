@@ -1,19 +1,19 @@
 import { useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { Eye, UserCheck, UserX, Mail, Star, AlertCircle } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Mail, Star, AlertCircle, Trash2 } from "lucide-react";
 import apiClient from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
+import CustomTable, { type columnType } from "#/components/tables/CustomTable";
+import { type Actions } from "#/components/tables/pop-up";
+import { usePagination } from "#/helpers/pagination";
+import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
+import { toast } from "sonner";
+import { extract_message } from "#/helpers/apihelpers";
 
 export const Route = createFileRoute("/admin/contributors/")({
   component: AdminContributors,
 });
-
-type VerificationStatus = "pending" | "verified" | "rejected";
 
 interface Contributor {
   id: string;
@@ -23,82 +23,103 @@ interface Contributor {
   createdAt: string;
 }
 
-interface UsersPage {
-  users: Contributor[];
-  pagination: {
-    limit: number;
-    total: number;
-    nextCursor: string | null;
-    hasMore: boolean;
-  };
-}
-
-const StatusBadge = ({ status }: { status: VerificationStatus }) => {
-  if (status === "verified")
-    return <span className="badge badge-success">Verified</span>;
-  if (status === "rejected")
-    return <span className="badge badge-error">Rejected</span>;
-  return <span className="badge badge-warning">Pending</span>;
-};
-
-const Avatar = ({
-  name,
-  size = "sm",
-}: {
-  name?: string;
-  size?: "sm" | "lg";
-}) => (
-  <div
-    className={`rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-medium shrink-0 ${size === "lg" ? "w-16 h-16 text-xl" : "w-8 h-8 text-base"}`}
-  >
+const Avatar = ({ name }: { name?: string; size?: "sm" | "lg" }) => (
+  <div className="rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-medium shrink-0 w-8 h-8 text-base">
     {(name?.[0] ?? "C").toUpperCase()}
   </div>
 );
 
+const columns: columnType<Contributor>[] = [
+  {
+    key: "firstName",
+    label: "Name",
+    render: (_, item) => (
+      <div className="flex items-center gap-3">
+        <Avatar name={item.firstName} />
+        <span className="font-medium">
+          {item.firstName} {item.lastName}
+        </span>
+      </div>
+    ),
+  },
+  {
+    key: "email",
+    label: "Email",
+    render: (val) => <span className="text-base-content/70">{val}</span>,
+  },
+  {
+    key: "createdAt",
+    label: "Joined",
+    render: (val) => (
+      <span className="text-sm text-base-content/60">
+        {new Date(val).toLocaleDateString()}
+      </span>
+    ),
+  },
+];
+
 function AdminContributors() {
   const queryClient = useQueryClient();
   const modalRef = useRef<HTMLDialogElement>(null);
+  const deleteConfirmRef = useRef<ModalHandle>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selected, setSelected] = useState<Contributor | null>(null);
-  const [selectedStatus, setSelectedStatus] =
-    useState<VerificationStatus>("pending");
+  const [pendingDelete, setPendingDelete] = useState<Contributor | null>(null);
+  const pagination = usePagination();
+  const { page, pageSize } = pagination;
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteQuery<UsersPage>({
-      queryKey: ["admin", "contributors", searchQuery],
-      queryFn: async ({ pageParam }) => {
-        const params: Record<string, string | number> = { limit: 10 };
-        if (searchQuery) params.search = searchQuery;
-        if (pageParam) params.cursor = pageParam as string;
-        const resp = await apiClient.get("/admins/users", { params });
-        return resp.data.data as UsersPage;
-      },
-      getNextPageParam: (lastPage) =>
-        lastPage.pagination.hasMore
-          ? (lastPage.pagination.nextCursor ?? undefined)
-          : undefined,
-      initialPageParam: "",
-    });
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "contributors", searchQuery, page, pageSize],
+    queryFn: async () => {
+      const params: Record<string, string | number> = {
+        page,
+        limit: pageSize,
+      };
+      if (searchQuery) params.search = searchQuery;
+      const resp = await apiClient.get("/admins/users", { params });
+      return resp.data.data as { users: Contributor[]; pagination: { total: number } };
+    },
+  });
 
-  const kycMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: VerificationStatus }) =>
-      apiClient.patch(`admin/contributors/${id}/kyc`, {
-        verification_status: status,
-      }),
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) =>
+      toast
+        .promise(apiClient.delete(`admins/users/${id}`), {
+          loading: "Deleting user...",
+          success: "User deleted",
+          error: extract_message,
+        })
+        .unwrap(),
     onSuccess: () => {
-      modalRef.current?.close();
+      deleteConfirmRef.current?.close();
+      setPendingDelete(null);
       queryClient.invalidateQueries({ queryKey: ["admin", "contributors"] });
     },
   });
 
-  const contributors = data?.pages.flatMap((p) => p.users) ?? [];
-  const total = data?.pages[0]?.pagination.total ?? 0;
+  const contributors = data?.users ?? [];
+  const total = data?.pagination.total ?? 0;
 
   const openModal = (c: Contributor) => {
     setSelected(c);
-    setSelectedStatus("pending");
     modalRef.current?.showModal();
   };
+
+  const actions: Actions<Contributor>[] = [
+    {
+      key: "view",
+      label: "View Details",
+      action: (item) => openModal(item),
+    },
+    {
+      key: "delete",
+      label: "Delete User",
+      action: (item) => {
+        setPendingDelete(item);
+        deleteConfirmRef.current?.open();
+      },
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -131,62 +152,53 @@ function AdminContributors() {
           <p className="text-base-content/60">Try adjusting your search</p>
         </div>
       ) : (
-        <>
-          <div className="card bg-base-100 shadow overflow-x-auto">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Joined</th>
-                  <th className="w-12"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {contributors.map((c) => (
-                  <tr key={c.id} className="hover">
-                    <td>
-                      <div className="flex items-center gap-3">
-                        <Avatar name={c.firstName} />
-                        <span className="font-medium">
-                          {c.firstName} {c.lastName}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="text-base-content/70">{c.email}</td>
-                    <td className="text-sm text-base-content/60">
-                      {new Date(c.createdAt).toLocaleDateString()}
-                    </td>
-                    <td>
-                      <button
-                        onClick={() => openModal(c)}
-                        className="btn btn-ghost btn-sm btn-square"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {hasNextPage && (
-            <div className="flex justify-center">
-              <button
-                className="btn btn-outline"
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-              >
-                {isFetchingNextPage && (
-                  <span className="loading loading-spinner loading-sm" />
-                )}
-                Load More
-              </button>
-            </div>
-          )}
-        </>
+        <CustomTable
+          data={contributors}
+          columns={columns}
+          actions={actions}
+          totalCount={total}
+          paginationProps={pagination}
+        />
       )}
+
+      <Modal
+        ref={deleteConfirmRef}
+        title="Delete User"
+        actions={
+          <>
+            <button
+              className="btn btn-ghost"
+              onClick={() => deleteConfirmRef.current?.close()}
+            >
+              Cancel
+            </button>
+            <button
+              className="btn btn-error"
+              disabled={deleteMutation.isPending}
+              onClick={() => {
+                if (pendingDelete) deleteMutation.mutate(pendingDelete.id);
+              }}
+            >
+              {deleteMutation.isPending ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+              Delete
+            </button>
+          </>
+        }
+      >
+        <p className="text-base-content">
+          Are you sure you want to delete{" "}
+          <span className="font-semibold">
+            {pendingDelete
+              ? `${pendingDelete.firstName} ${pendingDelete.lastName}`
+              : "this user"}
+          </span>
+          ? This action cannot be undone.
+        </p>
+      </Modal>
 
       <dialog ref={modalRef} className="modal">
         {selected && (
@@ -195,7 +207,9 @@ function AdminContributors() {
 
             <div className="space-y-6 mt-6">
               <div className="flex items-center gap-4">
-                <Avatar name={selected.firstName} size="lg" />
+                <div className="rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white font-medium shrink-0 w-16 h-16 text-xl">
+                  {(selected.firstName?.[0] ?? "C").toUpperCase()}
+                </div>
                 <div>
                   <h4 className="text-lg font-semibold">
                     {selected.firstName} {selected.lastName}
@@ -217,44 +231,6 @@ function AdminContributors() {
                 <div className="flex justify-between">
                   <span className="text-base-content/60">Joined</span>
                   <span>{new Date(selected.createdAt).toLocaleString()}</span>
-                </div>
-              </div>
-
-              <div className="card bg-base-200 p-4">
-                <h4 className="text-sm font-medium text-base-content mb-3">
-                  KYC Verification
-                </h4>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-base-content/60">Status</span>
-                  <StatusBadge status={selectedStatus} />
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    className="btn btn-success btn-sm flex-1"
-                    disabled={kycMutation.isPending}
-                    onClick={() =>
-                      kycMutation.mutate({
-                        id: selected.id,
-                        status: "verified",
-                      })
-                    }
-                  >
-                    <UserCheck className="w-4 h-4" />
-                    Approve
-                  </button>
-                  <button
-                    className="btn btn-error btn-sm flex-1"
-                    disabled={kycMutation.isPending}
-                    onClick={() =>
-                      kycMutation.mutate({
-                        id: selected.id,
-                        status: "rejected",
-                      })
-                    }
-                  >
-                    <UserX className="w-4 h-4" />
-                    Reject
-                  </button>
                 </div>
               </div>
 
