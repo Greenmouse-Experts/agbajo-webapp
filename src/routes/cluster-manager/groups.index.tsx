@@ -120,16 +120,6 @@ const columns: columnType<Group>[] = [
       ),
   },
   {
-    key: "maxMembers",
-    label: "Members",
-    render: (value: number) => (
-      <div className="flex items-center gap-1 text-base-content/60">
-        <Users className="w-4 h-4" />
-        {value}
-      </div>
-    ),
-  },
-  {
     key: "contributionAmount",
     label: "Amount",
     render: (value: number) => (
