@@ -171,7 +171,7 @@ function ContributorKYC() {
                 </p>
               </fieldset>
 
-              <fieldset className="fieldset">
+              {/*<fieldset className="fieldset">
                 <legend className="fieldset-legend">
                   BVN (Bank Verification Number)
                 </legend>
@@ -188,7 +188,7 @@ function ContributorKYC() {
                     ? `****${data.bvn.slice(-4)} — entered`
                     : "Not provided"}
                 </p>
-              </fieldset>
+              </fieldset>*/}
             </div>
           </div>
         </div>
@@ -211,13 +211,13 @@ function ContributorKYC() {
             </div>
 
             <div className="space-y-3">
-              <UploadRow
+              {/*<UploadRow
                 label="Face Image"
                 hint="Clear passport photograph"
                 uploaded={data.faceUploaded}
                 uploading={uploading === "faceUploaded"}
                 onFile={() => fakeUpload("faceUploaded")}
-              />
+              />*/}
               <UploadRow
                 label="Selfie Image"
                 hint="Live selfie for liveness check"
@@ -230,7 +230,7 @@ function ContributorKYC() {
         </div>
 
         {/* Address */}
-        <div className="card bg-base-100 border border-base-200 shadow-sm lg:col-span-2">
+        {/*<div className="card bg-base-100 border border-base-200 shadow-sm lg:col-span-2">
           <div className="card-body gap-5">
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-xl bg-warning flex items-center justify-center shrink-0">
@@ -274,7 +274,7 @@ function ContributorKYC() {
               </div>
             </div>
           </div>
-        </div>
+        </div>*/}
       </div>
 
       {/* Progress summary */}
