@@ -13,6 +13,7 @@ import {
 import apiClient from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import SearchBar from "#/components/Searchbar";
+import GroupContributions from "#/components/groups/GroupContributions.tsx";
 
 export const Route = createFileRoute("/contributor/group/$id/")({
   component: GroupDetailPage,
@@ -92,7 +93,7 @@ function GroupDetailPage() {
   const members = (membersQuery.data?.data?.members ?? []) as GroupMember[];
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 ">
       <Link
         to="/contributor/groups"
         search={{ tab: "my" }}
@@ -103,9 +104,9 @@ function GroupDetailPage() {
       </Link>
 
       <PageLoader query={groupQuery}>
-        {() =>
-          group && (
-            <div className="space-y-4">
+        {(data) => (
+          <section className="grid gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2">
               {/* Hero header */}
               <div className="card bg-base-100 shadow-sm overflow-hidden">
                 <div className="bg-gradient-to-br from-primary/10 to-secondary/5 px-6 pt-6 pb-4">
@@ -265,8 +266,11 @@ function GroupDetailPage() {
                 )}
               </div>
             </div>
-          )
-        }
+            <div className="lg:col-span-1">
+              <GroupContributions groupId={id} />
+            </div>
+          </section>
+        )}
       </PageLoader>
     </div>
   );

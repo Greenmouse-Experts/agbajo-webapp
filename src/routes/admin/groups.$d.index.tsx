@@ -490,7 +490,7 @@ function GroupDetailPage() {
                         embedded
                       />
                     ) : (
-                      <JoinRequestsList groupId={d} embedded />
+                      <JoinRequestsList groupId={d} />
                     )}
                   </div>
                 </div>
