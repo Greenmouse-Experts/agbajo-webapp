@@ -145,9 +145,7 @@ function ContributorKYC() {
                 <h3 className="font-semibold text-base-content">
                   Identity Documents
                 </h3>
-                <p className="text-sm text-base-content">
-                  Upload your verification documents
-                </p>
+                <p className="text-sm text-base-content">Upload your Key</p>
               </div>
             </div>
 
@@ -285,12 +283,12 @@ function ContributorKYC() {
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: "NIN", done: !!data.nin },
-              { label: "BVN", done: !!data.bvn },
-              { label: "Face photo", done: data.faceUploaded },
+              // { label: "NIN", done: !!data.nin },
+              // { label: "BVN", done: !!data.bvn },
+              // { label: "Face photo", done: data.faceUploaded },
               { label: "Selfie", done: data.selfieUploaded },
-              { label: "Address", done: !!data.address },
-              { label: "Address proof", done: data.addressProofUploaded },
+              // { label: "Address", done: !!data.address },
+              // { label: "Address proof", done: data.addressProofUploaded },
             ].map((item) => (
               <div
                 key={item.label}
