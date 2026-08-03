@@ -62,8 +62,6 @@ interface GroupMember {
 
 const formatCurrency = (amount = 0) =>
   new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "Dollar",
     minimumFractionDigits: 0,
   }).format(amount);
 
