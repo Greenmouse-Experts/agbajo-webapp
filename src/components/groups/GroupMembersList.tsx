@@ -107,7 +107,8 @@ export default function GroupMembersList({
 
   const createSlotButton = isOwner ? (
     <button
-      className="btn btn-primary btn-sm"
+      className="btn btn-primary"
+      disabled={(membersQuery.data?.data?.members?.length ?? 0) < 10}
       onClick={() => {
         setSelectedIds([]);
         slotModalRef.current?.open();
