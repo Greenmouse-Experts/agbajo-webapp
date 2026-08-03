@@ -487,6 +487,7 @@ function GroupDetailPage() {
                       <GroupMembersList
                         groupId={d}
                         queryScope="admin"
+                        ownerId={group.createdBy}
                         embedded
                       />
                     ) : (

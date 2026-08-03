@@ -25,3 +25,20 @@ export const getContributionsApi = async (
   const resp = await apiClient.get("/contributions", { params });
   return resp.data;
 };
+
+export const createSlotApi = async (params: {
+  groupId: string;
+  memberId: string[];
+}): Promise<ApiResponse<{}>> => {
+  const resp = await apiClient.post(`/groups/${params.groupId}/cycles`, {
+    memberId: params.memberId,
+  });
+  return resp.data;
+};
+
+export const getSlotsApi = async (params: {
+  groupId: string;
+}): Promise<ApiResponse<{ cycles: [] }>> => {
+  const resp = await apiClient.get(`/groups/${params.groupId}/cycles/current`);
+  return resp.data;
+};

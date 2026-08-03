@@ -497,6 +497,7 @@ function GroupDetailPage() {
                       <GroupMembersList
                         groupId={d}
                         queryScope="cluster-manager"
+                        ownerId={group.createdBy}
                         embedded
                       />
                     ) : (
