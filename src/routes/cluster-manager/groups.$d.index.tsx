@@ -63,7 +63,7 @@ interface GroupMember {
 const formatCurrency = (amount = 0) =>
   new Intl.NumberFormat("en-NG", {
     style: "currency",
-    currency: "NGN",
+    currency: "Dollar",
     minimumFractionDigits: 0,
   }).format(amount);
 
@@ -472,7 +472,10 @@ function GroupDetailPage() {
                         role="tab"
                         className={`tab${activeTab === "members" ? " tab-active font-semibold" : ""}`}
                         onClick={() =>
-                          navigate({ to: ".", search: (prev) => ({ ...prev, tab: "members" }) })
+                          navigate({
+                            to: ".",
+                            search: (prev) => ({ ...prev, tab: "members" }),
+                          })
                         }
                       >
                         Members
@@ -482,7 +485,10 @@ function GroupDetailPage() {
                           role="tab"
                           className={`tab${activeTab === "requests" ? " tab-active font-semibold" : ""}`}
                           onClick={() =>
-                            navigate({ to: ".", search: (prev) => ({ ...prev, tab: "requests" }) })
+                            navigate({
+                              to: ".",
+                              search: (prev) => ({ ...prev, tab: "requests" }),
+                            })
                           }
                         >
                           Join Requests
@@ -490,7 +496,11 @@ function GroupDetailPage() {
                       )}
                     </div>
                     {activeTab === "members" ? (
-                      <GroupMembersList groupId={d} queryScope="cluster-manager" embedded />
+                      <GroupMembersList
+                        groupId={d}
+                        queryScope="cluster-manager"
+                        embedded
+                      />
                     ) : (
                       <JoinRequestsList groupId={d} embedded />
                     )}

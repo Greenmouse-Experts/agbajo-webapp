@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Users, RefreshCw } from "lucide-react";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
-import QueryCompLayout from "#/components/layout/QueryCompLayout";
+import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 
 interface GroupMember {
   id: string;
@@ -17,6 +17,30 @@ interface Props {
   queryScope?: string;
   embedded?: boolean;
 }
+
+const columns: columnType<GroupMember>[] = [
+  {
+    key: "firstName",
+    label: "Name",
+    render: (_, m) => (
+      <div className="flex items-center gap-3">
+        <div className="rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content font-semibold shrink-0 w-9 h-9 text-sm">
+          {(m.firstName?.[0] ?? "?").toUpperCase()}
+        </div>
+        <span className="font-medium text-base-content">
+          {m.firstName} {m.lastName}
+        </span>
+      </div>
+    ),
+  },
+  {
+    key: "email",
+    label: "Email",
+    render: (val) => (
+      <span className="text-sm text-base-content/60">{val}</span>
+    ),
+  },
+];
 
 export default function GroupMembersList({
   groupId,
@@ -37,59 +61,41 @@ export default function GroupMembersList({
     },
   });
 
+  const members = membersQuery.data?.data?.members ?? [];
   const total = membersQuery.data?.data?.total;
 
-  const inner = (
-    <>
-      <div className="flex items-center gap-2 px-5 py-3 border-b border-base-200">
-        <SearchBar value={search} onChange={setSearch} />
-        {membersQuery.isFetching && !membersQuery.isLoading && (
-          <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin shrink-0" />
-        )}
-      </div>
-
-      <QueryCompLayout query={membersQuery}>
-        {(res) => {
-          const members = res.data?.members ?? [];
-
-          if (members.length === 0) {
-            return (
-              <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
-                <Users className="w-8 h-8" />
-                <p className="text-sm">
-                  {search ? "No members match your search" : "No members yet"}
-                </p>
-              </div>
-            );
-          }
-          return (
-            <div className="divide-y divide-base-200">
-              {members.map((m) => (
-                <div
-                  key={m.id}
-                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-base-200/40 transition-colors"
-                >
-                  <div className="rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content font-semibold shrink-0 w-11 h-11 text-base">
-                    {(m.firstName?.[0] ?? "?").toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-base-content truncate">
-                      {m.firstName} {m.lastName}
-                    </p>
-                    <p className="text-sm text-base-content/50 truncate">
-                      {m.email}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        }}
-      </QueryCompLayout>
-    </>
+  const searchBar = (
+    <div className="flex items-center gap-2 px-5 py-3 border-b border-base-200">
+      <SearchBar value={search} onChange={setSearch} />
+      {membersQuery.isFetching && !membersQuery.isLoading && (
+        <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin shrink-0" />
+      )}
+    </div>
   );
 
-  if (embedded) return <>{inner}</>;
+  const tableContent = membersQuery.isLoading ? (
+    <div className="flex justify-center py-10">
+      <span className="loading loading-spinner loading-md" />
+    </div>
+  ) : members.length === 0 ? (
+    <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
+      <Users className="w-8 h-8" />
+      <p className="text-sm">
+        {search ? "No members match your search" : "No members yet"}
+      </p>
+    </div>
+  ) : (
+    <CustomTable data={members} columns={columns} ring={false} totalCount={total} />
+  );
+
+  if (embedded) {
+    return (
+      <>
+        {searchBar}
+        {tableContent}
+      </>
+    );
+  }
 
   return (
     <div className="card bg-base-100 shadow-sm overflow-hidden">
@@ -101,7 +107,8 @@ export default function GroupMembersList({
           )}
         </div>
       </div>
-      {inner}
+      {searchBar}
+      {tableContent}
     </div>
   );
 }

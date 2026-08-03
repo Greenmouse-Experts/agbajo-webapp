@@ -38,8 +38,6 @@ const toForm = (p: Policy): FormData => ({
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
     minimumFractionDigits: 0,
   }).format(amount);
 
@@ -119,7 +117,9 @@ function AdminPolicies() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
                     <fieldset className="fieldset">
-                      <legend className="fieldset-legend">Late Fee Amount</legend>
+                      <legend className="fieldset-legend">
+                        Late Fee Amount
+                      </legend>
                       <label className="input w-full">
                         <span className="text-base-content">₦</span>
                         <input type="number" {...field("lateFeeAmount")} />
@@ -177,7 +177,10 @@ function AdminPolicies() {
                       </legend>
                       <label className="input w-full">
                         <span className="text-base-content">₦</span>
-                        <input type="number" {...field("maximumPenaltyAmount")} />
+                        <input
+                          type="number"
+                          {...field("maximumPenaltyAmount")}
+                        />
                       </label>
                       <p className="fieldset-label">
                         Cap for total penalties per cycle
