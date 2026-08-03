@@ -358,11 +358,11 @@ function Footer() {
   const scrollTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer className={`${NAVY} text-white`}>
+    <footer className={` bg-[#020E42] text-white`}>
       {/* Newsletter */}
       <div className="max-w-7xl mx-auto px-4 py-16 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
         <div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight">
+          <h2 className="text-3xl sm:text-3xl font-bold leading-tight">
             Stay close to the Agbajo movement.
           </h2>
           <p className="text-white/60 mt-4 max-w-md">
