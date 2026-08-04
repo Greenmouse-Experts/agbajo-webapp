@@ -47,7 +47,7 @@ export default function GroupHeaderDetails({
           {
             icon: <></>,
             label: "Contribution",
-            value: formatCurrency(group.contributionAmount),
+            value: formatCurrency(Number(group.contributionAmount)),
           },
           {
             icon: <></>,
@@ -57,7 +57,6 @@ export default function GroupHeaderDetails({
           {
             icon: <Users className="w-3.5 h-3.5" />,
             label: "Min Members",
-            //@ts-ignore
             value: group.minMembers,
           },
           {

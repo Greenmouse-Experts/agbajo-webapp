@@ -56,6 +56,7 @@ import { Route as HomeAuthAdminRouteImport } from './routes/home/auth/admin'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password/request'
 import { Route as AuthResetPasswordConfirmRouteImport } from './routes/auth/reset-password/confirm'
 import { Route as GroupsInvitationsAcceptIndexRouteImport } from './routes/groups/invitations/accept.index'
+import { Route as ContributorMygroupIdIndexRouteImport } from './routes/contributor/mygroup.$id.index'
 import { Route as ContributorGroupIdIndexRouteImport } from './routes/contributor/group.$id.index'
 import { Route as ClusterManagerGroupsDIndexRouteImport } from './routes/cluster-manager/groups.$d.index'
 import { Route as AdminPlansIdIndexRouteImport } from './routes/admin/plans/$id.index'
@@ -310,6 +311,12 @@ const GroupsInvitationsAcceptIndexRoute =
     path: '/groups/invitations/accept/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ContributorMygroupIdIndexRoute =
+  ContributorMygroupIdIndexRouteImport.update({
+    id: '/mygroup/$id/',
+    path: '/mygroup/$id/',
+    getParentRoute: () => ContributorRouteRoute,
+  } as any)
 const ContributorGroupIdIndexRoute = ContributorGroupIdIndexRouteImport.update({
   id: '/group/$id/',
   path: '/group/$id/',
@@ -383,6 +390,7 @@ export interface FileRoutesByFullPath {
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
   '/contributor/group/$id/': typeof ContributorGroupIdIndexRoute
+  '/contributor/mygroup/$id/': typeof ContributorMygroupIdIndexRoute
   '/groups/invitations/accept/': typeof GroupsInvitationsAcceptIndexRoute
 }
 export interface FileRoutesByTo {
@@ -433,6 +441,7 @@ export interface FileRoutesByTo {
   '/admin/plans/$id': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d': typeof ClusterManagerGroupsDIndexRoute
   '/contributor/group/$id': typeof ContributorGroupIdIndexRoute
+  '/contributor/mygroup/$id': typeof ContributorMygroupIdIndexRoute
   '/groups/invitations/accept': typeof GroupsInvitationsAcceptIndexRoute
 }
 export interface FileRoutesById {
@@ -487,6 +496,7 @@ export interface FileRoutesById {
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
   '/contributor/group/$id/': typeof ContributorGroupIdIndexRoute
+  '/contributor/mygroup/$id/': typeof ContributorMygroupIdIndexRoute
   '/groups/invitations/accept/': typeof GroupsInvitationsAcceptIndexRoute
 }
 export interface FileRouteTypes {
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
     | '/contributor/group/$id/'
+    | '/contributor/mygroup/$id/'
     | '/groups/invitations/accept/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -592,6 +603,7 @@ export interface FileRouteTypes {
     | '/admin/plans/$id'
     | '/cluster-manager/groups/$d'
     | '/contributor/group/$id'
+    | '/contributor/mygroup/$id'
     | '/groups/invitations/accept'
   id:
     | '__root__'
@@ -645,6 +657,7 @@ export interface FileRouteTypes {
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
     | '/contributor/group/$id/'
+    | '/contributor/mygroup/$id/'
     | '/groups/invitations/accept/'
   fileRoutesById: FileRoutesById
 }
@@ -998,6 +1011,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GroupsInvitationsAcceptIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contributor/mygroup/$id/': {
+      id: '/contributor/mygroup/$id/'
+      path: '/mygroup/$id'
+      fullPath: '/contributor/mygroup/$id/'
+      preLoaderRoute: typeof ContributorMygroupIdIndexRouteImport
+      parentRoute: typeof ContributorRouteRoute
+    }
     '/contributor/group/$id/': {
       id: '/contributor/group/$id/'
       path: '/group/$id'
@@ -1109,6 +1129,7 @@ interface ContributorRouteRouteChildren {
   ContributorPayoutsIndexRoute: typeof ContributorPayoutsIndexRoute
   ContributorWalletIndexRoute: typeof ContributorWalletIndexRoute
   ContributorGroupIdIndexRoute: typeof ContributorGroupIdIndexRoute
+  ContributorMygroupIdIndexRoute: typeof ContributorMygroupIdIndexRoute
 }
 
 const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
@@ -1122,6 +1143,7 @@ const ContributorRouteRouteChildren: ContributorRouteRouteChildren = {
   ContributorPayoutsIndexRoute: ContributorPayoutsIndexRoute,
   ContributorWalletIndexRoute: ContributorWalletIndexRoute,
   ContributorGroupIdIndexRoute: ContributorGroupIdIndexRoute,
+  ContributorMygroupIdIndexRoute: ContributorMygroupIdIndexRoute,
 }
 
 const ContributorRouteRouteWithChildren =

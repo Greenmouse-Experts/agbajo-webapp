@@ -7,7 +7,7 @@ import GroupContributions from "#/components/groups/GroupContributions.tsx";
 import GroupHeaderDetails from "#/components/GroupHeaderDetails";
 import GroupMembersList from "#/components/groups/GroupMembersList";
 
-export const Route = createFileRoute("/contributor/group/$id/")({
+export const Route = createFileRoute("/contributor/mygroup/$id/")({
   component: GroupDetailPage,
 });
 

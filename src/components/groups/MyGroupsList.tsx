@@ -25,9 +25,9 @@ const columns: columnType<MyGroupItem>[] = [
   {
     key: "contributionAmount",
     label: "Amount",
-    render: (value: number, item: MyGroupItem) => (
+    render: (value: string | number, item: MyGroupItem) => (
       <div>
-        <span className="font-medium">{formatCurrency(value)}</span>
+        <span className="font-medium">{formatCurrency(Number(value))}</span>
         <span className="text-xs text-base-content/60 ml-1 capitalize">
           / {item.frequency}
         </span>
@@ -35,8 +35,8 @@ const columns: columnType<MyGroupItem>[] = [
     ),
   },
   {
-    key: "maxMembers",
-    label: "Members",
+    key: "minMembers",
+    label: "Min. Members",
     render: (value: number) => (
       <div className="flex items-center gap-1 text-base-content/60">
         <Users className="w-4 h-4" /> {value}
@@ -52,17 +52,6 @@ const columns: columnType<MyGroupItem>[] = [
         month: "short",
         year: "numeric",
       }),
-  },
-
-  {
-    key: "memberStatus",
-    label: "Status",
-    render: (value?: MemberStatus) =>
-      value ? (
-        <span className={`badge ${statusBadge[value]} capitalize`}>
-          {value}
-        </span>
-      ) : null,
   },
 ];
 
@@ -124,7 +113,7 @@ export default function MyGroupsList() {
                   columns={columns}
                   onRowClick={(g) =>
                     navigate({
-                      to: "/contributor/group/$id",
+                      to: "/contributor/mygroup/$id",
                       params: { id: g.id },
                     })
                   }

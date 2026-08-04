@@ -70,8 +70,8 @@ export default function PublicGroupsList() {
         ),
     },
     {
-      key: "maxMembers",
-      label: "Members",
+      key: "minMembers",
+      label: "Min. Members",
       render: (value: number) => (
         <div className="flex items-center gap-1 text-base-content/60">
           <Users className="w-4 h-4" /> {value}

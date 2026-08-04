@@ -1,10 +1,18 @@
+export interface GroupManager {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export interface Group {
   id: string;
   groupName: string;
-  contributionAmount: number;
+  contributionAmount: string | number;
   frequency: string;
   frequencyAmount: number;
-  maxMembers: number;
+  minMembers: number;
+  maxMembers?: number;
   startDate: string;
   type: string;
   createdBy: string;
@@ -13,16 +21,27 @@ export interface Group {
   planId: string;
   managers: GroupManager[];
 }
-export interface GroupManager {
+
+export interface GroupDetail {
   id: string;
-  userId: string;
-  groupId: string;
-  role: string;
+  groupName: string;
+  contributionAmount: string | number;
+  frequency: string;
+  frequencyAmount: number;
+  minMembers: number;
+  maxMembers?: number;
+  startDate: string;
+  type: string;
   createdAt: string;
-  email: string;
+  createdBy: string;
+  managers: GroupManager[];
+}
+
+export interface GroupMember {
+  id: string;
   firstName: string;
   lastName: string;
-  updatedAt: string;
+  email: string;
 }
 
 export interface Plan {
@@ -42,35 +61,7 @@ export interface MyGroup {
   manager: string;
   contribution_amount: number;
   frequency: ContributionFrequency;
-  max_members: number;
+  min_members: number;
   current_cycle: number;
   member_status: MemberStatus;
-}
-
-export interface GroupManager {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-export interface GroupDetail {
-  id: string;
-  groupName: string;
-  contributionAmount: number;
-  frequency: string;
-  frequencyAmount: number;
-  maxMembers: number;
-  startDate: string;
-  type: string;
-  createdAt: string;
-  createdBy: string;
-  managers: GroupManager[];
-}
-
-export interface GroupMember {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
 }
