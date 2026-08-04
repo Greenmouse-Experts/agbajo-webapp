@@ -394,6 +394,7 @@ function GroupDetailPage() {
                   </div>*/}
 
                   <GroupHeaderDetails
+                    //@ts-ignore
                     group={group}
                     isOwner={isOwner}
                     onInvite={() => inviteModalRef.current?.open()}
