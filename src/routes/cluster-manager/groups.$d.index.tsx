@@ -22,6 +22,7 @@ import { extract_message } from "#/helpers/apihelpers";
 import { useAuth, type AUTHRECORD } from "#/store/authStore";
 import JoinRequestsList from "#/components/groups/JoinRequestsList";
 import GroupMembersList from "#/components/groups/GroupMembersList";
+import GroupHeaderDetails from "#/components/GroupHeaderDetails";
 
 type TabParam = "members" | "requests";
 
@@ -324,7 +325,11 @@ function GroupDetailPage() {
           group && (
             <div className="space-y-5">
               {/* Header */}
-              <GroupHeaderDetails group={group as any} />
+              <GroupHeaderDetails
+                group={group}
+                isOwner={isOwner}
+                onInvite={() => inviteModalRef.current?.open()}
+              />
 
               {/* Managers */}
               <div className="card bg-base-100 shadow-sm overflow-hidden">
