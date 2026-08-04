@@ -23,6 +23,7 @@ import { extract_message } from "#/helpers/apihelpers";
 import { useAuth, type AUTHRECORD } from "#/store/authStore";
 import JoinRequestsList from "#/components/groups/JoinRequestsList";
 import GroupMembersList from "#/components/groups/GroupMembersList";
+import GroupHeaderDetails from "#/components/GroupHeaderDetails";
 
 type TabParam = "members" | "requests";
 
@@ -60,16 +61,6 @@ interface GroupMember {
   lastName: string;
   email: string;
 }
-
-const formatCurrency = (amount = 0) =>
-  new Intl.NumberFormat("en-NG", {
-    // style: "currency",
-    // currency: "NGN",
-    minimumFractionDigits: 0,
-  }).format(amount);
-
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-NG", { dateStyle: "medium" });
 
 const managerName = (m: GroupManager) => `${m.firstName} ${m.lastName}`.trim();
 
@@ -333,7 +324,7 @@ function GroupDetailPage() {
               {group && (
                 <div className="space-y-5">
                   {/* Header */}
-                  <div className="card bg-base-100 shadow-sm p-6">
+                  {/*<div className="card bg-base-100 shadow-sm p-6">
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                       <div>
                         <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -400,8 +391,13 @@ function GroupDetailPage() {
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </div>*/}
 
+                  <GroupHeaderDetails
+                    group={group}
+                    isOwner={isOwner}
+                    onInvite={() => inviteModalRef.current?.open()}
+                  />
                   {/* Managers */}
                   <div className="card bg-base-100 shadow-sm overflow-hidden">
                     <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">

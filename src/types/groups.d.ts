@@ -46,3 +46,31 @@ export interface MyGroup {
   current_cycle: number;
   member_status: MemberStatus;
 }
+
+export interface GroupManager {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface GroupDetail {
+  id: string;
+  groupName: string;
+  contributionAmount: number;
+  frequency: string;
+  frequencyAmount: number;
+  maxMembers: number;
+  startDate: string;
+  type: string;
+  createdAt: string;
+  createdBy: string;
+  managers: GroupManager[];
+}
+
+export interface GroupMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
