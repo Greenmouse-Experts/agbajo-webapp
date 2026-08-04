@@ -4,7 +4,6 @@ import { ArrowLeft, Users, Hash } from "lucide-react";
 import apiClient from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import GroupContributions from "#/components/groups/GroupContributions.tsx";
-import GroupHeaderDetails from "#/components/GroupHeaderDetails";
 import GroupMembersList from "#/components/groups/GroupMembersList";
 
 export const Route = createFileRoute("/contributor/mygroup/$id/")({
@@ -12,6 +11,7 @@ export const Route = createFileRoute("/contributor/mygroup/$id/")({
 });
 
 import type { GroupDetail } from "#/types/groups";
+import MyGroupHeaderDetails from "#/components/MyGroupHeaderDetails.tsx";
 
 interface GroupManager {
   id: string;
@@ -61,7 +61,7 @@ function GroupDetailPage() {
         {() => (
           <section className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-5">
-              <GroupHeaderDetails group={group!} />
+              <MyGroupHeaderDetails group={group!} />
 
               {/* Managers */}
               <div className="card bg-base-100 shadow-sm overflow-hidden">
