@@ -45,12 +45,12 @@ export default function GroupHeaderDetails({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4">
         {[
           {
-            icon: <DollarSign className="w-3.5 h-3.5" />,
+            icon: <></>,
             label: "Contribution",
             value: formatCurrency(group.contributionAmount),
           },
           {
-            icon: <DollarSign className="w-3.5 h-3.5" />,
+            icon: <></>,
             label: "Per Interval",
             value: formatCurrency(group.frequencyAmount),
           },
