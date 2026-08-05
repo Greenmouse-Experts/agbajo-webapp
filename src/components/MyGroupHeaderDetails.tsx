@@ -1,8 +1,10 @@
-import { Calendar, DollarSign, Users, UserPlus } from "lucide-react";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Calendar, DollarSign, Users, UserPlus, Edit2, Check, X } from "lucide-react";
 import { formatCurrency, formatDate } from "#/helpers/helpers";
 import type { GroupDetail } from "#/types/groups";
-import { useQuery } from "@tanstack/react-query";
 import apiClient from "#/api/simpleApi";
+import { toast } from "sonner";
 
 interface Props {
   group: GroupDetail;
@@ -15,13 +17,42 @@ export default function MyGroupHeaderDetails({
   isOwner,
   onInvite,
 }: Props) {
-  const query = useQuery({
-    queryKey: ["slots-cycles", group.id],
-    queryFn: async () => {
-      let resp = await apiClient.get(`/groups/${group.id}/cycles/current`);
+  const queryClient = useQueryClient();
+  const [isEditingDate, setIsEditingDate] = useState(false);
+  const [newStartDate, setNewStartDate] = useState("");
+
+  const updateDateMutation = useMutation({
+    mutationFn: async (dateVal: string) => {
+      const payload = {
+        groupName: group.groupName,
+        contributionAmount: Number(group.contributionAmount),
+        frequency: group.frequency,
+        frequencyAmount: group.frequencyAmount,
+        minMembers: group.minMembers,
+        startDate: new Date(dateVal).toISOString(),
+        type: group.type,
+      };
+      const req = apiClient.patch(`/groups/${group.id}`, payload);
+      toast.promise(req, {
+        loading: "Updating start date...",
+        success: "Start date updated successfully",
+        error: (err: any) =>
+          err?.response?.data?.message || "Failed to update start date",
+      });
+      const resp = await req;
       return resp.data;
     },
+    onSuccess: () => {
+      setIsEditingDate(false);
+      queryClient.invalidateQueries({ queryKey: ["admin", "group", group.id] });
+    },
   });
+
+  const handleSaveDate = () => {
+    if (!newStartDate) return;
+    updateDateMutation.mutate(newStartDate);
+  };
+
   return (
     <div className="card bg-base-100 shadow-sm p-6">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
@@ -54,24 +85,82 @@ export default function MyGroupHeaderDetails({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4">
         {[
           {
-            icon: <></>,
+            icon: <DollarSign className="w-3.5 h-3.5 text-base-content/40" />,
             label: "Contribution",
-            value: formatCurrency(Number(group.contributionAmount)),
+            value: (
+              <p className="font-semibold text-base-content capitalize">
+                {formatCurrency(Number(group.contributionAmount))}
+              </p>
+            ),
           },
           {
-            icon: <></>,
+            icon: <DollarSign className="w-3.5 h-3.5 text-base-content/40" />,
             label: "Per Interval",
-            value: formatCurrency(group.frequencyAmount),
+            value: (
+              <p className="font-semibold text-base-content capitalize">
+                {formatCurrency(group.frequencyAmount)}
+              </p>
+            ),
           },
           {
             icon: <Users className="w-3.5 h-3.5" />,
             label: "Min Members",
-            value: group.minMembers,
+            value: (
+              <p className="font-semibold text-base-content capitalize">
+                {group.minMembers}
+              </p>
+            ),
           },
           {
             icon: <Calendar className="w-3.5 h-3.5" />,
             label: "Start Date",
-            value: formatDate(group.startDate),
+            value: isEditingDate ? (
+              <div
+                className="flex items-center gap-1 mt-1"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="date"
+                  value={newStartDate}
+                  onChange={(e) => setNewStartDate(e.target.value)}
+                  className="input input-bordered input-xs max-w-[130px] bg-base-100 text-base-content"
+                />
+                <button
+                  onClick={handleSaveDate}
+                  className="btn btn-ghost btn-xs btn-square text-success"
+                  disabled={updateDateMutation.isPending}
+                >
+                  <Check className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => setIsEditingDate(false)}
+                  className="btn btn-ghost btn-xs btn-square text-error"
+                  disabled={updateDateMutation.isPending}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 mt-0.5 group">
+                <span className="font-semibold text-base-content capitalize">
+                  {formatDate(group.startDate)}
+                </span>
+                {isOwner && (
+                  <button
+                    onClick={() => {
+                      setNewStartDate(
+                        new Date(group.startDate).toISOString().split("T")[0]
+                      );
+                      setIsEditingDate(true);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity btn btn-ghost btn-xs btn-square p-0 w-5 h-5 min-h-0"
+                    title="Edit Start Date"
+                  >
+                    <Edit2 className="w-3 h-3 text-primary" />
+                  </button>
+                )}
+              </div>
+            ),
           },
         ].map(({ icon, label, value }) => (
           <div key={label}>
@@ -79,9 +168,7 @@ export default function MyGroupHeaderDetails({
               {icon}
               {label}
             </div>
-            <p className="font-semibold text-base-content capitalize">
-              {value}
-            </p>
+            {value}
           </div>
         ))}
       </div>

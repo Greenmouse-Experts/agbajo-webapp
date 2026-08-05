@@ -46,6 +46,7 @@ interface GroupDetail {
   contributionAmount: number;
   frequency: string;
   frequencyAmount: number;
+  minMembers: number;
   maxMembers: number;
   startDate: string;
   type: string;

@@ -48,6 +48,7 @@ interface GroupDetail {
   contributionAmount: number;
   frequency: string;
   frequencyAmount: number;
+  minMembers: number;
   maxMembers: number;
   startDate: string;
   type: string;
@@ -275,7 +276,7 @@ function GroupDetailPage() {
   const queryClient = useQueryClient();
   const [rawUser] = useAuth();
   const authUser = rawUser as AUTHRECORD | null;
-  const authId = String(authUser?.user?.id ?? "");
+  const _authId = String(authUser?.user?.id ?? "");
   const navigate = useNavigate();
   const { tab = "members" } = Route.useSearch();
   const assignModalRef = useRef<ModalHandle>(null);
