@@ -283,7 +283,7 @@ function ContributorKYC() {
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              // { label: "NIN", done: !!data.nin },
+              { label: "NIN", done: !!data.nin },
               // { label: "BVN", done: !!data.bvn },
               // { label: "Face photo", done: data.faceUploaded },
               { label: "Selfie", done: data.selfieUploaded },
