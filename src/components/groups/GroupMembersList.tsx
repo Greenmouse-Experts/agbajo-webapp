@@ -1,6 +1,13 @@
 import { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, RefreshCw, Plus, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  Users,
+  RefreshCw,
+  Plus,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
@@ -88,7 +95,9 @@ export default function GroupMembersList({
     queryFn: () => getGroupSlotsApi({ groupId }),
   });
 
-  const cycles = Array.isArray(slotsQuery.data?.data) ? slotsQuery.data.data : [];
+  const cycles = Array.isArray(slotsQuery.data?.data)
+    ? slotsQuery.data.data
+    : [];
   const currentCycle = cycles[0];
 
   const slotMutation = useMutation({
@@ -139,7 +148,7 @@ export default function GroupMembersList({
 
   const createSlotButton = isOwner ? (
     <div className="flex gap-2">
-      {currentCycle && currentCycle.status === "pending" && (
+      {/*{currentCycle && currentCycle.status === "pending" && (
         <button
           className="btn btn-outline btn-primary"
           onClick={() => reorderModalRef.current?.open()}
@@ -147,7 +156,7 @@ export default function GroupMembersList({
           <ArrowUpDown className="w-4 h-4" />
           Reorder Slots
         </button>
-      )}
+      )}*/}
       <button
         className="btn btn-primary"
         disabled={(membersQuery.data?.data?.members?.length ?? 0) < 10}
@@ -266,7 +275,9 @@ export default function GroupMembersList({
           </p>
           {selectedIds.length === 0 ? (
             <div className="flex flex-col items-center justify-center border border-dashed border-base-300 rounded-lg h-72 text-base-content/40 p-4 text-center">
-              <p className="text-xs">Select members on the left to set their payout order.</p>
+              <p className="text-xs">
+                Select members on the left to set their payout order.
+              </p>
             </div>
           ) : (
             <div className="divide-y divide-base-200 border border-base-200 rounded-lg p-2 max-h-72 overflow-y-auto">
