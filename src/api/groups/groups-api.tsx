@@ -31,14 +31,75 @@ export const createSlotApi = async (params: {
   memberId: string[];
 }): Promise<ApiResponse<{}>> => {
   const resp = await apiClient.post(`/groups/${params.groupId}/cycles`, {
-    memberId: params.memberId,
+    slotOrder: params.memberId,
   });
   return resp.data;
 };
 
+export interface GroupSlotUser {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+}
+
+export interface GroupSlot {
+  id: string;
+  cycleId: string;
+  userId: string;
+  user?: GroupSlotUser;
+  slotOrder: number;
+  status: "current" | "pending" | "paid" | "completed" | string;
+  payoutDate: string | null;
+  payoutAmount: string | number;
+  paidAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GroupCycle {
+  id: string;
+  groupId: string;
+  cycleNumber: number;
+  status: "pending" | "active" | "completed" | string;
+  startDate: string | null;
+  endDate: string | null;
+  totalPoolAmount: string | number;
+  createdAt: string;
+  updatedAt: string;
+  slots: GroupSlot[];
+}
+
 export const getSlotsApi = async (params: {
   groupId: string;
-}): Promise<ApiResponse<{ cycles: [] }>> => {
+}): Promise<ApiResponse<GroupCycle>> => {
   const resp = await apiClient.get(`/groups/${params.groupId}/cycles/current`);
+  return resp.data;
+};
+
+export const getGroupSlotsApi = async (params: {
+  groupId: string;
+}): Promise<ApiResponse<GroupCycle[]>> => {
+  const resp = await apiClient.get(`/groups/${params.groupId}/cycles`);
+  return resp.data;
+};
+
+export const publishCycleApi = async (params: {
+  groupId: string;
+  cycleId: string;
+}): Promise<ApiResponse<GroupCycle>> => {
+  const resp = await apiClient.post(
+    `/groups/${params.groupId}/cycles/${params.cycleId}/publish`,
+  );
+  return resp.data;
+};
+
+export const getCycleDetailsApi = async (params: {
+  groupId: string;
+  cycleId: string;
+}): Promise<ApiResponse<GroupCycle>> => {
+  const resp = await apiClient.get(
+    `/groups/${params.groupId}/cycles/${params.cycleId}`,
+  );
   return resp.data;
 };

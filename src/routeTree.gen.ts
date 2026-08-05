@@ -58,6 +58,7 @@ import { Route as AuthResetPasswordConfirmRouteImport } from './routes/auth/rese
 import { Route as GroupsInvitationsAcceptIndexRouteImport } from './routes/groups/invitations/accept.index'
 import { Route as ContributorMygroupIdIndexRouteImport } from './routes/contributor/mygroup.$id.index'
 import { Route as ContributorGroupIdIndexRouteImport } from './routes/contributor/group.$id.index'
+import { Route as ClusterManagerMyGroupDIndexRouteImport } from './routes/cluster-manager/my-group.$d.index'
 import { Route as ClusterManagerGroupsDIndexRouteImport } from './routes/cluster-manager/groups.$d.index'
 import { Route as AdminPlansIdIndexRouteImport } from './routes/admin/plans/$id.index'
 import { Route as AdminGroupsDIndexRouteImport } from './routes/admin/groups.$d.index'
@@ -322,6 +323,12 @@ const ContributorGroupIdIndexRoute = ContributorGroupIdIndexRouteImport.update({
   path: '/group/$id/',
   getParentRoute: () => ContributorRouteRoute,
 } as any)
+const ClusterManagerMyGroupDIndexRoute =
+  ClusterManagerMyGroupDIndexRouteImport.update({
+    id: '/my-group/$d/',
+    path: '/my-group/$d/',
+    getParentRoute: () => ClusterManagerRouteRoute,
+  } as any)
 const ClusterManagerGroupsDIndexRoute =
   ClusterManagerGroupsDIndexRouteImport.update({
     id: '/groups/$d/',
@@ -389,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
+  '/cluster-manager/my-group/$d/': typeof ClusterManagerMyGroupDIndexRoute
   '/contributor/group/$id/': typeof ContributorGroupIdIndexRoute
   '/contributor/mygroup/$id/': typeof ContributorMygroupIdIndexRoute
   '/groups/invitations/accept/': typeof GroupsInvitationsAcceptIndexRoute
@@ -440,6 +448,7 @@ export interface FileRoutesByTo {
   '/admin/groups/$d': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d': typeof ClusterManagerGroupsDIndexRoute
+  '/cluster-manager/my-group/$d': typeof ClusterManagerMyGroupDIndexRoute
   '/contributor/group/$id': typeof ContributorGroupIdIndexRoute
   '/contributor/mygroup/$id': typeof ContributorMygroupIdIndexRoute
   '/groups/invitations/accept': typeof GroupsInvitationsAcceptIndexRoute
@@ -495,6 +504,7 @@ export interface FileRoutesById {
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
+  '/cluster-manager/my-group/$d/': typeof ClusterManagerMyGroupDIndexRoute
   '/contributor/group/$id/': typeof ContributorGroupIdIndexRoute
   '/contributor/mygroup/$id/': typeof ContributorMygroupIdIndexRoute
   '/groups/invitations/accept/': typeof GroupsInvitationsAcceptIndexRoute
@@ -551,6 +561,7 @@ export interface FileRouteTypes {
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
+    | '/cluster-manager/my-group/$d/'
     | '/contributor/group/$id/'
     | '/contributor/mygroup/$id/'
     | '/groups/invitations/accept/'
@@ -602,6 +613,7 @@ export interface FileRouteTypes {
     | '/admin/groups/$d'
     | '/admin/plans/$id'
     | '/cluster-manager/groups/$d'
+    | '/cluster-manager/my-group/$d'
     | '/contributor/group/$id'
     | '/contributor/mygroup/$id'
     | '/groups/invitations/accept'
@@ -656,6 +668,7 @@ export interface FileRouteTypes {
     | '/admin/groups/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
+    | '/cluster-manager/my-group/$d/'
     | '/contributor/group/$id/'
     | '/contributor/mygroup/$id/'
     | '/groups/invitations/accept/'
@@ -1025,6 +1038,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContributorGroupIdIndexRouteImport
       parentRoute: typeof ContributorRouteRoute
     }
+    '/cluster-manager/my-group/$d/': {
+      id: '/cluster-manager/my-group/$d/'
+      path: '/my-group/$d'
+      fullPath: '/cluster-manager/my-group/$d/'
+      preLoaderRoute: typeof ClusterManagerMyGroupDIndexRouteImport
+      parentRoute: typeof ClusterManagerRouteRoute
+    }
     '/cluster-manager/groups/$d/': {
       id: '/cluster-manager/groups/$d/'
       path: '/groups/$d'
@@ -1099,6 +1119,7 @@ interface ClusterManagerRouteRouteChildren {
   ClusterManagerPayoutsIndexRoute: typeof ClusterManagerPayoutsIndexRoute
   ClusterManagerWalletIndexRoute: typeof ClusterManagerWalletIndexRoute
   ClusterManagerGroupsDIndexRoute: typeof ClusterManagerGroupsDIndexRoute
+  ClusterManagerMyGroupDIndexRoute: typeof ClusterManagerMyGroupDIndexRoute
 }
 
 const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
@@ -1113,6 +1134,7 @@ const ClusterManagerRouteRouteChildren: ClusterManagerRouteRouteChildren = {
   ClusterManagerPayoutsIndexRoute: ClusterManagerPayoutsIndexRoute,
   ClusterManagerWalletIndexRoute: ClusterManagerWalletIndexRoute,
   ClusterManagerGroupsDIndexRoute: ClusterManagerGroupsDIndexRoute,
+  ClusterManagerMyGroupDIndexRoute: ClusterManagerMyGroupDIndexRoute,
 }
 
 const ClusterManagerRouteRouteWithChildren =

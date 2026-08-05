@@ -122,7 +122,7 @@ export default function GroupMembersList({
       }}
     >
       <Plus className="w-4 h-4" />
-      Create Slot
+      Generate Slot
     </button>
   ) : null;
 

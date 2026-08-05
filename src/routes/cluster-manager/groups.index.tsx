@@ -582,7 +582,7 @@ function AdminGroups() {
         </span>
       ),
       action: (g) => {
-        navigation.navigate(`/cluster-manager/groups/${g.id}`);
+        navigation.navigate(`/cluster-manager/my-group/${g.id}`);
       },
     },
     {
