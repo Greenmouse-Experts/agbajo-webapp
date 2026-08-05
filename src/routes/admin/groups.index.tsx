@@ -297,7 +297,10 @@ function AdminGroups() {
           <Eye className="w-3 h-3" /> View Group
         </span>
       ),
-      action: (g, nav) => nav({ to: "/admin/groups/$d", params: { d: g.id } }),
+      action: (g, nav) =>
+        createdBy == "admin"
+          ? nav({ to: "/admin/my-group/$d", params: { d: g.id } })
+          : nav({ to: "/admin/groups/$d", params: { d: g.id } }),
     },
     {
       key: "members",

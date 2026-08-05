@@ -28,7 +28,7 @@ import GroupSlotList from "#/components/groups/GroupSlotLists.tsx";
 
 type TabParam = "members" | "requests";
 
-export const Route = createFileRoute("/admin/groups/$d/")({
+export const Route = createFileRoute("/admin/my-group/$d/")({
   validateSearch: (s): { tab?: TabParam } => ({
     tab: (s?.tab as TabParam) ?? "members",
   }),
@@ -458,7 +458,9 @@ function GroupDetailPage() {
                       </div>
                     )}
                   </div>
-                  <GroupSlotList groupId={d} isAdmin={true} viewOnly={true} />
+
+                  <GroupSlotList groupId={d} isAdmin />
+
                   {/* Members / Requests tabs */}
                   <div className="card bg-base-100 shadow-sm overflow-hidden">
                     <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">

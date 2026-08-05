@@ -61,6 +61,7 @@ import { Route as ContributorGroupIdIndexRouteImport } from './routes/contributo
 import { Route as ClusterManagerMyGroupDIndexRouteImport } from './routes/cluster-manager/my-group.$d.index'
 import { Route as ClusterManagerGroupsDIndexRouteImport } from './routes/cluster-manager/groups.$d.index'
 import { Route as AdminPlansIdIndexRouteImport } from './routes/admin/plans/$id.index'
+import { Route as AdminMyGroupDIndexRouteImport } from './routes/admin/my-group.$d.index'
 import { Route as AdminGroupsDIndexRouteImport } from './routes/admin/groups.$d.index'
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
@@ -340,6 +341,11 @@ const AdminPlansIdIndexRoute = AdminPlansIdIndexRouteImport.update({
   path: '/plans/$id/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminMyGroupDIndexRoute = AdminMyGroupDIndexRouteImport.update({
+  id: '/my-group/$d/',
+  path: '/my-group/$d/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminGroupsDIndexRoute = AdminGroupsDIndexRouteImport.update({
   id: '/groups/$d/',
   path: '/groups/$d/',
@@ -394,6 +400,7 @@ export interface FileRoutesByFullPath {
   '/groups/invitations/': typeof GroupsInvitationsIndexRoute
   '/invitations/accept/': typeof InvitationsAcceptIndexRoute
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
+  '/admin/my-group/$d/': typeof AdminMyGroupDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
   '/cluster-manager/my-group/$d/': typeof ClusterManagerMyGroupDIndexRoute
@@ -446,6 +453,7 @@ export interface FileRoutesByTo {
   '/groups/invitations': typeof GroupsInvitationsIndexRoute
   '/invitations/accept': typeof InvitationsAcceptIndexRoute
   '/admin/groups/$d': typeof AdminGroupsDIndexRoute
+  '/admin/my-group/$d': typeof AdminMyGroupDIndexRoute
   '/admin/plans/$id': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d': typeof ClusterManagerGroupsDIndexRoute
   '/cluster-manager/my-group/$d': typeof ClusterManagerMyGroupDIndexRoute
@@ -502,6 +510,7 @@ export interface FileRoutesById {
   '/groups/invitations/': typeof GroupsInvitationsIndexRoute
   '/invitations/accept/': typeof InvitationsAcceptIndexRoute
   '/admin/groups/$d/': typeof AdminGroupsDIndexRoute
+  '/admin/my-group/$d/': typeof AdminMyGroupDIndexRoute
   '/admin/plans/$id/': typeof AdminPlansIdIndexRoute
   '/cluster-manager/groups/$d/': typeof ClusterManagerGroupsDIndexRoute
   '/cluster-manager/my-group/$d/': typeof ClusterManagerMyGroupDIndexRoute
@@ -559,6 +568,7 @@ export interface FileRouteTypes {
     | '/groups/invitations/'
     | '/invitations/accept/'
     | '/admin/groups/$d/'
+    | '/admin/my-group/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
     | '/cluster-manager/my-group/$d/'
@@ -611,6 +621,7 @@ export interface FileRouteTypes {
     | '/groups/invitations'
     | '/invitations/accept'
     | '/admin/groups/$d'
+    | '/admin/my-group/$d'
     | '/admin/plans/$id'
     | '/cluster-manager/groups/$d'
     | '/cluster-manager/my-group/$d'
@@ -666,6 +677,7 @@ export interface FileRouteTypes {
     | '/groups/invitations/'
     | '/invitations/accept/'
     | '/admin/groups/$d/'
+    | '/admin/my-group/$d/'
     | '/admin/plans/$id/'
     | '/cluster-manager/groups/$d/'
     | '/cluster-manager/my-group/$d/'
@@ -1059,6 +1071,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPlansIdIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/my-group/$d/': {
+      id: '/admin/my-group/$d/'
+      path: '/my-group/$d'
+      fullPath: '/admin/my-group/$d/'
+      preLoaderRoute: typeof AdminMyGroupDIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/groups/$d/': {
       id: '/admin/groups/$d/'
       path: '/groups/$d'
@@ -1083,6 +1102,7 @@ interface AdminRouteRouteChildren {
   AdminReportsIndexRoute: typeof AdminReportsIndexRoute
   AdminWithdrawalsIndexRoute: typeof AdminWithdrawalsIndexRoute
   AdminGroupsDIndexRoute: typeof AdminGroupsDIndexRoute
+  AdminMyGroupDIndexRoute: typeof AdminMyGroupDIndexRoute
   AdminPlansIdIndexRoute: typeof AdminPlansIdIndexRoute
 }
 
@@ -1100,6 +1120,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminReportsIndexRoute: AdminReportsIndexRoute,
   AdminWithdrawalsIndexRoute: AdminWithdrawalsIndexRoute,
   AdminGroupsDIndexRoute: AdminGroupsDIndexRoute,
+  AdminMyGroupDIndexRoute: AdminMyGroupDIndexRoute,
   AdminPlansIdIndexRoute: AdminPlansIdIndexRoute,
 }
 

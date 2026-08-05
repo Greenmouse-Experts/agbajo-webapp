@@ -15,6 +15,8 @@ import {
   publishCycleApi,
   type GroupSlot,
   type GroupCycle,
+  getAdminGroupSlotsApi,
+  adminPublishCycleApi,
 } from "#/api/groups/groups-api.tsx";
 import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 import QueryCompLayout from "#/components/layout/QueryCompLayout";
@@ -42,8 +44,8 @@ const columns: columnType<GroupSlot>[] = [
       const name = slot.user
         ? `${slot.user.firstName ?? ""} ${slot.user.lastName ?? ""}`.trim()
         : slot.userId
-        ? `User (${slot.userId.slice(0, 8)}...)`
-        : "—";
+          ? `User (${slot.userId.slice(0, 8)}...)`
+          : "—";
       const initials = slot.user?.firstName
         ? slot.user.firstName[0].toUpperCase()
         : "?";
@@ -102,10 +104,10 @@ const columns: columnType<GroupSlot>[] = [
         statusStr === "current"
           ? "badge-info"
           : statusStr === "completed" || statusStr === "paid"
-          ? "badge-success"
-          : statusStr === "pending"
-          ? "badge-warning"
-          : "badge-ghost";
+            ? "badge-success"
+            : statusStr === "pending"
+              ? "badge-warning"
+              : "badge-ghost";
       return (
         <span className={`badge ${badgeClass} badge-sm capitalize font-medium`}>
           {val ?? "—"}
@@ -117,26 +119,40 @@ const columns: columnType<GroupSlot>[] = [
 
 interface Props {
   groupId: string;
+  isAdmin?: boolean;
+  viewOnly?: boolean;
 }
 
-export default function GroupSlotList({ groupId }: Props) {
+export default function GroupSlotList({
+  groupId,
+  isAdmin = false,
+  viewOnly = false,
+}: Props) {
   const [selectedCycleIndex, setSelectedCycleIndex] = useState(0);
   const reorderModalRef = useRef<ModalHandle>(null);
   const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: ["group-slots", groupId],
-    queryFn: () => getGroupSlotsApi({ groupId }),
+    queryFn: () =>
+      isAdmin
+        ? getAdminGroupSlotsApi({ groupId })
+        : getGroupSlotsApi({ groupId }),
   });
 
   const publishMutation = useMutation({
     mutationFn: (cycleId: string) =>
       toast
-        .promise(publishCycleApi({ groupId, cycleId }), {
-          loading: "Publishing cycle...",
-          success: "Cycle published successfully",
-          error: extract_message,
-        })
+        .promise(
+          isAdmin
+            ? adminPublishCycleApi({ groupId, cycleId })
+            : publishCycleApi({ groupId, cycleId }),
+          {
+            loading: "Publishing cycle...",
+            success: "Cycle published successfully",
+            error: extract_message,
+          },
+        )
         .unwrap(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["group-slots", groupId] });
@@ -206,8 +222,8 @@ export default function GroupSlotList({ groupId }: Props) {
                       currentCycle.status === "active"
                         ? "badge-info"
                         : currentCycle.status === "completed"
-                        ? "badge-success"
-                        : "badge-warning"
+                          ? "badge-success"
+                          : "badge-warning"
                     }`}
                   >
                     {currentCycle.status}
@@ -240,31 +256,37 @@ export default function GroupSlotList({ groupId }: Props) {
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 ml-auto">
-                    {currentCycle.status === "pending" && (
-                      <>
-                        <button
-                          className="btn btn-xs btn-outline gap-1"
-                          onClick={() => reorderModalRef.current?.open()}
-                        >
-                          <ArrowUpDown className="w-3 h-3" />
-                          Reorder Slots
-                        </button>
-                        <button
-                          className="btn btn-xs btn-primary gap-1"
-                          disabled={publishMutation.isPending}
-                          onClick={() => publishMutation.mutate(currentCycle.id)}
-                        >
-                          {publishMutation.isPending ? (
-                            <span className="loading loading-spinner loading-xs" />
-                          ) : (
-                            <Send className="w-3 h-3" />
-                          )}
-                          Publish Cycle
-                        </button>
-                      </>
-                    )}
-                  </div>
+                  {!viewOnly && (
+                    <>
+                      <div className="flex items-center gap-2 ml-auto">
+                        {currentCycle.status === "pending" && (
+                          <>
+                            <button
+                              className="btn btn-xs btn-outline gap-1"
+                              onClick={() => reorderModalRef.current?.open()}
+                            >
+                              <ArrowUpDown className="w-3 h-3" />
+                              Reorder Slots
+                            </button>
+                            <button
+                              className="btn btn-xs btn-primary gap-1"
+                              disabled={publishMutation.isPending}
+                              onClick={() =>
+                                publishMutation.mutate(currentCycle.id)
+                              }
+                            >
+                              {publishMutation.isPending ? (
+                                <span className="loading loading-spinner loading-xs" />
+                              ) : (
+                                <Send className="w-3 h-3" />
+                              )}
+                              Publish Cycle
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 

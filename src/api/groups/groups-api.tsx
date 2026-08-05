@@ -84,6 +84,12 @@ export const getGroupSlotsApi = async (params: {
   const resp = await apiClient.get(`/groups/${params.groupId}/cycles`);
   return resp.data;
 };
+export const getAdminGroupSlotsApi = async (params: {
+  groupId: string;
+}): Promise<ApiResponse<GroupCycle[]>> => {
+  const resp = await apiClient.get(`admins/groups/${params.groupId}/cycles`);
+  return resp.data;
+};
 
 export const publishCycleApi = async (params: {
   groupId: string;
@@ -91,6 +97,15 @@ export const publishCycleApi = async (params: {
 }): Promise<ApiResponse<GroupCycle>> => {
   const resp = await apiClient.post(
     `/groups/${params.groupId}/cycles/${params.cycleId}/publish`,
+  );
+  return resp.data;
+};
+export const adminPublishCycleApi = async (params: {
+  groupId: string;
+  cycleId: string;
+}): Promise<ApiResponse<GroupCycle>> => {
+  const resp = await apiClient.post(
+    `admins/groups/${params.groupId}/cycles/${params.cycleId}/publish`,
   );
   return resp.data;
 };
