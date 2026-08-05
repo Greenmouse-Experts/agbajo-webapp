@@ -38,7 +38,7 @@ const columns: columnType<GroupSlot>[] = [
     ),
   },
   {
-    key: "userId",
+    key: "user",
     label: "Member",
     render: (_, slot) => {
       const name = slot.user
@@ -68,6 +68,7 @@ const columns: columnType<GroupSlot>[] = [
       );
     },
   },
+
   {
     key: "payoutAmount",
     label: "Payout Amount",
@@ -129,6 +130,7 @@ export default function GroupSlotList({
   viewOnly = false,
 }: Props) {
   const [selectedCycleIndex, setSelectedCycleIndex] = useState(0);
+  const [showSlots, setShowSlots] = useState(false);
   const reorderModalRef = useRef<ModalHandle>(null);
   const queryClient = useQueryClient();
 
@@ -163,15 +165,21 @@ export default function GroupSlotList({
     <div className="card bg-base-100 shadow-sm overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           <ListOrdered className="w-5 h-5 text-primary" />
           <h3 className="font-semibold text-base-content text-lg">
             Group Slots
           </h3>
+          {query.isFetching && !query.isLoading && (
+            <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin" />
+          )}
+          <button
+            className="btn btn-sm btn-soft btn-primary ml-auto ring fade"
+            onClick={() => setShowSlots((s) => !s)}
+          >
+            {showSlots ? "Hide" : "View"}
+          </button>
         </div>
-        {query.isFetching && !query.isLoading && (
-          <RefreshCw className="w-4 h-4 text-base-content/40 animate-spin" />
-        )}
       </div>
 
       {/* Content */}
@@ -290,14 +298,18 @@ export default function GroupSlotList({
                 </div>
               </div>
 
-              {/* Custom Table */}
+              {/* Toggle Table View */}
               {slots.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-10 text-base-content/40">
                   <ListOrdered className="w-8 h-8" />
                   <p className="text-sm">No slots in this cycle</p>
                 </div>
               ) : (
-                <CustomTable data={slots} columns={columns} ring={false} />
+                <div className="px-5">
+                  {showSlots && (
+                    <CustomTable data={slots} columns={columns} ring={false} />
+                  )}
+                </div>
               )}
 
               {/* Reorder Slots Modal */}
