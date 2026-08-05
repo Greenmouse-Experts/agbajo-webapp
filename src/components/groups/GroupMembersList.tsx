@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, RefreshCw, Plus, ArrowUpDown } from "lucide-react";
+import { Users, RefreshCw, Plus, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
@@ -115,6 +115,28 @@ export default function GroupMembersList({
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
 
+  const moveSelectedUp = (index: number) => {
+    if (index <= 0 || index >= selectedIds.length) return;
+    setSelectedIds((prev) => {
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[index - 1];
+      copy[index - 1] = temp;
+      return copy;
+    });
+  };
+
+  const moveSelectedDown = (index: number) => {
+    if (index < 0 || index >= selectedIds.length - 1) return;
+    setSelectedIds((prev) => {
+      const copy = [...prev];
+      const temp = copy[index];
+      copy[index] = copy[index + 1];
+      copy[index + 1] = temp;
+      return copy;
+    });
+  };
+
   const createSlotButton = isOwner ? (
     <div className="flex gap-2">
       {currentCycle && currentCycle.status === "pending" && (
@@ -173,7 +195,7 @@ export default function GroupMembersList({
   const slotModal = (
     <Modal
       ref={slotModalRef}
-      title="Create Slot"
+      title="Create & Order Slots"
       actions={
         <>
           <button
@@ -197,37 +219,97 @@ export default function GroupMembersList({
         </>
       }
     >
-      <p className="text-sm text-base-content/60 mb-4">
-        Select members to include in this slot.
-      </p>
-      <div className="divide-y divide-base-200 max-h-72 overflow-y-auto -mx-1 px-1">
-        {members.map((m) => {
-          const checked = selectedIds.includes(m.id);
-          return (
-            <label
-              key={m.id}
-              className="flex items-center gap-3 py-3 cursor-pointer hover:bg-base-200/40 px-2 rounded-lg"
-            >
-              <input
-                type="checkbox"
-                className="checkbox checkbox-primary checkbox-sm"
-                checked={checked}
-                onChange={() => toggleMember(m.id)}
-              />
-              <div className="rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content font-semibold shrink-0 w-8 h-8 text-sm">
-                {(m.firstName?.[0] ?? "?").toUpperCase()}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-medium text-base-content text-sm truncate">
-                  {m.firstName} {m.lastName}
-                </p>
-                <p className="text-xs text-base-content/50 truncate">
-                  {m.email}
-                </p>
-              </div>
-            </label>
-          );
-        })}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto">
+        {/* Left column: Selection list */}
+        <div>
+          <h4 className="font-semibold text-sm mb-2 text-base-content">
+            Select Members
+          </h4>
+          <p className="text-xs text-base-content/60 mb-3">
+            Check the members you want to include in this payout cycle.
+          </p>
+          <div className="divide-y divide-base-200 border border-base-200 rounded-lg p-2 max-h-72 overflow-y-auto">
+            {members.map((m) => {
+              const checked = selectedIds.includes(m.id);
+              return (
+                <label
+                  key={m.id}
+                  className="flex items-center gap-3 py-2 cursor-pointer hover:bg-base-200/40 px-2 rounded-lg"
+                >
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-primary checkbox-sm"
+                    checked={checked}
+                    onChange={() => toggleMember(m.id)}
+                  />
+                  <div className="rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content font-semibold shrink-0 w-7 h-7 text-xs">
+                    {(m.firstName?.[0] ?? "?").toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-base-content text-xs truncate">
+                      {m.firstName} {m.lastName}
+                    </p>
+                  </div>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right column: Ordering list */}
+        <div>
+          <h4 className="font-semibold text-sm mb-2 text-base-content">
+            Payout Order
+          </h4>
+          <p className="text-xs text-base-content/60 mb-3">
+            Use the arrows to set the sequence of slot payouts.
+          </p>
+          {selectedIds.length === 0 ? (
+            <div className="flex flex-col items-center justify-center border border-dashed border-base-300 rounded-lg h-72 text-base-content/40 p-4 text-center">
+              <p className="text-xs">Select members on the left to set their payout order.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-base-200 border border-base-200 rounded-lg p-2 max-h-72 overflow-y-auto">
+              {selectedIds.map((id, index) => {
+                const member = members.find((m) => m.id === id);
+                if (!member) return null;
+                return (
+                  <div
+                    key={id}
+                    className="flex items-center justify-between py-1.5 px-2 hover:bg-base-200/40 rounded-lg"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xs font-bold text-primary w-5">
+                        #{index + 1}
+                      </span>
+                      <span className="text-xs text-base-content font-medium truncate">
+                        {member.firstName} {member.lastName}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        className="btn btn-ghost btn-xs btn-square"
+                        disabled={index === 0}
+                        onClick={() => moveSelectedUp(index)}
+                        title="Move Up"
+                      >
+                        <ArrowUp className="w-3 h-3" />
+                      </button>
+                      <button
+                        className="btn btn-ghost btn-xs btn-square"
+                        disabled={index === selectedIds.length - 1}
+                        onClick={() => moveSelectedDown(index)}
+                        title="Move Down"
+                      >
+                        <ArrowDown className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </Modal>
   );
