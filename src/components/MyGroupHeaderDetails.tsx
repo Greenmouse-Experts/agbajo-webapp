@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Calendar, DollarSign, Users, UserPlus, Edit2, Check, X } from "lucide-react";
+import { Calendar, DollarSign, Users, UserPlus, Edit2, Check, X, Mail } from "lucide-react";
 import { formatCurrency, formatDate } from "#/helpers/helpers";
 import type { GroupDetail } from "#/types/groups";
 import apiClient from "#/api/simpleApi";
 import { toast } from "sonner";
+import { extract_message } from "#/helpers/apihelpers";
 
 interface Props {
   group: GroupDetail;
@@ -20,6 +21,13 @@ export default function MyGroupHeaderDetails({
   const queryClient = useQueryClient();
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [newStartDate, setNewStartDate] = useState("");
+
+  const inviteEmailModalRef = useRef<HTMLDialogElement>(null);
+  const [inviteForm, setInviteForm] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+  });
 
   const updateDateMutation = useMutation({
     mutationFn: async (dateVal: string) => {
@@ -48,9 +56,28 @@ export default function MyGroupHeaderDetails({
     },
   });
 
+  const inviteMutation = useMutation({
+    mutationFn: (body: typeof inviteForm) =>
+      apiClient.post(`groups/${group.id}/email-invitations`, body),
+    onSuccess: () => {
+      inviteEmailModalRef.current?.close();
+      toast.success("Invitation sent successfully");
+      setInviteForm({ email: "", firstName: "", lastName: "" });
+    },
+    onError: (error: any) => {
+      console.log(error, "error");
+      return toast.error(extract_message(error));
+    },
+  });
+
   const handleSaveDate = () => {
     if (!newStartDate) return;
     updateDateMutation.mutate(newStartDate);
+  };
+
+  const handleInviteByEmail = (e: React.FormEvent) => {
+    e.preventDefault();
+    inviteMutation.mutate(inviteForm);
   };
 
   return (
@@ -72,6 +99,13 @@ export default function MyGroupHeaderDetails({
         </div>
         {isOwner && onInvite && (
           <div className="flex gap-2 shrink-0">
+            <button
+              className="btn btn-outline btn-primary"
+              onClick={() => inviteEmailModalRef.current?.showModal()}
+            >
+              <Mail className="w-4 h-4" />
+              Email Invite
+            </button>
             <button className="btn btn-primary" onClick={onInvite}>
               <UserPlus className="w-4 h-4" />
               Invite Members
@@ -172,6 +206,82 @@ export default function MyGroupHeaderDetails({
           </div>
         ))}
       </div>
+
+      <dialog ref={inviteEmailModalRef} className="modal">
+        <div className="modal-box bg-base-100 text-base-content">
+          <h3 className="text-xl font-semibold">Invite Member</h3>
+          <p className="text-base text-base-content/60 mt-1">
+            Invite a contributor to this group by email
+          </p>
+
+          <form onSubmit={handleInviteByEmail} className="space-y-4 mt-6">
+            <div className="grid grid-cols-2 gap-3">
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">First Name</legend>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="Jane"
+                  value={inviteForm.firstName}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, firstName: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+              <fieldset className="fieldset">
+                <legend className="fieldset-legend">Last Name</legend>
+                <input
+                  type="text"
+                  className="input w-full"
+                  placeholder="Doe"
+                  value={inviteForm.lastName}
+                  onChange={(e) =>
+                    setInviteForm({ ...inviteForm, lastName: e.target.value })
+                  }
+                  required
+                />
+              </fieldset>
+            </div>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Email Address</legend>
+              <input
+                type="email"
+                className="input w-full"
+                placeholder="contributor@example.com"
+                value={inviteForm.email}
+                onChange={(e) =>
+                  setInviteForm({ ...inviteForm, email: e.target.value })
+                }
+                required
+              />
+            </fieldset>
+
+            <div className="modal-action">
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => inviteEmailModalRef.current?.close()}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={inviteMutation.isPending}
+              >
+                {inviteMutation.isPending && (
+                  <span className="loading loading-spinner loading-sm" />
+                )}
+                Send Invitation
+              </button>
+            </div>
+          </form>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }
