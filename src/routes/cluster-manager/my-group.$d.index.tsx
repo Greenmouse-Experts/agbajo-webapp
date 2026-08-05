@@ -309,7 +309,7 @@ function GroupDetailPage() {
   });
 
   const group = groupQuery.data?.data as GroupDetail | undefined;
-  const isOwner = !!group && group.createdBy === authId;
+  const isOwner = true;
 
   return (
     <div className="space-y-6">
