@@ -322,7 +322,6 @@ function GroupDetailPage() {
         <ArrowLeft className="w-4 h-4" />
         Groups
       </Link>
-
       <PageLoader query={groupQuery}>
         {() =>
           group && (
