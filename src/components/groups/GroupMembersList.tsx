@@ -1,14 +1,15 @@
 import { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, RefreshCw, Plus } from "lucide-react";
+import { Users, RefreshCw, Plus, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import apiClient, { type ApiResponse } from "#/api/simpleApi";
 import SearchBar from "#/components/Searchbar";
 import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal";
 import { useAuth, type AUTHRECORD } from "#/store/authStore";
-import { createSlotApi } from "#/api/groups/groups-api.tsx";
+import { createSlotApi, getGroupSlotsApi } from "#/api/groups/groups-api.tsx";
 import { extract_message } from "#/helpers/apihelpers";
+import ReorderSlotsModal from "#/components/groups/ReorderSlotsModal";
 
 interface GroupMember {
   id: string;
@@ -64,6 +65,7 @@ export default function GroupMembersList({
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const slotModalRef = useRef<ModalHandle>(null);
+  const reorderModalRef = useRef<ModalHandle>(null);
   const queryClient = useQueryClient();
   const [rawUser] = useAuth();
   const authUser = rawUser as AUTHRECORD | null;
@@ -80,13 +82,14 @@ export default function GroupMembersList({
       return resp.data;
     },
   });
-  // const get_cycles = useQuery<ApiResponse<{ cycles: [] }>>({
-  //   queryKey: [queryScope, groupId, "cycles"],
-  //   queryFn: async () => {
-  //     const resp = await apiClient.get(`groups/${groupId}/cycles/current`);
-  //     return resp.data;
-  //   },
-  // });
+
+  const slotsQuery = useQuery({
+    queryKey: ["group-slots", groupId],
+    queryFn: () => getGroupSlotsApi({ groupId }),
+  });
+
+  const cycles = Array.isArray(slotsQuery.data?.data) ? slotsQuery.data.data : [];
+  const currentCycle = cycles[0];
 
   const slotMutation = useMutation({
     mutationFn: () =>
@@ -113,17 +116,28 @@ export default function GroupMembersList({
     );
 
   const createSlotButton = isOwner ? (
-    <button
-      className="btn btn-primary"
-      disabled={(membersQuery.data?.data?.members?.length ?? 0) < 10}
-      onClick={() => {
-        setSelectedIds([]);
-        slotModalRef.current?.open();
-      }}
-    >
-      <Plus className="w-4 h-4" />
-      Generate Slot
-    </button>
+    <div className="flex gap-2">
+      {currentCycle && currentCycle.status === "pending" && (
+        <button
+          className="btn btn-outline btn-primary"
+          onClick={() => reorderModalRef.current?.open()}
+        >
+          <ArrowUpDown className="w-4 h-4" />
+          Reorder Slots
+        </button>
+      )}
+      <button
+        className="btn btn-primary"
+        disabled={(membersQuery.data?.data?.members?.length ?? 0) < 10}
+        onClick={() => {
+          setSelectedIds([]);
+          slotModalRef.current?.open();
+        }}
+      >
+        <Plus className="w-4 h-4" />
+        Generate Slot
+      </button>
+    </div>
   ) : null;
 
   const searchBar = (
@@ -224,6 +238,13 @@ export default function GroupMembersList({
         {searchBar}
         {tableContent}
         {slotModal}
+        {currentCycle && (
+          <ReorderSlotsModal
+            modalRef={reorderModalRef}
+            groupId={groupId}
+            cycle={currentCycle}
+          />
+        )}
       </>
     );
   }
@@ -242,6 +263,13 @@ export default function GroupMembersList({
       {searchBar}
       {tableContent}
       {slotModal}
+      {currentCycle && (
+        <ReorderSlotsModal
+          modalRef={reorderModalRef}
+          groupId={groupId}
+          cycle={currentCycle}
+        />
+      )}
     </div>
   );
 }
