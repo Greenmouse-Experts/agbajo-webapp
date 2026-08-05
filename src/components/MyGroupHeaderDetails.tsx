@@ -1,6 +1,15 @@
 import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Calendar, DollarSign, Users, UserPlus, Edit2, Check, X, Mail } from "lucide-react";
+import {
+  Calendar,
+  DollarSign,
+  Users,
+  UserPlus,
+  Edit2,
+  Check,
+  X,
+  Mail,
+} from "lucide-react";
 import { formatCurrency, formatDate } from "#/helpers/helpers";
 import type { GroupDetail } from "#/types/groups";
 import apiClient from "#/api/simpleApi";
@@ -119,7 +128,7 @@ export default function MyGroupHeaderDetails({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4">
         {[
           {
-            icon: <DollarSign className="w-3.5 h-3.5 text-base-content/40" />,
+            icon: <></>,
             label: "Contribution",
             value: (
               <p className="font-semibold text-base-content capitalize">
@@ -128,7 +137,7 @@ export default function MyGroupHeaderDetails({
             ),
           },
           {
-            icon: <DollarSign className="w-3.5 h-3.5 text-base-content/40" />,
+            icon: <></>,
             label: "Per Interval",
             value: (
               <p className="font-semibold text-base-content capitalize">
@@ -183,7 +192,7 @@ export default function MyGroupHeaderDetails({
                   <button
                     onClick={() => {
                       setNewStartDate(
-                        new Date(group.startDate).toISOString().split("T")[0]
+                        new Date(group.startDate).toISOString().split("T")[0],
                       );
                       setIsEditingDate(true);
                     }}

@@ -12,6 +12,7 @@ export const Route = createFileRoute("/contributor/mygroup/$id/")({
 
 import type { GroupDetail } from "#/types/groups";
 import MyGroupHeaderDetails from "#/components/MyGroupHeaderDetails.tsx";
+import GroupSlotList from "#/components/groups/GroupSlotLists.tsx";
 
 interface GroupManager {
   id: string;
@@ -100,6 +101,7 @@ function GroupDetailPage() {
                 )}
               </div>
 
+              <GroupSlotList groupId={id} viewOnly />
               <GroupMembersList groupId={id} queryScope="contributor" />
             </div>
             <div className="lg:col-span-1">

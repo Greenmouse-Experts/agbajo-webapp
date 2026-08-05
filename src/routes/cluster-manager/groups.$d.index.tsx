@@ -23,6 +23,7 @@ import { useAuth, type AUTHRECORD } from "#/store/authStore";
 import JoinRequestsList from "#/components/groups/JoinRequestsList";
 import GroupMembersList from "#/components/groups/GroupMembersList";
 import GroupHeaderDetails from "#/components/GroupHeaderDetails";
+import GroupSlotList from "#/components/groups/GroupSlotLists.tsx";
 
 type TabParam = "members" | "requests";
 
@@ -390,7 +391,10 @@ function GroupDetailPage() {
                   </div>
                 )}
               </div>
-
+              <GroupSlotList
+                groupId={d}
+                // viewOnly={viewOnly}
+              />
               {/* Members / Requests tabs */}
               {(() => {
                 const showRequests = isOwner && group.type !== "private";
