@@ -55,6 +55,7 @@ export interface GroupSlot {
   paidAt: string | null;
   createdAt: string;
   updatedAt: string;
+  deductions?: any[];
 }
 
 export interface GroupCycle {
