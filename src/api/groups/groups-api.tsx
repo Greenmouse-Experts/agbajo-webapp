@@ -104,3 +104,15 @@ export const getCycleDetailsApi = async (params: {
   );
   return resp.data;
 };
+
+export const reorderSlotsApi = async (params: {
+  groupId: string;
+  cycleId: string;
+  slotOrder: string[];
+}): Promise<ApiResponse<{}>> => {
+  const resp = await apiClient.put(
+    `/groups/${params.groupId}/cycles/${params.cycleId}/reorder-slots`,
+    { slotOrder: params.slotOrder },
+  );
+  return resp.data;
+};

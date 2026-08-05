@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ListOrdered,
@@ -7,6 +7,7 @@ import {
   DollarSign,
   Layers,
   Send,
+  ArrowUpDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -19,6 +20,8 @@ import CustomTable, { type columnType } from "#/components/tables/CustomTable";
 import QueryCompLayout from "#/components/layout/QueryCompLayout";
 import { extract_message } from "#/helpers/apihelpers";
 import { formatCurrency, formatDate } from "#/helpers/helpers";
+import ReorderSlotsModal from "#/components/groups/ReorderSlotsModal";
+import type { ModalHandle } from "#/components/modals/DialogModal";
 
 const columns: columnType<GroupSlot>[] = [
   {
@@ -118,6 +121,7 @@ interface Props {
 
 export default function GroupSlotList({ groupId }: Props) {
   const [selectedCycleIndex, setSelectedCycleIndex] = useState(0);
+  const reorderModalRef = useRef<ModalHandle>(null);
   const queryClient = useQueryClient();
 
   const query = useQuery({
@@ -238,18 +242,27 @@ export default function GroupSlotList({ groupId }: Props) {
 
                   <div className="flex items-center gap-2 ml-auto">
                     {currentCycle.status === "pending" && (
-                      <button
-                        className="btn btn-xs btn-primary gap-1"
-                        disabled={publishMutation.isPending}
-                        onClick={() => publishMutation.mutate(currentCycle.id)}
-                      >
-                        {publishMutation.isPending ? (
-                          <span className="loading loading-spinner loading-xs" />
-                        ) : (
-                          <Send className="w-3 h-3" />
-                        )}
-                        Publish Cycle
-                      </button>
+                      <>
+                        <button
+                          className="btn btn-xs btn-outline gap-1"
+                          onClick={() => reorderModalRef.current?.open()}
+                        >
+                          <ArrowUpDown className="w-3 h-3" />
+                          Reorder Slots
+                        </button>
+                        <button
+                          className="btn btn-xs btn-primary gap-1"
+                          disabled={publishMutation.isPending}
+                          onClick={() => publishMutation.mutate(currentCycle.id)}
+                        >
+                          {publishMutation.isPending ? (
+                            <span className="loading loading-spinner loading-xs" />
+                          ) : (
+                            <Send className="w-3 h-3" />
+                          )}
+                          Publish Cycle
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -262,12 +275,15 @@ export default function GroupSlotList({ groupId }: Props) {
                   <p className="text-sm">No slots in this cycle</p>
                 </div>
               ) : (
-                <CustomTable
-                  data={slots}
-                  columns={columns}
-                  ring={false}
-                />
+                <CustomTable data={slots} columns={columns} ring={false} />
               )}
+
+              {/* Reorder Slots Modal */}
+              <ReorderSlotsModal
+                modalRef={reorderModalRef}
+                groupId={groupId}
+                cycle={currentCycle}
+              />
             </div>
           );
         }}
