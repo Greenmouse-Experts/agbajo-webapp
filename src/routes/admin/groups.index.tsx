@@ -118,7 +118,6 @@ const columns: columnType<Group>[] = [
     //   <span className="badge badge-outline capitalize">{value}</span>
     // ),
   },
-
   // {
   //   key: "maxMembers",
   //   label: "Max Members",

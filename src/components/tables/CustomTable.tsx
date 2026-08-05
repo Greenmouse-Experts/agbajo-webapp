@@ -18,6 +18,7 @@ interface CustomTableProps {
   totalCount?: number;
   paginationProps?: ReturnType<typeof usePagination>;
   onRowClick?: (item: any) => void;
+  color?: "primary" | "secondary" | "acccent";
 }
 
 export default function CustomTable(props: CustomTableProps) {

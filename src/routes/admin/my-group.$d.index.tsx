@@ -25,6 +25,7 @@ import JoinRequestsList from "#/components/groups/JoinRequestsList";
 import GroupMembersList from "#/components/groups/GroupMembersList";
 import GroupHeaderDetails from "#/components/GroupHeaderDetails";
 import GroupSlotList from "#/components/groups/GroupSlotLists.tsx";
+import MyGroupHeaderDetails from "#/components/MyGroupHeaderDetails.tsx";
 
 type TabParam = "members" | "requests";
 
@@ -394,10 +395,11 @@ function GroupDetailPage() {
                     </div>
                   </div>*/}
 
-                  <GroupHeaderDetails
+                  <MyGroupHeaderDetails
                     //@ts-ignore
                     group={group}
                     isOwner={isOwner}
+
                     onInvite={() => inviteModalRef.current?.open()}
                   />
                   {/* Managers */}

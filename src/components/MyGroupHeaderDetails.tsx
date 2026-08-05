@@ -19,12 +19,14 @@ import { extract_message } from "#/helpers/apihelpers";
 interface Props {
   group: GroupDetail;
   isOwner?: boolean;
+  isAdmin?: boolean;
   onInvite?: () => void;
 }
 
 export default function MyGroupHeaderDetails({
   group,
   isOwner,
+  isAdmin = false,
   onInvite,
 }: Props) {
   const queryClient = useQueryClient();
@@ -49,7 +51,10 @@ export default function MyGroupHeaderDetails({
         startDate: new Date(dateVal).toISOString(),
         type: group.type,
       };
-      const req = apiClient.patch(`/groups/${group.id}`, payload);
+      const req = apiClient.patch(
+        `${isAdmin && "admins"}/groups/${group.id}`,
+        payload,
+      );
       toast.promise(req, {
         loading: "Updating start date...",
         success: "Start date updated successfully",
@@ -67,7 +72,10 @@ export default function MyGroupHeaderDetails({
 
   const inviteMutation = useMutation({
     mutationFn: (body: typeof inviteForm) =>
-      apiClient.post(`groups/${group.id}/email-invitations`, body),
+      apiClient.post(
+        `${isAdmin && "admins"}/groups/${group.id}/email-invitations`,
+        body,
+      ),
     onSuccess: () => {
       inviteEmailModalRef.current?.close();
       toast.success("Invitation sent successfully");
