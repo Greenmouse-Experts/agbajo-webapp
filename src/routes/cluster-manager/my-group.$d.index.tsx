@@ -431,7 +431,7 @@ function GroupDetailPage() {
                       <GroupMembersList
                         groupId={d}
                         queryScope="cluster-manager"
-                        ownerId={group.createdBy}
+                        ownerId={authUser?.user.id as string}
                         embedded
                       />
                     ) : (
