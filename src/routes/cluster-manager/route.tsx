@@ -43,7 +43,7 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
     exact: true,
   },
-  { to: "/cluster-manager/members", label: "Members", icon: Users },
+  // { to: "/cluster-manager/members", label: "Members", icon: Users },
   { to: "/cluster-manager/groups", label: "Groups", icon: Folder },
   {
     to: "/cluster-manager/contributions",
