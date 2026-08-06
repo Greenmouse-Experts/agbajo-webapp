@@ -377,7 +377,7 @@ function GroupDetailPage() {
                             {m.email}
                           </p>
                         </div>
-                        {isOwner && (
+                        {/*{isOwner && (
                           <button
                             className="btn btn-ghost btn-sm btn-square text-error shrink-0"
                             disabled={unassignMutation.isPending}
@@ -386,7 +386,7 @@ function GroupDetailPage() {
                           >
                             <X className="w-4 h-4" />
                           </button>
-                        )}
+                        )}*/}
                       </div>
                     ))}
                   </div>
