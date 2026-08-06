@@ -346,7 +346,7 @@ function GroupDetailPage() {
                       {group.managers.length}
                     </span>
                   </div>
-                  {isOwner && (
+                  {/*{isOwner && (
                     <button
                       className="btn btn-outline btn-sm"
                       onClick={() => assignModalRef.current?.open()}
@@ -354,7 +354,7 @@ function GroupDetailPage() {
                       <UserPlus className="w-4 h-4" />
                       Assign
                     </button>
-                  )}
+                  )}*/}
                 </div>
 
                 {group.managers.length === 0 ? (
