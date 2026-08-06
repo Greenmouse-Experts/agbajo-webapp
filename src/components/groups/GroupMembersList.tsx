@@ -4,7 +4,6 @@ import {
   Users,
   RefreshCw,
   Plus,
-  ArrowUpDown,
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
@@ -63,7 +62,7 @@ export default function GroupMembersList({
   ownerId,
 }: Props) {
   const [search, setSearch] = useState("");
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [orderedMembers, setOrderedMembers] = useState<GroupMember[]>([]);
   const slotModalRef = useRef<ModalHandle>(null);
   const reorderModalRef = useRef<ModalHandle>(null);
   const queryClient = useQueryClient();
@@ -94,17 +93,19 @@ export default function GroupMembersList({
   const currentCycle = cycles[0];
 
   const slotMutation = useMutation({
-    mutationFn: () =>
-      toast
-        .promise(createSlotApi({ groupId, memberId: selectedIds }), {
+    mutationFn: () => {
+      const memberIds = orderedMembers.map((m) => m.id);
+      return toast
+        .promise(createSlotApi({ groupId, memberId: memberIds }), {
           loading: "Creating slot...",
           success: "Slot created",
           error: extract_message,
         })
-        .unwrap(),
+        .unwrap();
+    },
     onSuccess: () => {
       slotModalRef.current?.close();
-      setSelectedIds([]);
+      setOrderedMembers([]);
       queryClient.invalidateQueries({ queryKey: [queryScope, groupId] });
     },
   });
@@ -112,14 +113,51 @@ export default function GroupMembersList({
   const members = membersQuery.data?.data?.members ?? [];
   const total = membersQuery.data?.data?.total;
 
-  const toggleMember = (id: string) =>
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+  const fetchPreview = async () => {
+    try {
+      const promise = apiClient.get(`/groups/${groupId}/cycles/preview-slots`);
+      toast.promise(
+        promise,
+        {
+          loading: "Fetching default slot arrangement...",
+          success: "Default arrangement loaded",
+          error: "Failed to fetch arrangement",
+        }
+      );
+      const resp = await promise;
+      const resData = resp.data?.data;
+      const slots = Array.isArray(resData) ? resData : (Array.isArray(resData?.slots) ? resData.slots : []);
+      
+      const ordered = slots
+        .map((s: any) => {
+          const u = s.user || s;
+          const memberId = u.id || s.userId || u.userId || s.memberId;
+          return (
+            members.find((m) => m.id === memberId) || {
+              id: memberId,
+              firstName: u.firstName || "",
+              lastName: u.lastName || "",
+              email: u.email || "",
+            }
+          );
+        })
+        .filter((x: any) => x && x.id);
+
+      if (ordered.length === 0) {
+        setOrderedMembers([...members]);
+      } else {
+        setOrderedMembers(ordered);
+      }
+      slotModalRef.current?.open();
+    } catch (err) {
+      setOrderedMembers([...members]);
+      slotModalRef.current?.open();
+    }
+  };
 
   const moveSelectedUp = (index: number) => {
-    if (index <= 0 || index >= selectedIds.length) return;
-    setSelectedIds((prev) => {
+    if (index <= 0 || index >= orderedMembers.length) return;
+    setOrderedMembers((prev) => {
       const copy = [...prev];
       const temp = copy[index];
       copy[index] = copy[index - 1];
@@ -129,8 +167,8 @@ export default function GroupMembersList({
   };
 
   const moveSelectedDown = (index: number) => {
-    if (index < 0 || index >= selectedIds.length - 1) return;
-    setSelectedIds((prev) => {
+    if (index < 0 || index >= orderedMembers.length - 1) return;
+    setOrderedMembers((prev) => {
       const copy = [...prev];
       const temp = copy[index];
       copy[index] = copy[index + 1];
@@ -153,10 +191,7 @@ export default function GroupMembersList({
       <button
         className="btn btn-primary"
         disabled={(membersQuery.data?.data?.members?.length ?? 0) < 10}
-        onClick={() => {
-          setSelectedIds([]);
-          slotModalRef.current?.open();
-        }}
+        onClick={fetchPreview}
       >
         <Plus className="w-4 h-4" />
         Generate Slot
@@ -208,7 +243,7 @@ export default function GroupMembersList({
           </button>
           <button
             className="btn btn-primary"
-            disabled={selectedIds.length === 0 || slotMutation.isPending}
+            disabled={orderedMembers.length === 0 || slotMutation.isPending}
             onClick={() => slotMutation.mutate()}
           >
             {slotMutation.isPending ? (
@@ -216,104 +251,69 @@ export default function GroupMembersList({
             ) : (
               <Plus className="w-4 h-4" />
             )}
-            Create ({selectedIds.length})
+            Create ({orderedMembers.length})
           </button>
         </>
       }
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto">
-        {/* Left column: Selection list */}
-        <div>
-          <h4 className="font-semibold text-sm mb-2 text-base-content">
-            Select Members
-          </h4>
-          <p className="text-xs text-base-content/60 mb-3">
-            Check the members you want to include in this payout cycle.
-          </p>
-          <div className="divide-y divide-base-200 border border-base-200 rounded-lg p-2 max-h-72 overflow-y-auto">
-            {members.map((m) => {
-              const checked = selectedIds.includes(m.id);
+      <div className="max-h-[60vh] overflow-y-auto">
+        <h4 className="font-semibold text-sm mb-2 text-base-content">
+          Payout Order
+        </h4>
+        <p className="text-xs text-base-content/60 mb-3">
+          Below is the preview arrangement of slots. Use the arrows to adjust the sequence of slot payouts.
+        </p>
+        {orderedMembers.length === 0 ? (
+          <div className="flex flex-col items-center justify-center border border-dashed border-base-300 rounded-lg h-72 text-base-content/40 p-4 text-center">
+            <p className="text-xs">No members in this group to arrange.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-base-200 border border-base-200 rounded-lg p-2 max-h-96 overflow-y-auto">
+            {orderedMembers.map((member, index) => {
               return (
-                <label
-                  key={m.id}
-                  className="flex items-center gap-3 py-2 cursor-pointer hover:bg-base-200/40 px-2 rounded-lg"
+                <div
+                  key={member.id}
+                  className="flex items-center justify-between py-2 px-3 hover:bg-base-200/40 rounded-lg"
                 >
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-primary checkbox-sm"
-                    checked={checked}
-                    onChange={() => toggleMember(m.id)}
-                  />
-                  <div className="rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content font-semibold shrink-0 w-7 h-7 text-xs">
-                    {(m.firstName?.[0] ?? "?").toUpperCase()}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-sm font-bold text-primary w-6">
+                      #{index + 1}
+                    </span>
+                    <div className="rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center text-primary-content font-semibold shrink-0 w-8 h-8 text-xs">
+                      {(member.firstName?.[0] ?? "?").toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-sm text-base-content truncate">
+                        {member.firstName} {member.lastName}
+                      </p>
+                      <p className="text-xs text-base-content/50 truncate">
+                        {member.email}
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-base-content text-xs truncate">
-                      {m.firstName} {m.lastName}
-                    </p>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      className="btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-base-content"
+                      disabled={index === 0}
+                      onClick={() => moveSelectedUp(index)}
+                      title="Move Up"
+                    >
+                      <ArrowUp className="w-4 h-4" />
+                    </button>
+                    <button
+                      className="btn btn-ghost btn-sm btn-square text-base-content/60 hover:text-base-content"
+                      disabled={index === orderedMembers.length - 1}
+                      onClick={() => moveSelectedDown(index)}
+                      title="Move Down"
+                    >
+                      <ArrowDown className="w-4 h-4" />
+                    </button>
                   </div>
-                </label>
+                </div>
               );
             })}
           </div>
-        </div>
-
-        {/* Right column: Ordering list */}
-        <div>
-          <h4 className="font-semibold text-sm mb-2 text-base-content">
-            Payout Order
-          </h4>
-          <p className="text-xs text-base-content/60 mb-3">
-            Use the arrows to set the sequence of slot payouts.
-          </p>
-          {selectedIds.length === 0 ? (
-            <div className="flex flex-col items-center justify-center border border-dashed border-base-300 rounded-lg h-72 text-base-content/40 p-4 text-center">
-              <p className="text-xs">
-                Select members on the left to set their payout order.
-              </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-base-200 border border-base-200 rounded-lg p-2 max-h-72 overflow-y-auto">
-              {selectedIds.map((id, index) => {
-                const member = members.find((m) => m.id === id);
-                if (!member) return null;
-                return (
-                  <div
-                    key={id}
-                    className="flex items-center justify-between py-1.5 px-2 hover:bg-base-200/40 rounded-lg"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs font-bold text-primary w-5">
-                        #{index + 1}
-                      </span>
-                      <span className="text-xs text-base-content font-medium truncate">
-                        {member.firstName} {member.lastName}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        className="btn btn-ghost btn-xs btn-square"
-                        disabled={index === 0}
-                        onClick={() => moveSelectedUp(index)}
-                        title="Move Up"
-                      >
-                        <ArrowUp className="w-3 h-3" />
-                      </button>
-                      <button
-                        className="btn btn-ghost btn-xs btn-square"
-                        disabled={index === selectedIds.length - 1}
-                        onClick={() => moveSelectedDown(index)}
-                        title="Move Down"
-                      >
-                        <ArrowDown className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </Modal>
   );
