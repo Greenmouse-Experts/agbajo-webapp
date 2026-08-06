@@ -109,8 +109,28 @@ function GroupDetailPage() {
                 )}
               </div>
 
-              <GroupSlotList groupId={id} viewOnly />
-              <GroupMembersList groupId={id} queryScope="contributor" />
+              {/* Tabbed Payout Slots & Members */}
+              <div className="card bg-base-100 shadow-sm overflow-hidden">
+                <TabSwitcher
+                  tabs={[
+                    { id: "slots", label: "Payout Slots" },
+                    { id: "members", label: "Members" },
+                  ]}
+                  activeTab={tab}
+                  onChange={(tabId) =>
+                    navigate({
+                      to: ".",
+                      search: (prev) => ({ ...prev, tab: tabId }),
+                    })
+                  }
+                />
+                <div>
+                  {tab === "slots" && <GroupSlotList groupId={id} viewOnly embedded />}
+                  {tab === "members" && (
+                    <GroupMembersList groupId={id} queryScope="contributor" embedded />
+                  )}
+                </div>
+              </div>
             </div>
             <div className="lg:col-span-1">
               <GroupContributions groupId={id} />
