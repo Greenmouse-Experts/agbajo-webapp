@@ -20,6 +20,7 @@ interface Props {
   group: GroupDetail;
   isOwner?: boolean;
   isAdmin?: boolean;
+  hideInvite?: boolean;
   onInvite?: () => void;
 }
 
@@ -27,6 +28,7 @@ export default function MyGroupHeaderDetails({
   group,
   isOwner,
   isAdmin = false,
+  hideInvite,
   onInvite,
 }: Props) {
   const queryClient = useQueryClient();
@@ -108,20 +110,24 @@ export default function MyGroupHeaderDetails({
             Created {formatDate(group.createdAt)}
           </p>
         </div>
-        {isOwner && onInvite && (
-          <div className="flex gap-2 shrink-0">
-            <button
-              className="btn btn-outline btn-primary"
-              onClick={() => inviteEmailModalRef.current?.showModal()}
-            >
-              <Mail className="w-4 h-4" />
-              Email Invite
-            </button>
-            <button className="btn btn-primary" onClick={onInvite}>
-              <UserPlus className="w-4 h-4" />
-              Invite Members
-            </button>
-          </div>
+        {hideInvite && (
+          <>
+            {isOwner && onInvite && (
+              <div className="flex gap-2 shrink-0">
+                <button
+                  className="btn btn-outline btn-primary"
+                  onClick={() => inviteEmailModalRef.current?.showModal()}
+                >
+                  <Mail className="w-4 h-4" />
+                  Email Invite
+                </button>
+                <button className="btn btn-primary" onClick={onInvite}>
+                  <UserPlus className="w-4 h-4" />
+                  Invite Members
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
