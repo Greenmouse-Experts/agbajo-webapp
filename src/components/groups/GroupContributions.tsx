@@ -98,8 +98,8 @@ export default function GroupContributions({ groupId }: Props) {
             <div className="divide-y divide-base-200 overflow-y-auto max-h-[500px]">
               {contributions.map((c) => {
                 const cfg = statusConfig[c.status];
-                const name = c.user
-                  ? `${c.user.firstName} ${c.user.lastName}`.trim()
+                const name = c.firstName && c.lastName
+                  ? `${c.firstName} ${c.lastName}`.trim()
                   : "—";
                 return (
                   <div
@@ -107,7 +107,7 @@ export default function GroupContributions({ groupId }: Props) {
                     className="flex items-center gap-3 px-5 py-3 hover:bg-base-200/40 transition-colors"
                   >
                     <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-semibold text-sm shrink-0">
-                      {(c.user?.firstName?.[0] ?? "?").toUpperCase()}
+                      {(c.firstName?.[0] ?? "?").toUpperCase()}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-base-content text-sm truncate">
@@ -119,7 +119,7 @@ export default function GroupContributions({ groupId }: Props) {
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">
                       <span className="font-semibold text-sm text-base-content">
-                        {formatCurrency(c.amount)}
+                        {formatCurrency(c.contributionAmount)}
                       </span>
                       <span className={`badge badge-sm ${cfg.badge}`}>
                         {cfg.label}
