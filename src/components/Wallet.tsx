@@ -2,7 +2,11 @@ import apiClient, { type ApiResponse } from "#/api/simpleApi.ts";
 import { formatCurrency } from "#/helpers/currency.ts";
 import Modal, { type ModalHandle } from "#/components/modals/DialogModal.tsx";
 import SimpleInput from "#/components/modals/inputs/SimpleInput.tsx";
-import type { WalletData, NgnDepositResponse, DepositForm } from "#/types/wallet.ts";
+import type {
+  WalletData,
+  NgnDepositResponse,
+  DepositForm,
+} from "#/types/wallet.ts";
 import { extract_message } from "#/helpers/apihelpers";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,7 +22,9 @@ const QUICK_AMOUNTS = [5000, 10000, 20000, 50000];
 export default function Wallet() {
   const qc = useQueryClient();
   const modalRef = useRef<ModalHandle>(null);
-  const methods = useForm<DepositForm>({ defaultValues: { amount: "", currency: "NGN" } });
+  const methods = useForm<DepositForm>({
+    defaultValues: { amount: "", currency: "NGN" },
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["wallet", "balance"],
@@ -113,8 +119,12 @@ export default function Wallet() {
                 <ArrowDownRight className="w-5 h-5 text-primary-content" />
               </div>
               <div className="text-left items-start">
-                <p className="text-base font-medium text-base-content">Fund Wallet</p>
-                <p className="text-sm text-base-content/60">Add money to your wallet</p>
+                <p className="text-base font-medium text-base-content">
+                  Fund Wallet
+                </p>
+                <p className="text-sm text-base-content/60">
+                  Add money to your wallet
+                </p>
               </div>
             </button>
 
@@ -123,8 +133,12 @@ export default function Wallet() {
                 <Zap className="w-5 h-5 text-warning" />
               </div>
               <div>
-                <p className="text-base font-medium text-base-content">Auto Debit</p>
-                <p className="text-sm text-base-content/60">Enabled for contributions</p>
+                <p className="text-base font-medium text-base-content">
+                  Withdraw
+                </p>
+                <p className="text-sm text-base-content/60">
+                  Enabled for contributions
+                </p>
               </div>
               <input
                 type="checkbox"
@@ -187,7 +201,9 @@ export default function Wallet() {
                   type="button"
                   className="btn btn-sm btn-outline"
                   onClick={() =>
-                    methods.setValue("amount", String(amt), { shouldValidate: true })
+                    methods.setValue("amount", String(amt), {
+                      shouldValidate: true,
+                    })
                   }
                 >
                   ₦{amt / 1000}k
