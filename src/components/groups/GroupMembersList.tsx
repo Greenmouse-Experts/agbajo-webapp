@@ -54,13 +54,6 @@ const columns: columnType<GroupMember>[] = [
       <span className="text-sm text-base-content/60">{val}</span>
     ),
   },
-  {
-    key: "slot",
-    label: "Slot",
-    render: (val) => (
-      <span className="text-sm text-base-content/60">{val}</span>
-    ),
-  },
 ];
 
 export default function GroupMembersList({
