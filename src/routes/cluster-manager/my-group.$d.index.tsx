@@ -25,12 +25,13 @@ import GroupMembersList from "#/components/groups/GroupMembersList";
 import GroupHeaderDetails from "#/components/GroupHeaderDetails";
 import MyGroupHeaderDetails from "#/components/MyGroupHeaderDetails.tsx";
 import GroupSlotList from "#/components/groups/GroupSlotLists.tsx";
+import TabSwitcher from "#/components/TabSwitcher";
 
-type TabParam = "members" | "requests";
+type TabParam = "slots" | "members" | "requests";
 
 export const Route = createFileRoute("/cluster-manager/my-group/$d/")({
   validateSearch: (s): { tab?: TabParam } => ({
-    tab: (s?.tab as TabParam) ?? "members",
+    tab: (s?.tab as TabParam) ?? "slots",
   }),
   component: GroupDetailPage,
 });
@@ -278,7 +279,7 @@ function GroupDetailPage() {
   const authUser = rawUser as AUTHRECORD | null;
   const _authId = String(authUser?.user?.id ?? "");
   const navigate = useNavigate();
-  const { tab = "members" } = Route.useSearch();
+  const { tab = "slots" } = Route.useSearch();
   const assignModalRef = useRef<ModalHandle>(null);
   const inviteModalRef = useRef<ModalHandle>(null);
   const inviteByEmailModalRef = useRef<ModalHandle>(null);
@@ -391,51 +392,42 @@ function GroupDetailPage() {
                   </div>
                 )}
               </div>
-              <GroupSlotList groupId={d} />
-              {/* Members / Requests tabs */}
+              {/* Members / Slots / Requests tabs */}
               {(() => {
                 const showRequests = isOwner && group.type !== "private";
-                const activeTab = showRequests ? tab : "members";
+                const activeTab = showRequests ? tab : tab === "requests" ? "slots" : tab;
                 return (
                   <div className="card bg-base-100 shadow-sm overflow-hidden">
-                    <div className="tabs tabs-border border-b border-base-200 px-2 pt-2">
-                      <button
-                        role="tab"
-                        className={`tab${activeTab === "members" ? " tab-active font-semibold" : ""}`}
-                        onClick={() =>
-                          navigate({
-                            to: ".",
-                            search: (prev) => ({ ...prev, tab: "members" }),
-                          })
-                        }
-                      >
-                        Members
-                      </button>
-                      {showRequests && (
-                        <button
-                          role="tab"
-                          className={`tab${activeTab === "requests" ? " tab-active font-semibold" : ""}`}
-                          onClick={() =>
-                            navigate({
-                              to: ".",
-                              search: (prev) => ({ ...prev, tab: "requests" }),
-                            })
-                          }
-                        >
-                          Join Requests
-                        </button>
+                    <TabSwitcher
+                      tabs={[
+                        { id: "slots", label: "Payout Slots" },
+                        { id: "members", label: "Members" },
+                        {
+                          id: "requests",
+                          label: "Join Requests",
+                          hidden: !showRequests,
+                        },
+                      ]}
+                      activeTab={activeTab}
+                      onChange={(tabId) =>
+                        navigate({
+                          to: ".",
+                          search: (prev) => ({ ...prev, tab: tabId }),
+                        })
+                      }
+                    />
+                    <div>
+                      {activeTab === "slots" && <GroupSlotList groupId={d} embedded />}
+                      {activeTab === "members" && (
+                        <GroupMembersList
+                          groupId={d}
+                          queryScope="cluster-manager"
+                          ownerId={authUser?.user.id as string}
+                          embedded
+                        />
                       )}
+                      {activeTab === "requests" && <JoinRequestsList groupId={d} />}
                     </div>
-                    {activeTab === "members" ? (
-                      <GroupMembersList
-                        groupId={d}
-                        queryScope="cluster-manager"
-                        ownerId={authUser?.user.id as string}
-                        embedded
-                      />
-                    ) : (
-                      <JoinRequestsList groupId={d} />
-                    )}
                   </div>
                 );
               })()}
