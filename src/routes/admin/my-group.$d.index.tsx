@@ -399,7 +399,7 @@ function GroupDetailPage() {
                     //@ts-ignore
                     group={group}
                     isOwner={isOwner}
-
+                    hideInvite
                     onInvite={() => inviteModalRef.current?.open()}
                   />
                   {/* Managers */}
