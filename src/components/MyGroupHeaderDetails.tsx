@@ -110,7 +110,7 @@ export default function MyGroupHeaderDetails({
             Created {formatDate(group.createdAt)}
           </p>
         </div>
-        {hideInvite && (
+        {!hideInvite && (
           <>
             {isOwner && onInvite && (
               <div className="flex gap-2 shrink-0">

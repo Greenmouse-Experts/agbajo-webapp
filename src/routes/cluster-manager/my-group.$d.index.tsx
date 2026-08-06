@@ -331,6 +331,7 @@ function GroupDetailPage() {
               <MyGroupHeaderDetails
                 group={group}
                 isOwner={isOwner}
+                hideInvite={false}
                 onInvite={() => inviteModalRef.current?.open()}
               />
 
@@ -395,7 +396,11 @@ function GroupDetailPage() {
               {/* Members / Slots / Requests tabs */}
               {(() => {
                 const showRequests = isOwner && group.type !== "private";
-                const activeTab = showRequests ? tab : tab === "requests" ? "slots" : tab;
+                const activeTab = showRequests
+                  ? tab
+                  : tab === "requests"
+                    ? "slots"
+                    : tab;
                 return (
                   <div className="card bg-base-100 shadow-sm overflow-hidden">
                     <TabSwitcher
@@ -417,7 +422,9 @@ function GroupDetailPage() {
                       }
                     />
                     <div>
-                      {activeTab === "slots" && <GroupSlotList groupId={d} embedded />}
+                      {activeTab === "slots" && (
+                        <GroupSlotList groupId={d} embedded />
+                      )}
                       {activeTab === "members" && (
                         <GroupMembersList
                           groupId={d}
@@ -426,7 +433,9 @@ function GroupDetailPage() {
                           embedded
                         />
                       )}
-                      {activeTab === "requests" && <JoinRequestsList groupId={d} />}
+                      {activeTab === "requests" && (
+                        <JoinRequestsList groupId={d} />
+                      )}
                     </div>
                   </div>
                 );

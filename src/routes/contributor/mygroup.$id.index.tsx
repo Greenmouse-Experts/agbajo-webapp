@@ -1,12 +1,18 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Users, Hash } from "lucide-react";
 import apiClient from "#/api/simpleApi";
 import PageLoader from "#/components/layout/PageLoader";
 import GroupContributions from "#/components/groups/GroupContributions.tsx";
 import GroupMembersList from "#/components/groups/GroupMembersList";
+import TabSwitcher from "#/components/TabSwitcher";
+
+type TabParam = "slots" | "members";
 
 export const Route = createFileRoute("/contributor/mygroup/$id/")({
+  validateSearch: (s): { tab?: TabParam } => ({
+    tab: (s?.tab as TabParam) ?? "slots",
+  }),
   component: GroupDetailPage,
 });
 
@@ -39,6 +45,8 @@ const Avatar = ({
 
 function GroupDetailPage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const { tab = "slots" } = Route.useSearch();
 
   const groupQuery = useQuery({
     queryKey: ["contributor", "group", id],

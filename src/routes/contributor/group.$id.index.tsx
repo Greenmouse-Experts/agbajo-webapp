@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Users, Hash } from "lucide-react";
 import apiClient from "#/api/simpleApi";
@@ -6,8 +6,15 @@ import PageLoader from "#/components/layout/PageLoader";
 import GroupContributions from "#/components/groups/GroupContributions.tsx";
 import GroupHeaderDetails from "#/components/GroupHeaderDetails";
 import GroupMembersList from "#/components/groups/GroupMembersList";
+import GroupSlotList from "#/components/groups/GroupSlotLists.tsx";
+import TabSwitcher from "#/components/TabSwitcher";
+
+type TabParam = "slots" | "members";
 
 export const Route = createFileRoute("/contributor/group/$id/")({
+  validateSearch: (s): { tab?: TabParam } => ({
+    tab: (s?.tab as TabParam) ?? "slots",
+  }),
   component: GroupDetailPage,
 });
 
@@ -38,6 +45,8 @@ const Avatar = ({
 
 function GroupDetailPage() {
   const { id } = Route.useParams();
+  const navigate = useNavigate();
+  const { tab = "slots" } = Route.useSearch();
 
   const groupQuery = useQuery({
     queryKey: ["contributor", "group", id],
@@ -100,7 +109,28 @@ function GroupDetailPage() {
                 )}
               </div>
 
-              <GroupMembersList groupId={id} queryScope="contributor" />
+              {/* Tabbed Payout Slots & Members */}
+              <div className="card bg-base-100 shadow-sm overflow-hidden">
+                <TabSwitcher
+                  tabs={[
+                    { id: "slots", label: "Payout Slots" },
+                    { id: "members", label: "Members" },
+                  ]}
+                  activeTab={tab}
+                  onChange={(tabId) =>
+                    navigate({
+                      to: ".",
+                      search: (prev) => ({ ...prev, tab: tabId }),
+                    })
+                  }
+                />
+                <div>
+                  {tab === "slots" && <GroupSlotList groupId={id} viewOnly embedded />}
+                  {tab === "members" && (
+                    <GroupMembersList groupId={id} queryScope="contributor" embedded />
+                  )}
+                </div>
+              </div>
             </div>
             <div className="lg:col-span-1">
               <GroupContributions groupId={id} />
