@@ -43,7 +43,7 @@ export default function WalletTrx() {
                     {isCredit ? (
                       <ArrowDownRight className="w-5 h-5 text-success" />
                     ) : (
-                      <ArrowUpRight className="w-5 h-5 text-error" />
+                      <ArrowUpRight className="w-5 h-5 text-info" />
                     )}
                   </div>
 
@@ -52,14 +52,18 @@ export default function WalletTrx() {
                       {tx.description}
                     </p>
                     <p className="text-sm text-base-content/60 mt-0.5 truncate">
-                      {tx.reference}
+                      {new Date(tx.createdAt).toLocaleDateString("en-NG", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
                     </p>
                   </div>
 
                   <p
-                    className={`font-semibold shrink-0 ${isCredit ? "text-success" : "text-error"}`}
+                    className={`font-semibold shrink-0 ${isCredit ? "text-success" : "text-info"}`}
                   >
-                    {isCredit ? "+" : "-"}
+                    {isCredit ? "+" : ""}
                     {formatCurrency(Number(tx.amount))}
                   </p>
                 </div>
