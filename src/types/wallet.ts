@@ -84,5 +84,6 @@ export type WithdrawResponse = NgnWithdrawResponse | UsdWithdrawResponse;
 
 export interface WithdrawForm {
   amount: string;
+  pin: string;
   currency: WithdrawCurrency;
 }

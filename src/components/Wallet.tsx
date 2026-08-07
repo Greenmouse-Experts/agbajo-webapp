@@ -6,6 +6,7 @@ import type {
   WalletData,
   NgnDepositResponse,
   DepositForm,
+  WithdrawForm,
 } from "#/types/wallet.ts";
 import { extract_message } from "#/helpers/apihelpers";
 import { toast } from "sonner";
@@ -22,8 +23,12 @@ const QUICK_AMOUNTS = [5000, 10000, 20000, 50000];
 export default function Wallet() {
   const qc = useQueryClient();
   const modalRef = useRef<ModalHandle>(null);
+  const withdrawModalRef = useRef<ModalHandle>(null);
   const methods = useForm<DepositForm>({
     defaultValues: { amount: "", currency: "NGN" },
+  });
+  const withdrawMethods = useForm<WithdrawForm>({
+    defaultValues: { amount: "", pin: "", currency: "NGN" },
   });
 
   const { data, isLoading } = useQuery({
@@ -58,6 +63,29 @@ export default function Wallet() {
 
   const handleFund = methods.handleSubmit((values) => {
     deposit.mutate(Number(values.amount));
+  });
+
+  const withdraw = useMutation({
+    mutationFn: async (values: WithdrawForm) => {
+      const resp = await apiClient.post("/wallet/withdraw", {
+        amount: Number(values.amount),
+        pin: values.pin,
+        currency: values.currency,
+      });
+      return resp.data;
+    },
+    onSuccess: () => {
+      withdrawModalRef.current?.close();
+      withdrawMethods.reset();
+      qc.invalidateQueries({ queryKey: ["wallet", "balance"] });
+      qc.invalidateQueries({ queryKey: ["wallet", "transactions"] });
+      toast.success("Withdrawal successful!");
+    },
+    onError: (err) => toast.error(extract_message(err)),
+  });
+
+  const handleWithdraw = withdrawMethods.handleSubmit((values) => {
+    withdraw.mutate(values);
   });
 
   const balance = Number(data?.balance ?? 0);
@@ -128,28 +156,82 @@ export default function Wallet() {
               </div>
             </button>
 
-            <div className="flex items-center gap-3 p-3 rounded-xl border border-base-200">
+            <button
+              onClick={() => withdrawModalRef.current?.open()}
+              className="btn items-start h-auto p-3 btn-ghost flex justify-start"
+            >
               <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center shrink-0">
                 <Zap className="w-5 h-5 text-warning" />
               </div>
-              <div>
+              <div className="text-left items-start">
                 <p className="text-base font-medium text-base-content">
                   Withdraw
                 </p>
                 <p className="text-sm text-base-content/60">
-                  Enabled for contributions
+                  Transfer to your bank
                 </p>
               </div>
-              <input
-                type="checkbox"
-                className="toggle toggle-success toggle-sm ml-auto"
-                defaultChecked
-                readOnly
-              />
-            </div>
+            </button>
           </div>
         </div>
       </div>
+
+      <Modal
+        ref={withdrawModalRef}
+        title="Withdraw Funds"
+        actions={
+          <>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => {
+                withdrawModalRef.current?.close();
+                withdrawMethods.reset();
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn btn-warning"
+              onClick={handleWithdraw}
+              disabled={withdraw.isPending}
+            >
+              {withdraw.isPending ? (
+                <span className="loading loading-spinner loading-sm" />
+              ) : (
+                "Withdraw"
+              )}
+            </button>
+          </>
+        }
+      >
+        <FormProvider {...withdrawMethods}>
+          <div className="space-y-4">
+            <SimpleInput
+              label="Amount (₦)"
+              type="number"
+              placeholder="e.g. 5000"
+              min="100"
+              {...withdrawMethods.register("amount", {
+                required: "Amount is required",
+                min: { value: 100, message: "Minimum is ₦100" },
+              })}
+            />
+            <SimpleInput
+              label="Transaction PIN"
+              type="password"
+              placeholder="Enter your 4-digit PIN"
+              maxLength={4}
+              {...withdrawMethods.register("pin", {
+                required: "PIN is required",
+                minLength: { value: 4, message: "PIN must be 4 digits" },
+                maxLength: { value: 4, message: "PIN must be 4 digits" },
+              })}
+            />
+          </div>
+        </FormProvider>
+      </Modal>
 
       <Modal
         ref={modalRef}
