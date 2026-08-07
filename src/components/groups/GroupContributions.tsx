@@ -98,9 +98,15 @@ export default function GroupContributions({ groupId }: Props) {
             <div className="divide-y divide-base-200 overflow-y-auto max-h-[500px]">
               {contributions.map((c) => {
                 const cfg = statusConfig[c.status];
-                const name = c.firstName && c.lastName
-                  ? `${c.firstName} ${c.lastName}`.trim()
-                  : "—";
+                //@ts-ignore
+                const name =
+                  //@ts-ignore
+
+                  c.firstName && c.lastName
+                    ? //@ts-ignore
+
+                      `${c.firstName} ${c.lastName}`.trim()
+                    : "—";
                 return (
                   <div
                     key={c.id}
@@ -114,7 +120,7 @@ export default function GroupContributions({ groupId }: Props) {
                         {name}
                       </p>
                       <p className="text-xs text-base-content/50">
-                        {formatDate(c.createdAt)}
+                        {c.deductedAt ? formatDate(c.deductedAt) : "pending"}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1 shrink-0">

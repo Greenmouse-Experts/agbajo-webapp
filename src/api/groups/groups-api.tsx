@@ -5,6 +5,7 @@ export interface Contribution {
   amount: number;
   status: "pending" | "paid" | "insufficient_funds";
   createdAt: string;
+  deductedAt?: string;
   user?: {
     firstName: string;
     lastName: string;
